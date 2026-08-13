@@ -1,0 +1,61 @@
+version: '3.8'
+ 
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: kkn_app
+    restart: unless-stopped
+    ports:
+      - "8083:80"
+    volumes:
+      - ./app:/var/www/html
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - kkn_network
+ 
+  db:
+    image: mysql:8.0
+    container_name: kkn_db
+    restart: unless-stopped
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: kkn_tematik
+      MYSQL_USER: kkn_user
+      MYSQL_PASSWORD: kkn_pass
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 10s
+      retries: 5
+    networks:
+      - kkn_network
+ 
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: kkn_phpmyadmin
+    restart: unless-stopped
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: root123
+    depends_on:
+      - db
+    networks:
+      - kkn_network
+ 
+networks:
+  kkn_network:
+    driver: bridge
+ 
+volumes:
+  db_data:
