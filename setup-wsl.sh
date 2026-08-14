@@ -39,6 +39,11 @@ for required_file in "${required_files[@]}"; do
     [[ -f "$required_file" ]] || fail "File tidak ditemukan: $required_file"
 done
 
+log "Menghapus container dan image aplikasi lama"
+"${compose_command[@]}" down --remove-orphans
+docker rm -f kkn_app kkn_db kkn_phpmyadmin >/dev/null 2>&1 || true
+docker image rm -f kkn-monitoring-app:latest >/dev/null 2>&1 || true
+
 log "Membangun image dan menyalakan semua service"
 "${compose_command[@]}" up -d --build
 

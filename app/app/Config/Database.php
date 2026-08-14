@@ -26,10 +26,10 @@ class Database extends Config
      */
     public array $default = [
         'DSN'          => '',
-        'hostname'     => 'localhost',
-        'username'     => '',
-        'password'     => '',
-        'database'     => '',
+        'hostname'     => 'db',
+        'username'     => 'kkn_user',
+        'password'     => 'kkn_pass',
+        'database'     => 'kkn_tematik',
         'DBDriver'     => 'MySQLi',
         'DBPrefix'     => '',
         'pConnect'     => false,
@@ -193,6 +193,11 @@ class Database extends Config
     public function __construct()
     {
         parent::__construct();
+
+        if (! is_file('/.dockerenv')) {
+            $this->default['hostname'] = '127.0.0.1';
+            $this->default['port']     = 3307;
+        }
 
         // Ensure that we always set the database group to 'tests' if
         // we are currently running an automated test suite, so that

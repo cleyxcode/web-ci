@@ -16,6 +16,7 @@
 bash setup-wsl.sh
 ```
 Script ini membangun image, menyalakan semua service, menunggu MySQL siap, dan memasukkan schema/data SQL otomatis.
+Container dan image aplikasi lama akan dibersihkan terlebih dahulu. Volume database dan upload tetap dipertahankan.
 
 **3. Akses di browser:**
 - App CI4     : http://localhost:8083

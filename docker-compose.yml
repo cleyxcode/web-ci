@@ -3,19 +3,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    image: kkn-monitoring-app:latest
     container_name: kkn_app
     restart: unless-stopped
     ports:
       - "8083:80"
-    environment:
-      CI_ENVIRONMENT: development
-      "app.baseURL": http://localhost:8083/
-      "database.default.hostname": db
-      "database.default.database": kkn_tematik
-      "database.default.username": kkn_user
-      "database.default.password": kkn_pass
-      "database.default.DBDriver": MySQLi
-      "database.default.port": 3306
     volumes:
       - app_uploads:/var/www/html/public/uploads
     depends_on:

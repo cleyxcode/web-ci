@@ -41,7 +41,6 @@ RUN composer install \
     --optimize-autoloader
 
 COPY app/ ./
-COPY docker/app.env /usr/local/share/kkn-monitoring.env
 COPY docker/apache-vhost.conf /etc/apache2/sites-available/000-default.conf
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 

@@ -1,10 +1,6 @@
 #!/bin/sh
 set -eu
 
-if [ ! -f /var/www/html/.env ]; then
-    cp /usr/local/share/kkn-monitoring.env /var/www/html/.env
-fi
-
 mkdir -p \
     /var/www/html/writable/cache \
     /var/www/html/writable/logs \

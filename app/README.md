@@ -25,8 +25,8 @@ to your `app` folder. The affected files can be copied or merged from
 
 ## Setup
 
-Copy `env` to `.env` and tailor for your app, specifically the baseURL
-and any database settings.
+Application, database, and email settings are configured directly in
+`app/Config/App.php`, `app/Config/Database.php`, and `app/Config/Email.php`.
 
 ## Important Change with index.php
 
