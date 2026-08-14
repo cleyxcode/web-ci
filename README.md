@@ -13,9 +13,9 @@
 
 **2. Buka terminal WSL di folder project, lalu jalankan:**
 ```bash
-bash setup-wsl.sh
+bash run.sh
 ```
-Script ini membangun image, menyalakan semua service, menunggu MySQL siap, dan memasukkan schema/data SQL otomatis.
+Script ini membangun image, menyalakan semua service, memasukkan schema/data SQL otomatis, dan menampilkan URL aplikasi.
 Container dan image aplikasi lama akan dibersihkan terlebih dahulu. Volume database dan upload tetap dipertahankan.
 
 **3. Akses di browser:**
@@ -36,7 +36,7 @@ Container dan image aplikasi lama akan dibersihkan terlebih dahulu. Volume datab
 ## Perintah Docker Berguna
 ```bash
 # Setup lengkap dari WSL
-bash setup-wsl.sh
+bash run.sh
 
 # Jalankan
 docker compose up -d --build
