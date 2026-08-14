@@ -65,14 +65,10 @@ if (! function_exists('panel_menus')) {
             'admin' => [
                 ['label' => 'Dashboard', 'url' => '/admin/dashboard', 'icon' => 'home', 'mobile' => true],
                 ['label' => 'Mahasiswa', 'url' => '/admin/mahasiswa', 'icon' => 'users', 'mobile' => true],
-                ['label' => 'DPL', 'url' => '/admin/dpl', 'icon' => 'academic'],
+                ['label' => 'DPL', 'url' => '/admin/dpl', 'icon' => 'academic', 'mobile' => true],
                 ['label' => 'Kelompok KKN', 'url' => '/admin/kkn', 'icon' => 'group', 'mobile' => true],
                 ['label' => 'Lokasi KKN', 'url' => '/admin/lokasi', 'icon' => 'map'],
-                ['label' => 'Analitik KNN', 'url' => '/admin/analitik', 'icon' => 'chart', 'mobile' => true],
-                ['label' => 'Export', 'url' => '/admin/export', 'icon' => 'download'],
-                ['label' => 'Audit Trail', 'url' => '/admin/audit', 'icon' => 'clipboard'],
-                ['label' => 'Laporan', 'url' => '/admin/laporan', 'icon' => 'doc'],
-                ['label' => 'Pengumuman', 'url' => '/admin/pengumuman', 'icon' => 'bell'],
+                ['label' => 'Laporan', 'url' => '/admin/laporan', 'icon' => 'doc', 'mobile' => true],
                 ['label' => 'Profil', 'url' => '/admin/profil', 'icon' => 'user'],
             ],
             'dpl' => [
@@ -81,6 +77,7 @@ if (! function_exists('panel_menus')) {
                 ['label' => 'Validasi Logbook', 'url' => '/dpl/logbook', 'icon' => 'check', 'mobile' => true],
                 ['label' => 'Review Laporan', 'url' => '/dpl/laporan', 'icon' => 'doc'],
                 ['label' => 'Penilaian', 'url' => '/dpl/penilaian', 'icon' => 'star', 'mobile' => true],
+                ['label' => 'Evaluasi Mhs', 'url' => '/dpl/evaluasi', 'icon' => 'chat', 'mobile' => true],
                 ['label' => 'Export', 'url' => '/dpl/export', 'icon' => 'download'],
             ],
             'mahasiswa' => [
@@ -89,6 +86,7 @@ if (! function_exists('panel_menus')) {
                 ['label' => 'Logbook', 'url' => '/mahasiswa/logbook', 'icon' => 'book', 'mobile' => true],
                 ['label' => 'Laporan', 'url' => '/mahasiswa/laporan', 'icon' => 'upload'],
                 ['label' => 'Nilai', 'url' => '/mahasiswa/nilai', 'icon' => 'star', 'mobile' => true],
+                ['label' => 'Evaluasi', 'url' => '/mahasiswa/evaluasi', 'icon' => 'chat', 'mobile' => true],
                 ['label' => 'Profil', 'url' => '/mahasiswa/profil', 'icon' => 'user'],
             ],
             default => [],

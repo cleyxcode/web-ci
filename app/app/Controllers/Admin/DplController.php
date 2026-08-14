@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controllers\Admin;
 
 use App\Controllers\PanelController;
@@ -13,21 +15,24 @@ class DplController extends PanelController
 
     public function __construct()
     {
-        $this->dplModel   = model(DplModel::class);
-        $this->userModel  = model(UserModel::class);
+        $this->dplModel  = model(DplModel::class);
+        $this->userModel = model(UserModel::class);
     }
 
     public function index()
     {
         return $this->render('admin/dpl/index', [
-            'title' => 'Data DPL',
-            'dpl'   => $this->dplModel->getAllWithUser(),
+            'title'       => 'Kelola Data DPL',
+            'dpl'         => $this->dplModel->getAllWithUser(),
+            'credentials' => session()->getFlashdata('dpl_credentials'),
         ]);
     }
 
     public function create()
     {
-        return $this->render('admin/dpl/form', ['title' => 'Tambah DPL']);
+        return $this->render('admin/dpl/form', [
+            'title' => 'Tambah Akun DPL',
+        ]);
     }
 
     public function store()
@@ -44,23 +49,34 @@ class DplController extends PanelController
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
 
+        $username = trim((string) $this->request->getPost('username'));
+        $password = (string) $this->request->getPost('password');
+        $nama     = trim((string) $this->request->getPost('nama'));
+
         $userId = $this->userModel->insert([
-            'nama'     => $this->request->getPost('nama'),
-            'username' => $this->request->getPost('username'),
-            'email'    => $this->request->getPost('email'),
-            'password' => password_hash($this->request->getPost('password'), PASSWORD_BCRYPT),
-            'role'     => 'dpl',
+            'nama'      => $nama,
+            'username'  => $username,
+            'email'     => $this->request->getPost('email'),
+            'password'  => password_hash($password, PASSWORD_BCRYPT),
+            'role'      => 'dpl',
+            'is_active' => 1,
         ]);
 
         $this->dplModel->insert([
             'user_id' => $userId,
             'nidn'    => $this->request->getPost('nidn'),
-            'nama'    => $this->request->getPost('nama'),
+            'nama'    => $nama,
             'prodi'   => $this->request->getPost('prodi'),
             'no_hp'   => $this->request->getPost('no_hp'),
         ]);
 
-        return redirect()->to('/admin/dpl')->with('success', 'DPL berhasil ditambahkan.');
+        return redirect()->to('/admin/dpl')
+            ->with('success', 'Akun DPL berhasil dibuat. Bagikan kredensial di bawah kepada dosen yang bersangkutan.')
+            ->with('dpl_credentials', [
+                'nama'     => $nama,
+                'username' => $username,
+                'password' => $password,
+            ]);
     }
 
     public function edit(int $id)
@@ -71,7 +87,10 @@ class DplController extends PanelController
             return redirect()->to('/admin/dpl')->with('error', 'Data tidak ditemukan.');
         }
 
-        return $this->render('admin/dpl/form', ['title' => 'Edit DPL', 'dpl' => $dpl]);
+        return $this->render('admin/dpl/form', [
+            'title' => 'Edit DPL',
+            'dpl'   => $dpl,
+        ]);
     }
 
     public function update(int $id)
@@ -82,10 +101,29 @@ class DplController extends PanelController
             return redirect()->to('/admin/dpl')->with('error', 'Data tidak ditemukan.');
         }
 
-        $this->userModel->update($dpl['user_id'], [
+        $userData = [
             'nama'  => $this->request->getPost('nama'),
             'email' => $this->request->getPost('email'),
-        ]);
+        ];
+
+        $newPassword = trim((string) $this->request->getPost('password'));
+        $credentials = null;
+
+        if ($newPassword !== '') {
+            if (strlen($newPassword) < 6) {
+                return redirect()->back()->withInput()->with('error', 'Password baru minimal 6 karakter.');
+            }
+
+            $userData['password'] = password_hash($newPassword, PASSWORD_BCRYPT);
+            $user                 = $this->userModel->find((int) $dpl['user_id']);
+            $credentials          = [
+                'nama'     => $this->request->getPost('nama'),
+                'username' => $user['username'] ?? '',
+                'password' => $newPassword,
+            ];
+        }
+
+        $this->userModel->update((int) $dpl['user_id'], $userData);
 
         $this->dplModel->update($id, [
             'nidn'  => $this->request->getPost('nidn'),
@@ -94,7 +132,14 @@ class DplController extends PanelController
             'no_hp' => $this->request->getPost('no_hp'),
         ]);
 
-        return redirect()->to('/admin/dpl')->with('success', 'Data DPL diperbarui.');
+        $redirect = redirect()->to('/admin/dpl')->with('success', 'Data DPL diperbarui.');
+
+        if ($credentials !== null) {
+            $redirect->with('dpl_credentials', $credentials)
+                ->with('success', 'Data DPL diperbarui. Password baru siap dibagikan kepada DPL.');
+        }
+
+        return $redirect;
     }
 
     public function delete(int $id)

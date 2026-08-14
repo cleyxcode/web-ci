@@ -47,7 +47,7 @@ class KelompokKknModel extends Model
     public function getWithGps(?int $dplId = null): array
     {
         $builder = $this->select('kelompok_kkn.id, kelompok_kkn.nama_kelompok, kelompok_kkn.latitude, kelompok_kkn.longitude,
-            kelompok_kkn.lokasi_gps_at, kelompok_kkn.periode, kelompok_kkn.dosen_pendamping,
+            kelompok_kkn.lokasi_gps_at, kelompok_kkn.periode,
             lokasi_kkn.nama_desa, lokasi_kkn.kecamatan, lokasi_kkn.kabupaten,
             dpl.nama as nama_dpl, ketua.nama as nama_ketua')
             ->join('lokasi_kkn', 'lokasi_kkn.id = kelompok_kkn.lokasi_id', 'left')

@@ -23,17 +23,10 @@ $ketuaId = (int) ($k['ketua_mahasiswa_id'] ?? 0);
 
     <div class="info-grid" style="margin-bottom:16px">
         <div class="info-card">
-            <span class="info-label">DPL</span>
+            <span class="info-label">DPL (Dosen Pembimbing Lapangan)</span>
             <strong><?= esc($k['nama_dpl'] ?? 'Belum ditentukan') ?></strong>
             <?php if (! empty($k['no_hp_dpl'])): ?>
                 <small><?= esc($k['no_hp_dpl']) ?></small>
-            <?php endif; ?>
-        </div>
-        <div class="info-card">
-            <span class="info-label">Dosen pendamping</span>
-            <strong><?= trim($k['dosen_pendamping'] ?? '') !== '' ? esc($k['dosen_pendamping']) : 'Belum diisi' ?></strong>
-            <?php if (! empty($k['no_hp_dosen_pendamping'])): ?>
-                <small><?= esc($k['no_hp_dosen_pendamping']) ?></small>
             <?php endif; ?>
         </div>
         <div class="info-card">

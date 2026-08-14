@@ -305,15 +305,15 @@ if (preg_match('#dpl/laporan/(\d+)/review#', $lapPage['body'], $m)) {
     ok(false, 'DPL form review laporan ditemukan');
 }
 
-out("\n## DPL: penilaian + KNN");
+out("\n## DPL: penilaian ");
 $form = getAuthed('dpl', '/dpl/penilaian/1');
-ok($form['code'] === 200 && str_contains($form['body'], 'Prediksi KNN'), 'Form penilaian + prediksi KNN');
+ok($form['code'] === 200 && str_contains($form['body'], 'Nilai akhir'), 'Form penilaian + prediksi KNN');
 $r = postFromPage('dpl', '/dpl/penilaian/1', '/dpl/penilaian/1', [
     'nilai_keaktifan' => '85',
     'nilai_logbook'   => '80',
     'nilai_laporan'   => '90',
     'grade'           => '',
-    'prediksi_knn'    => 'A',
+    'grade'    => 'A',
     'catatan'         => 'Nilai E2E',
 ]);
 ok(in_array($r['code'], [302, 303], true), 'DPL simpan penilaian', 'HTTP ' . $r['code']);

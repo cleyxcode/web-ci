@@ -56,11 +56,25 @@
   };
 
   if (notifBtn && notifPanel) {
-    notifBtn.addEventListener('click', (e) => {
+    notifBtn.addEventListener('click', async (e) => {
       e.stopPropagation();
       const open = notifPanel.hasAttribute('hidden');
       notifPanel.toggleAttribute('hidden', !open);
       notifBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+
+      // Saat panel DIBUKA — hapus dot merah & tandai semua dibaca
+      if (open) {
+        const dot = document.getElementById('notif-dot');
+        if (dot) {
+          dot.remove();
+          // Tandai semua sebagai dibaca di server (silent)
+          const cfg = window.KKN || {};
+          postForm(`${cfg.notifReadUrl}/read-all`).then(() => {
+            document.querySelectorAll('.notif-item.unread').forEach((el) => el.classList.remove('unread'));
+            if (readAllBtn) readAllBtn.remove();
+          }).catch(() => {});
+        }
+      }
     });
 
     document.addEventListener('click', (e) => {

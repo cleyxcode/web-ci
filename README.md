@@ -11,14 +11,14 @@
 
 **1. Download/clone project ini ke komputer kamu**
 
-**2. Buka terminal di folder project, lalu jalankan:**
+**2. Buka terminal WSL di folder project, lalu jalankan:**
 ```bash
-docker-compose up -d --build
+bash setup-wsl.sh
 ```
-> Tunggu sekitar 3-5 menit (download CI4 otomatis)
+Script ini membangun image, menyalakan semua service, menunggu MySQL siap, dan memasukkan schema/data SQL otomatis.
 
 **3. Akses di browser:**
-- App CI4     : http://localhost:8080
+- App CI4     : http://localhost:8083
 - phpMyAdmin  : http://localhost:8081
 
 **4. Login phpMyAdmin:**
@@ -34,17 +34,20 @@ docker-compose up -d --build
 
 ## Perintah Docker Berguna
 ```bash
+# Setup lengkap dari WSL
+bash setup-wsl.sh
+
 # Jalankan
-docker-compose up -d --build
+docker compose up -d --build
 
 # Stop
-docker-compose down
+docker compose down
 
 # Lihat log
-docker-compose logs app
+docker compose logs -f app
 
 # Masuk container
-docker exec -it kkn_app bash
+docker compose exec app bash
 ```
 
 ## Struktur Database

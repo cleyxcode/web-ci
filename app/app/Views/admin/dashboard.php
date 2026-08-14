@@ -39,7 +39,7 @@
 <div class="card" style="margin-top:16px">
     <div class="card-head">
         <h2>Peta lokasi GPS kelompok</h2>
-        <a href="<?= site_url('admin/analitik') ?>" class="btn btn-secondary btn-sm">Analitik</a>
+        <a href="<?= site_url('admin/kkn') ?>" class="btn btn-secondary btn-sm">Kelompok KKN</a>
     </div>
     <?= view('partials/map', [
         'mapId'    => 'map-admin-dash',

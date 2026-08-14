@@ -11,7 +11,7 @@ class MahasiswaModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
     protected $allowedFields    = ['user_id', 'npm', 'nama', 'prodi', 'kelompok_id', 'no_hp'];
-    protected $useTimestamps    = true;
+    protected $useTimestamps    = false;
     protected $createdField     = 'created_at';
     protected $updatedField     = null;
 
@@ -20,8 +20,8 @@ class MahasiswaModel extends Model
         return $this->select('mahasiswa.*, users.username, users.email, users.is_active,
             kelompok_kkn.nama_kelompok, kelompok_kkn.periode, kelompok_kkn.tanggal_mulai, kelompok_kkn.tanggal_selesai,
             lokasi_kkn.nama_desa, lokasi_kkn.kecamatan, lokasi_kkn.kabupaten,
-            dpl.nama as nama_dpl, dpl.id as dpl_id,
-            kelompok_kkn.alamat_penelitian, kelompok_kkn.dosen_pendamping, kelompok_kkn.no_hp_dosen_pendamping,
+            dpl.nama as nama_dpl, dpl.id as dpl_id, dpl.no_hp as no_hp_dpl,
+            kelompok_kkn.alamat_penelitian,
             kelompok_kkn.latitude, kelompok_kkn.longitude, kelompok_kkn.lokasi_gps_at, kelompok_kkn.ketua_mahasiswa_id')
             ->join('users', 'users.id = mahasiswa.user_id')
             ->join('kelompok_kkn', 'kelompok_kkn.id = mahasiswa.kelompok_id', 'left')

@@ -16,7 +16,7 @@ use CodeIgniter\Test\CIUnitTestCase;
  *  - Tambah DPL: semua required field kosong
  *  - Reset Password (OTP): konfirmasi tidak cocok, password terlalu pendek
  *  - GPS Koordinat: range tidak valid (ditangani controller, bukan validator CI4)
- *  - Penilaian: nilai di luar range 0–100 (bug — tidak ada validasi range)
+ *  - Penilaian: nilai wajib 0–100
  */
 final class ValidationTest extends CIUnitTestCase
 {
@@ -349,28 +349,52 @@ final class ValidationTest extends CIUnitTestCase
     }
 
     // ---------------------------------------------------------------
-    // BUG DITEMUKAN: Penilaian — tidak ada validasi range 0–100
-    // Dokumentasi sebagai test yang menunjukkan CELAH (expected to pass saat ini)
+    // PENILAIAN — range 0–100
     // ---------------------------------------------------------------
 
-    public function testPenilaianTanpaValidasiRangeMenerimaNilaiNegatif(): void
+    public function testPenilaianNilaiNegatifDitolak(): void
     {
-        // Controller DplController\PenilaianController::save() hanya cast ke float,
-        // tidak ada validasi range 0–100.
-        // Test ini mendokumentasikan bahwa validasi belum ada → nilai negatif diterima
-        $nilaiInput = '-50';
-        $nilai = (float) $nilaiInput;
+        $rules = [
+            'nilai_keaktifan' => 'required|decimal|greater_than_equal_to[0]|less_than_equal_to[100]',
+            'nilai_logbook'   => 'required|decimal|greater_than_equal_to[0]|less_than_equal_to[100]',
+            'nilai_laporan'   => 'required|decimal|greater_than_equal_to[0]|less_than_equal_to[100]',
+        ];
 
-        // Tanpa validasi, nilai negatif lolos
-        $this->assertLessThan(0, $nilai, 'BUG: Nilai -50 berhasil di-cast tanpa ditolak (tidak ada validasi range)');
+        $this->assertFalse($this->v->setRules($rules)->run([
+            'nilai_keaktifan' => '-50',
+            'nilai_logbook'   => '80',
+            'nilai_laporan'   => '80',
+        ]));
     }
 
-    public function testPenilaianTanpaValidasiRangeMenerimaNilaiMelebihi100(): void
+    public function testPenilaianNilaiMelebihi100Ditolak(): void
     {
-        $nilaiInput = '999';
-        $nilai = (float) $nilaiInput;
+        $rules = [
+            'nilai_keaktifan' => 'required|decimal|greater_than_equal_to[0]|less_than_equal_to[100]',
+            'nilai_logbook'   => 'required|decimal|greater_than_equal_to[0]|less_than_equal_to[100]',
+            'nilai_laporan'   => 'required|decimal|greater_than_equal_to[0]|less_than_equal_to[100]',
+        ];
 
-        $this->assertGreaterThan(100, $nilai, 'BUG: Nilai 999 berhasil di-cast tanpa ditolak (tidak ada validasi range)');
+        $this->assertFalse($this->v->setRules($rules)->run([
+            'nilai_keaktifan' => '999',
+            'nilai_logbook'   => '80',
+            'nilai_laporan'   => '80',
+        ]));
+    }
+
+    public function testPenilaianNilaiValidLolos(): void
+    {
+        $rules = [
+            'nilai_keaktifan' => 'required|decimal|greater_than_equal_to[0]|less_than_equal_to[100]',
+            'nilai_logbook'   => 'required|decimal|greater_than_equal_to[0]|less_than_equal_to[100]',
+            'nilai_laporan'   => 'required|decimal|greater_than_equal_to[0]|less_than_equal_to[100]',
+        ];
+
+        $this->assertTrue($this->v->setRules($rules)->run([
+            'nilai_keaktifan' => '80',
+            'nilai_logbook'   => '75.5',
+            'nilai_laporan'   => '90',
+        ]));
     }
 
     // ---------------------------------------------------------------

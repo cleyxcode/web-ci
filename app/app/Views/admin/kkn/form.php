@@ -13,25 +13,16 @@
                 <input type="text" name="periode" placeholder="2026 Genap" value="<?= esc(old('periode', $kelompok['periode'] ?? '')) ?>">
             </div>
             <div class="field">
-                <label>DPL</label>
-                <select name="dpl_id">
+                <label>DPL (Dosen Pembimbing Lapangan)</label>
+                <select name="dpl_id" required>
                     <option value="">— Pilih DPL —</option>
                     <?php foreach ($dpl ?? [] as $row): ?>
                         <option value="<?= (int) $row['id'] ?>" <?= (string) old('dpl_id', $kelompok['dpl_id'] ?? '') === (string) $row['id'] ? 'selected' : '' ?>>
-                            <?= esc($row['nama']) ?>
+                            <?= esc($row['nama']) ?><?= ! empty($row['nidn']) ? ' · ' . esc($row['nidn']) : '' ?>
                         </option>
                     <?php endforeach; ?>
                 </select>
-                <div class="field-hint">Dosen Pembimbing Lapangan (akun sistem)</div>
-            </div>
-            <div class="field">
-                <label>Dosen pendamping</label>
-                <input type="text" name="dosen_pendamping" placeholder="Nama dosen pendamping di lapangan" value="<?= esc(old('dosen_pendamping', $kelompok['dosen_pendamping'] ?? '')) ?>">
-                <div class="field-hint">Tanpa akun login — hanya data kontak lapangan</div>
-            </div>
-            <div class="field">
-                <label>No. HP dosen pendamping</label>
-                <input type="text" name="no_hp_dosen_pendamping" placeholder="08xxxxxxxxxx" value="<?= esc(old('no_hp_dosen_pendamping', $kelompok['no_hp_dosen_pendamping'] ?? '')) ?>">
+                <div class="field-hint">DPL adalah dosen di lapangan. Buat akunnya dulu di menu DPL, lalu pilih di sini.</div>
             </div>
             <div class="field">
                 <label>Lokasi penempatan</label>

@@ -26,12 +26,18 @@ class LaporanController extends PanelController
 
     public function review(int $id)
     {
-        $dpl          = model(DplModel::class)->findByUserId(current_user()['id']);
+        $dpl          = model(DplModel::class)->findByUserId((int) current_user()['id']);
         $laporanModel = model(LaporanModel::class);
         $laporan      = $laporanModel->find($id);
 
         if (! $laporan || ! $dpl) {
             return redirect()->back()->with('error', 'Data tidak ditemukan.');
+        }
+
+        $mhs = model(MahasiswaModel::class)->getWithRelations((int) $laporan['mahasiswa_id']);
+
+        if (! $mhs || (int) ($mhs['dpl_id'] ?? 0) !== (int) $dpl['id']) {
+            return redirect()->back()->with('error', 'Laporan bukan dari mahasiswa bimbingan Anda.');
         }
 
         $action = $this->request->getPost('action');
@@ -44,8 +50,6 @@ class LaporanController extends PanelController
             'reviewed_at' => date('Y-m-d H:i:s'),
         ]);
 
-        $mhs = model(MahasiswaModel::class)->find($laporan['mahasiswa_id']);
-
         AuditLib::log(
             $status,
             'laporan',
@@ -56,7 +60,7 @@ class LaporanController extends PanelController
         );
 
         $this->notify(
-            $mhs['user_id'],
+            (int) $mhs['user_id'],
             'Laporan ' . stempel_label($status),
             'Laporan "' . $laporan['judul'] . '" ' . stempel_label($status),
             $status === 'diterima' ? 'success' : 'danger',

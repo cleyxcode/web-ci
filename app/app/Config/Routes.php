@@ -19,6 +19,10 @@ $routes->post('otp-verify', 'Auth\OtpController::verify');
 $routes->get('reset-password', 'Auth\OtpController::resetForm');
 $routes->post('reset-password', 'Auth\OtpController::reset');
 
+// Registrasi mahasiswa mandiri
+$routes->get('register', 'Auth\RegisterController::index');
+$routes->post('register', 'Auth\RegisterController::store');
+
 // Notifikasi (semua role)
 $routes->group('', ['filter' => 'auth'], static function ($routes) {
     $routes->get('notifikasi', 'NotifikasiController::index');
@@ -66,23 +70,6 @@ $routes->group('admin', ['filter' => ['auth', 'role:admin']], static function ($
 
     $routes->get('laporan', 'Admin\LaporanController::index');
 
-    $routes->get('analitik', 'Admin\AnalitikController::index');
-
-    $routes->get('export', 'Admin\ExportController::index');
-    $routes->get('export/mahasiswa', 'Admin\ExportController::mahasiswa');
-    $routes->get('export/logbook', 'Admin\ExportController::logbook');
-    $routes->get('export/laporan', 'Admin\ExportController::laporan');
-    $routes->get('export/nilai', 'Admin\ExportController::nilai');
-    $routes->get('export/kelompok', 'Admin\ExportController::kelompok');
-
-    $routes->get('audit', 'Admin\AuditController::index');
-
-    $routes->get('pengumuman', 'Admin\PengumumanController::index');
-    $routes->get('pengumuman/create', 'Admin\PengumumanController::create');
-    $routes->post('pengumuman', 'Admin\PengumumanController::store');
-    $routes->post('pengumuman/(:num)/delete', 'Admin\PengumumanController::delete/$1');
-    $routes->post('reset-password', 'Admin\PengumumanController::resetPassword');
-
     $routes->get('profil', 'Admin\ProfilController::index');
     $routes->post('profil', 'Admin\ProfilController::update');
     $routes->post('profil/password', 'Admin\ProfilController::changePassword');
@@ -100,6 +87,7 @@ $routes->group('dpl', ['filter' => ['auth', 'role:dpl']], static function ($rout
     $routes->get('penilaian', 'Dpl\PenilaianController::index');
     $routes->get('penilaian/(:num)', 'Dpl\PenilaianController::form/$1');
     $routes->post('penilaian/(:num)', 'Dpl\PenilaianController::save/$1');
+    $routes->get('evaluasi', 'Dpl\EvaluasiController::index');
     $routes->get('export', 'Dpl\ExportController::index');
     $routes->get('export/logbook', 'Dpl\ExportController::logbook');
     $routes->get('export/laporan', 'Dpl\ExportController::laporan');
@@ -117,9 +105,12 @@ $routes->group('mahasiswa', ['filter' => ['auth', 'role:mahasiswa']], static fun
     $routes->get('laporan/create', 'Mahasiswa\LaporanController::create');
     $routes->post('laporan', 'Mahasiswa\LaporanController::store');
     $routes->get('nilai', 'Mahasiswa\NilaiController::index');
+    $routes->get('evaluasi', 'Mahasiswa\EvaluasiController::index');
+    $routes->post('evaluasi', 'Mahasiswa\EvaluasiController::store');
     $routes->get('tim', 'Mahasiswa\TimController::index');
     $routes->post('tim/gps', 'Mahasiswa\TimController::setLokasiGps');
     $routes->get('profil', 'Mahasiswa\ProfilController::index');
     $routes->post('profil', 'Mahasiswa\ProfilController::update');
+    $routes->post('profil/data', 'Mahasiswa\ProfilController::updateData');
     $routes->post('profil/password', 'Mahasiswa\ProfilController::changePassword');
 });

@@ -46,15 +46,23 @@ final class HelperTest extends CIUnitTestCase
         $this->assertNotEmpty($mhs);
 
         $adminUrls = array_column($admin, 'url');
-        $this->assertContains('/admin/analitik', $adminUrls);
-        $this->assertContains('/admin/export', $adminUrls);
-        $this->assertContains('/admin/audit', $adminUrls);
+        $this->assertContains('/admin/dashboard', $adminUrls);
+        $this->assertContains('/admin/mahasiswa', $adminUrls);
+        $this->assertContains('/admin/dpl', $adminUrls);
+        $this->assertContains('/admin/kkn', $adminUrls);
+        $this->assertContains('/admin/lokasi', $adminUrls);
+        $this->assertContains('/admin/laporan', $adminUrls);
+        $this->assertNotContains('/admin/analitik', $adminUrls);
+        $this->assertNotContains('/admin/export', $adminUrls);
 
         $dplUrls = array_column($dpl, 'url');
+        $this->assertContains('/dpl/penilaian', $dplUrls);
         $this->assertContains('/dpl/export', $dplUrls);
 
         $mhsUrls = array_column($mhs, 'url');
         $this->assertContains('/mahasiswa/tim', $mhsUrls);
+        $this->assertContains('/mahasiswa/evaluasi', $mhsUrls);
+        $this->assertContains('/mahasiswa/nilai', $mhsUrls);
     }
 
     public function testFormatAlamatAndTanggal(): void

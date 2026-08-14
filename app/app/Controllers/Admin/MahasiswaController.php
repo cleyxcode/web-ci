@@ -40,11 +40,12 @@ class MahasiswaController extends PanelController
     public function store()
     {
         $rules = [
-            'nama'     => 'required|min_length[3]',
-            'username' => 'required|is_unique[users.username]',
-            'email'    => 'required|valid_email|is_unique[users.email]',
-            'npm'      => 'required|is_unique[mahasiswa.npm]',
-            'password' => 'required|min_length[6]',
+            'nama'             => 'required|min_length[3]',
+            'username'         => 'required|is_unique[users.username]',
+            'email'            => 'required|valid_email|is_unique[users.email]',
+            'npm'              => 'required|is_unique[mahasiswa.npm]',
+            'password'         => 'required|min_length[6]',
+            'password_confirm' => 'required|matches[password]',
         ];
 
         if (! $this->validate($rules)) {
@@ -94,10 +95,32 @@ class MahasiswaController extends PanelController
             return redirect()->to('/admin/mahasiswa')->with('error', 'Data tidak ditemukan.');
         }
 
-        $this->userModel->update($mhs['user_id'], [
-            'nama'  => $this->request->getPost('nama'),
-            'email' => $this->request->getPost('email'),
-        ]);
+        $rules = [
+            'nama'     => 'required|min_length[3]',
+            'email'    => "required|valid_email|is_unique[users.email,id,{$mhs['user_id']}]",
+            'username' => "required|is_unique[users.username,id,{$mhs['user_id']}]",
+            'npm'      => "required|is_unique[mahasiswa.npm,id,{$id}]",
+        ];
+
+        if ($this->request->getPost('password')) {
+            $rules['password'] = 'min_length[6]';
+        }
+
+        if (! $this->validate($rules)) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $userData = [
+            'nama'     => $this->request->getPost('nama'),
+            'email'    => $this->request->getPost('email'),
+            'username' => $this->request->getPost('username'),
+        ];
+
+        if ($this->request->getPost('password')) {
+            $userData['password'] = password_hash((string) $this->request->getPost('password'), PASSWORD_BCRYPT);
+        }
+
+        $this->userModel->update($mhs['user_id'], $userData);
 
         $this->mahasiswaModel->update($id, [
             'npm'         => $this->request->getPost('npm'),

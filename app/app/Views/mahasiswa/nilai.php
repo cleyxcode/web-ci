@@ -1,7 +1,7 @@
 <div class="card" style="max-width:560px">
     <div class="card-head"><h2>Nilai KKN</h2></div>
     <?php if (empty($nilai)): ?>
-        <p class="empty">Nilai belum dipublikasikan DPL.</p>
+        <p class="empty">Nilai belum dipublikasikan DPL. Setelah DPL menilai, nilai akan muncul di sini.</p>
     <?php else: ?>
         <div class="stat-row">
             <div class="stat">
@@ -11,10 +11,6 @@
             <div class="stat">
                 <div class="label">Grade</div>
                 <div class="value <?= grade_class($nilai['grade'] ?? null) ?>"><?= esc($nilai['grade'] ?? '-') ?></div>
-            </div>
-            <div class="stat">
-                <div class="label">Prediksi KNN</div>
-                <div class="value font-mono"><?= esc($nilai['prediksi_knn'] ?? '-') ?></div>
             </div>
         </div>
         <div class="table-wrap">

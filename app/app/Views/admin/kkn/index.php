@@ -10,7 +10,6 @@
                     <th>Nama kelompok</th>
                     <th>Ketua</th>
                     <th>DPL</th>
-                    <th>Dosen pendamping</th>
                     <th>Lokasi</th>
                     <th>GPS</th>
                     <th>Anggota</th>
@@ -20,7 +19,7 @@
             </thead>
             <tbody>
             <?php if (empty($kelompok)): ?>
-                <tr><td colspan="9" class="empty">Belum ada kelompok. Buat kelompok lalu tempatkan mahasiswa.</td></tr>
+                <tr><td colspan="8" class="empty">Belum ada kelompok. Buat kelompok lalu tempatkan mahasiswa.</td></tr>
             <?php else: ?>
                 <?php foreach ($kelompok as $row): ?>
                     <tr>
@@ -29,7 +28,6 @@
                         </td>
                         <td><?= esc($row['nama_ketua'] ?? '—') ?></td>
                         <td><?= esc($row['nama_dpl'] ?? '-') ?></td>
-                        <td><?= esc($row['dosen_pendamping'] ?? '-') ?></td>
                         <td><?= esc(format_alamat($row)) ?></td>
                         <td><?= ! empty($row['latitude']) ? '✓' : '—' ?></td>
                         <td><span class="badge-count"><?= (int) ($row['jumlah_anggota'] ?? 0) ?> mhs</span></td>

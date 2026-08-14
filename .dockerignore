@@ -1,0 +1,10 @@
+.git
+.gitignore
+app/.env
+app/vendor
+app/writable
+app/build
+app/tests/coverage*
+docker-compose*.yml
+README.md
+TESTING_REPORT.md

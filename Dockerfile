@@ -1,36 +1,62 @@
 FROM php:8.2-apache
 
-# Install ekstensi PHP (intl wajib untuk CodeIgniter 4)
-RUN apt-get update && apt-get install -y \
-    libzip-dev zip unzip libpng-dev \
-    libonig-dev libxml2-dev libicu-dev curl git \
-    && docker-php-ext-install \
-    pdo pdo_mysql mysqli mbstring intl \
-    exif pcntl bcmath gd zip \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Install Composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        libcurl4-openssl-dev \
+        libfreetype6-dev \
+        libicu-dev \
+        libjpeg62-turbo-dev \
+        libonig-dev \
+        libpng-dev \
+        libxml2-dev \
+        libzip-dev \
+        unzip \
+        zip \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j"$(nproc)" \
+        bcmath \
+        curl \
+        exif \
+        gd \
+        intl \
+        mbstring \
+        mysqli \
+        pcntl \
+        pdo_mysql \
+        zip \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-# Aktifkan mod_rewrite
 RUN a2enmod rewrite
 
-# Konfigurasi Apache untuk CI4
-RUN echo '<VirtualHost *:80>\n\
-    DocumentRoot /var/www/html/public\n\
-    <Directory /var/www/html/public>\n\
-        Options Indexes FollowSymLinks\n\
-        AllowOverride All\n\
-        Require all granted\n\
-    </Directory>\n\
-    ErrorLog ${APACHE_LOG_DIR}/error.log\n\
-    CustomLog ${APACHE_LOG_DIR}/access.log combined\n\
-</VirtualHost>' > /etc/apache2/sites-available/000-default.conf
-
-# Script install CI4 otomatis saat container pertama kali jalan
-COPY docker/entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-
 WORKDIR /var/www/html
+
+COPY app/composer.json app/composer.lock ./
+RUN composer install \
+    --no-interaction \
+    --no-progress \
+    --prefer-dist \
+    --optimize-autoloader
+
+COPY app/ ./
+COPY docker/app.env /usr/local/share/kkn-monitoring.env
+COPY docker/apache-vhost.conf /etc/apache2/sites-available/000-default.conf
+COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
+
+RUN mkdir -p \
+        writable/cache \
+        writable/logs \
+        writable/session \
+        writable/uploads \
+        writable/debugbar \
+        public/uploads/logbook \
+        public/uploads/laporan \
+    && chown -R www-data:www-data writable public/uploads \
+    && chmod -R ug+rwX writable public/uploads \
+    && chmod +x /usr/local/bin/entrypoint.sh
+
 EXPOSE 80
-ENTRYPOINT ["/entrypoint.sh"]
+
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

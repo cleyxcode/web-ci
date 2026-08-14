@@ -20,7 +20,7 @@
         </div>
         <div class="export-item">
             <strong>Nilai bimbingan</strong>
-            <span>Nilai &amp; prediksi KNN</span>
+            <span>Nilai akhir &amp; grade mahasiswa</span>
             <div class="export-links">
                 <a href="<?= site_url('dpl/export/nilai') ?>">Excel</a>
                 <a href="<?= site_url('dpl/export/nilai?format=csv') ?>">CSV</a>

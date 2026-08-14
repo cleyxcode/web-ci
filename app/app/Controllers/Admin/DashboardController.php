@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controllers\Admin;
 
 use App\Controllers\PanelController;
@@ -9,7 +11,6 @@ use App\Models\LaporanModel;
 use App\Models\LogbookModel;
 use App\Models\LokasiKknModel;
 use App\Models\MahasiswaModel;
-use App\Models\PengumumanModel;
 
 class DashboardController extends PanelController
 {

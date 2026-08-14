@@ -3,6 +3,7 @@
 namespace App\Controllers\Mahasiswa;
 
 use App\Controllers\PanelController;
+use App\Models\EvaluasiModel;
 use App\Models\LogbookModel;
 use App\Models\MahasiswaModel;
 use App\Models\PengumumanModel;
@@ -18,6 +19,7 @@ class DashboardController extends PanelController
         $totalLogbook = $mhs ? $logbookModel->where('mahasiswa_id', $mhs['id'])->countAllResults() : 0;
         $validLogbook = $mhs ? $logbookModel->countByMahasiswaStatus($mhs['id'], 'divalidasi') : 0;
         $progress     = $totalLogbook > 0 ? round(($validLogbook / max($totalLogbook, 1)) * 100) : 0;
+        $evaluasi     = $mhs ? model(EvaluasiModel::class)->findByMahasiswa((int) $mhs['id']) : null;
 
         return $this->render('mahasiswa/dashboard', [
             'title'         => 'Dashboard Mahasiswa',
@@ -26,6 +28,7 @@ class DashboardController extends PanelController
             'totalLogbook'  => $totalLogbook,
             'validLogbook'  => $validLogbook,
             'totalLaporan'  => $mhs ? model(\App\Models\LaporanModel::class)->where('mahasiswa_id', $mhs['id'])->countAllResults() : 0,
+            'evaluasi'      => $evaluasi,
             'logbookTerbaru'=> $mhs ? $logbookModel->getByMahasiswa($mhs['id']) : [],
             'pengumuman'    => model(PengumumanModel::class)->getLatest(3),
             'petaKelompok'  => $detail && ! empty($detail['latitude']) ? [[

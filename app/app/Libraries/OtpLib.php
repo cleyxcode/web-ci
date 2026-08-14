@@ -21,11 +21,12 @@ class OtpLib
     {
         $code = (string) random_int(100000, 999999);
 
-        $this->otpModel->where('user_id', $userId)
+        // Mark previous OTPs as used
+        $builder = $this->otpModel->builder();
+        $builder->where('user_id', $userId)
             ->where('type', $type)
             ->where('is_used', 0)
-            ->set(['is_used' => 1])
-            ->update();
+            ->update(['is_used' => 1]);
 
         $this->otpModel->insert([
             'user_id'    => $userId,

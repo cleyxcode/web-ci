@@ -11,7 +11,7 @@ class NotifikasiModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
     protected $allowedFields    = ['user_id', 'judul', 'pesan', 'type', 'is_read'];
-    protected $useTimestamps    = true;
+    protected $useTimestamps    = false;
     protected $createdField     = 'created_at';
     protected $updatedField     = null;
 
@@ -48,10 +48,11 @@ class NotifikasiModel extends Model
     public function createNotif(int $userId, string $judul, string $pesan, string $type = 'info'): int
     {
         return (int) $this->insert([
-            'user_id' => $userId,
-            'judul'   => $judul,
-            'pesan'   => $pesan,
-            'type'    => $type,
+            'user_id'    => $userId,
+            'judul'      => $judul,
+            'pesan'      => $pesan,
+            'type'       => $type,
+            'created_at' => date('Y-m-d H:i:s'),
         ]);
     }
 }

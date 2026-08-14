@@ -133,11 +133,12 @@ CREATE TABLE IF NOT EXISTS `penilaian` (
   `nilai_laporan` float DEFAULT 0,
   `nilai_akhir` float DEFAULT 0,
   `grade` char(2) DEFAULT NULL,
-  `prediksi_knn` char(2) DEFAULT NULL,
   `catatan` text DEFAULT NULL,
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
   `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_penilaian_mahasiswa` (`mahasiswa_id`),
+  KEY `idx_penilaian_dpl` (`dpl_id`),
   FOREIGN KEY (`mahasiswa_id`) REFERENCES `mahasiswa`(`id`),
   FOREIGN KEY (`dpl_id`) REFERENCES `dpl`(`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -145,10 +146,22 @@ CREATE TABLE IF NOT EXISTS `penilaian` (
 CREATE TABLE IF NOT EXISTS `evaluasi` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `mahasiswa_id` int(11) NOT NULL,
+  `kelompok_id` int(11) DEFAULT NULL,
+  `dpl_id` int(11) DEFAULT NULL,
   `rating` tinyint(1) DEFAULT NULL,
+  `aspek_bimbingan` tinyint(1) DEFAULT NULL,
+  `aspek_lokasi` tinyint(1) DEFAULT NULL,
+  `aspek_pelaksanaan` tinyint(1) DEFAULT NULL,
   `komentar` text DEFAULT NULL,
+  `skor_total` float DEFAULT 0,
+  `kategori` varchar(30) DEFAULT NULL,
+  `rekomendasi` text DEFAULT NULL,
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_evaluasi_mahasiswa` (`mahasiswa_id`),
+  KEY `idx_evaluasi_kelompok` (`kelompok_id`),
+  KEY `idx_evaluasi_dpl` (`dpl_id`),
   FOREIGN KEY (`mahasiswa_id`) REFERENCES `mahasiswa`(`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 

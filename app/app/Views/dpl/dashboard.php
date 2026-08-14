@@ -20,6 +20,11 @@
             <div class="label">Laporan menunggu</div>
             <div class="value"><?= is_array($laporanPending ?? null) ? count($laporanPending) : (int) ($laporanPending ?? 0) ?></div>
         </div>
+        <div class="stat">
+            <div class="label">Evaluasi masuk</div>
+            <div class="value"><?= (int) ($totalEvaluasi ?? 0) ?></div>
+            <small>avg <?= $avgEvaluasi !== null ? esc((string) $avgEvaluasi) : '-' ?>/5</small>
+        </div>
     </div>
 
     <div class="card" style="margin-bottom:16px">
@@ -36,7 +41,10 @@
     <div class="card">
         <div class="card-head">
             <h2>Kegiatan terbaru</h2>
-            <a href="<?= site_url('dpl/logbook') ?>" class="btn btn-secondary btn-sm">Validasi</a>
+            <div style="display:flex;gap:8px">
+                <a href="<?= site_url('dpl/evaluasi') ?>" class="btn btn-secondary btn-sm">Evaluasi</a>
+                <a href="<?= site_url('dpl/logbook') ?>" class="btn btn-secondary btn-sm">Validasi</a>
+            </div>
         </div>
         <div class="table-wrap">
             <table class="data">

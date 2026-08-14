@@ -11,14 +11,35 @@
         <div class="stat"><div class="label">Laporan diterima</div><div class="value"><?= (int) $jml_laporan_terima ?></div></div>
     </div>
 
-    <div class="alert alert-info" style="display:flex;justify-content:space-between;align-items:center;gap:12px">
-        <span>Prediksi KNN</span>
-        <strong class="font-mono" style="font-size:1.25rem"><?= esc($prediksi_knn ?? '-') ?></strong>
-    </div>
+    <?php if (! empty($evaluasi)): ?>
+        <div class="alert alert-info" style="margin-bottom:16px">
+            <strong>Evaluasi kegiatan dari mahasiswa:</strong>
+            rating <?= (int) $evaluasi['rating'] ?>/5
+            · bimbingan <?= (int) ($evaluasi['aspek_bimbingan'] ?? 0) ?>
+            · lokasi <?= (int) ($evaluasi['aspek_lokasi'] ?? 0) ?>
+            · pelaksanaan <?= (int) ($evaluasi['aspek_pelaksanaan'] ?? 0) ?>
+            <?php if (! empty($evaluasi['komentar'])): ?>
+                <br><span style="opacity:.85"><?= esc($evaluasi['komentar']) ?></span>
+            <?php endif; ?>
+        </div>
+    <?php else: ?>
+        <p class="field-hint" style="margin-bottom:16px">Mahasiswa belum mengirim evaluasi kegiatan.</p>
+    <?php endif; ?>
+
+    <p class="field-hint" style="margin-bottom:16px">
+        Nilai akhir = keaktifan 30% + logbook 30% + laporan 40%. Grade otomatis jika dikosongkan.
+    </p>
+
+    <?php if (! empty(session('errors'))): ?>
+        <ul class="alert alert-danger" style="margin-bottom:16px">
+            <?php foreach ((array) session('errors') as $err): ?>
+                <li><?= esc(is_array($err) ? implode(', ', $err) : $err) ?></li>
+            <?php endforeach; ?>
+        </ul>
+    <?php endif; ?>
 
     <form method="post" action="<?= site_url('dpl/penilaian/' . $mahasiswa['id']) ?>">
         <?= csrf_field() ?>
-        <input type="hidden" name="prediksi_knn" value="<?= esc($prediksi_knn ?? '') ?>">
         <div class="form-grid">
             <div class="field">
                 <label>Nilai keaktifan (30%)</label>

@@ -38,15 +38,19 @@ $alamatPenelitian = trim($m['alamat_penelitian'] ?? '');
         <small>file terupload</small>
     </div>
     <div class="stat">
-        <div class="label">DPL</div>
-        <div class="value" style="font-size:1rem"><?= esc($m['nama_dpl'] ?? '-') ?></div>
+        <div class="label">Evaluasi</div>
+        <div class="value" style="font-size:1rem">
+            <?php if (! empty($evaluasi)): ?>
+                <?= (int) $evaluasi['rating'] ?>/5
+            <?php else: ?>
+                Belum
+            <?php endif; ?>
+        </div>
+        <small><?= ! empty($evaluasi) ? 'sudah dikirim' : 'isi evaluasi kegiatan' ?></small>
     </div>
     <div class="stat">
-        <div class="label">Dosen pendamping</div>
-        <div class="value" style="font-size:1rem"><?= esc($m['dosen_pendamping'] ?? '-') ?></div>
-        <?php if (! empty($m['no_hp_dosen_pendamping'])): ?>
-            <small><?= esc($m['no_hp_dosen_pendamping']) ?></small>
-        <?php endif; ?>
+        <div class="label">DPL</div>
+        <div class="value" style="font-size:1rem"><?= esc($m['nama_dpl'] ?? '-') ?></div>
     </div>
     <div class="stat">
         <div class="label">Periode</div>
@@ -82,6 +86,10 @@ $alamatPenelitian = trim($m['alamat_penelitian'] ?? '');
     <a href="<?= site_url('mahasiswa/nilai') ?>" class="quick-action">
         <?= view('partials/icon', ['name' => 'star']) ?>
         <span>Lihat nilai</span>
+    </a>
+    <a href="<?= site_url('mahasiswa/evaluasi') ?>" class="quick-action">
+        <?= view('partials/icon', ['name' => 'chat']) ?>
+        <span><?= ! empty($evaluasi) ? 'Lihat evaluasi' : 'Isi evaluasi' ?></span>
     </a>
     <a href="<?= site_url('mahasiswa/tim') ?>" class="quick-action">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm14 10v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>

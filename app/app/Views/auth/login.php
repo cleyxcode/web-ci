@@ -36,6 +36,8 @@
         </form>
         <p style="margin:20px 0 0;text-align:center;font-size:0.85rem;color:var(--abu-karang)">
             <a href="<?= site_url('forgot-password') ?>">Lupa password?</a>
+            &nbsp;·&nbsp;
+            <a href="<?= site_url('register') ?>">Daftar akun baru</a>
         </p>
     </div>
 </div>

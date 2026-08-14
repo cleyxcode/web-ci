@@ -1,13 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controllers\Dpl;
 
 use App\Controllers\PanelController;
 use App\Libraries\AuditLib;
-use App\Libraries\KnnLib;
+use App\Libraries\NilaiLib;
 use App\Models\DplModel;
-use App\Models\LogbookModel;
+use App\Models\EvaluasiModel;
 use App\Models\LaporanModel;
+use App\Models\LogbookModel;
 use App\Models\MahasiswaModel;
 use App\Models\PenilaianModel;
 
@@ -15,26 +18,42 @@ class PenilaianController extends PanelController
 {
     public function index()
     {
-        $dpl = model(DplModel::class)->findByUserId(current_user()['id']);
+        $dpl = model(DplModel::class)->findByUserId((int) current_user()['id']);
 
         if (! $dpl) {
             return redirect()->to('/dpl/dashboard');
         }
 
+        $mahasiswa = model(MahasiswaModel::class)->getByDplId((int) $dpl['id']);
+        $penilaianModel = model(PenilaianModel::class);
+
+        foreach ($mahasiswa as &$row) {
+            $nilai = $penilaianModel->findByMahasiswa((int) $row['id']);
+            $row['sudah_dinilai'] = $nilai !== null;
+            $row['nilai_akhir']   = $nilai['nilai_akhir'] ?? null;
+            $row['grade']         = $nilai['grade'] ?? null;
+        }
+        unset($row);
+
         return $this->render('dpl/penilaian/index', [
             'title'     => 'Penilaian Mahasiswa',
-            'mahasiswa' => model(MahasiswaModel::class)->getByDplId($dpl['id']),
+            'mahasiswa' => $mahasiswa,
             'dpl'       => $dpl,
         ]);
     }
 
     public function form(int $mahasiswaId)
     {
-        $dpl = model(DplModel::class)->findByUserId(current_user()['id']);
+        $dpl = model(DplModel::class)->findByUserId((int) current_user()['id']);
         $mhs = model(MahasiswaModel::class)->getWithRelations($mahasiswaId);
 
         if (! $dpl || ! $mhs) {
             return redirect()->to('/dpl/penilaian')->with('error', 'Data tidak ditemukan.');
+        }
+
+        // Pastikan mahasiswa benar bimbingan DPL ini
+        if ((int) ($mhs['dpl_id'] ?? 0) !== (int) $dpl['id']) {
+            return redirect()->to('/dpl/penilaian')->with('error', 'Mahasiswa bukan bimbingan Anda.');
         }
 
         $penilaianModel = model(PenilaianModel::class);
@@ -45,93 +64,84 @@ class PenilaianController extends PanelController
         $jmlLogbookValid  = $logbookModel->countByMahasiswaStatus($mahasiswaId, 'divalidasi');
         $jmlLaporan       = $laporanModel->where('mahasiswa_id', $mahasiswaId)->countAllResults();
         $jmlLaporanTerima = $laporanModel->where('mahasiswa_id', $mahasiswaId)->where('status', 'diterima')->countAllResults();
-
-        $existing = $penilaianModel->findByMahasiswa($mahasiswaId);
-        $keaktifan = $existing['nilai_keaktifan'] ?? 0;
-
-        $knn = new KnnLib();
-        $training = [];
-
-        foreach ($penilaianModel->getTrainingData() as $row) {
-            $training[] = [
-                'features' => [
-                    (float) $logbookModel->where('mahasiswa_id', $row['mahasiswa_id'])->countAllResults(),
-                    (float) $logbookModel->countByMahasiswaStatus($row['mahasiswa_id'], 'divalidasi'),
-                    (float) $laporanModel->where('mahasiswa_id', $row['mahasiswa_id'])->countAllResults(),
-                    (float) $laporanModel->where('mahasiswa_id', $row['mahasiswa_id'])->where('status', 'diterima')->countAllResults(),
-                    (float) $row['nilai_keaktifan'],
-                ],
-                'grade' => $row['grade'],
-            ];
-        }
-
-        $knn->setTrainingData($training);
-        $prediksi = $knn->predict([$jmlLogbook, $jmlLogbookValid, $jmlLaporan, $jmlLaporanTerima, (float) $keaktifan]);
+        $existing         = $penilaianModel->findByMahasiswa($mahasiswaId);
+        $evaluasi         = model(EvaluasiModel::class)->findByMahasiswa($mahasiswaId);
 
         return $this->render('dpl/penilaian/form', [
-            'title'            => 'Penilaian - ' . $mhs['nama'],
-            'mahasiswa'        => $mhs,
-            'penilaian'        => $existing,
-            'prediksi_knn'     => $prediksi,
-            'jml_logbook'      => $jmlLogbook,
-            'jml_logbook_valid'=> $jmlLogbookValid,
-            'jml_laporan'      => $jmlLaporan,
+            'title'             => 'Penilaian - ' . $mhs['nama'],
+            'mahasiswa'         => $mhs,
+            'penilaian'         => $existing,
+            'evaluasi'          => $evaluasi,
+            'jml_logbook'       => $jmlLogbook,
+            'jml_logbook_valid' => $jmlLogbookValid,
+            'jml_laporan'       => $jmlLaporan,
             'jml_laporan_terima'=> $jmlLaporanTerima,
-            'dpl'              => $dpl,
+            'dpl'               => $dpl,
         ]);
     }
 
     public function save(int $mahasiswaId)
     {
-        $dpl = model(DplModel::class)->findByUserId(current_user()['id']);
+        $dpl = model(DplModel::class)->findByUserId((int) current_user()['id']);
+        $mhs = model(MahasiswaModel::class)->getWithRelations($mahasiswaId);
 
-        if (! $dpl) {
-            return redirect()->to('/dpl/penilaian');
+        if (! $dpl || ! $mhs || (int) ($mhs['dpl_id'] ?? 0) !== (int) $dpl['id']) {
+            return redirect()->to('/dpl/penilaian')->with('error', 'Data tidak valid.');
         }
 
-        $keaktifan = (float) $this->request->getPost('nilai_keaktifan');
-        $logbook   = (float) $this->request->getPost('nilai_logbook');
-        $laporan   = (float) $this->request->getPost('nilai_laporan');
-        $nilaiAkhir = KnnLib::hitungNilaiAkhir($keaktifan, $logbook, $laporan);
-        $grade      = $this->request->getPost('grade') ?: KnnLib::gradeFromScore($nilaiAkhir);
+        $rules = [
+            'nilai_keaktifan' => 'required|decimal|greater_than_equal_to[0]|less_than_equal_to[100]',
+            'nilai_logbook'   => 'required|decimal|greater_than_equal_to[0]|less_than_equal_to[100]',
+            'nilai_laporan'   => 'required|decimal|greater_than_equal_to[0]|less_than_equal_to[100]',
+            'grade'           => 'permit_empty|in_list[A,B,BC,C,D]',
+            'catatan'         => 'permit_empty|max_length[2000]',
+        ];
+
+        if (! $this->validate($rules)) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $keaktifan  = (float) $this->request->getPost('nilai_keaktifan');
+        $logbook    = (float) $this->request->getPost('nilai_logbook');
+        $laporan    = (float) $this->request->getPost('nilai_laporan');
+        $nilaiAkhir = NilaiLib::hitungNilaiAkhir($keaktifan, $logbook, $laporan);
+        $grade      = (string) ($this->request->getPost('grade') ?: NilaiLib::gradeFromScore($nilaiAkhir));
 
         $penilaianModel = model(PenilaianModel::class);
         $existing       = $penilaianModel->findByMahasiswa($mahasiswaId);
 
         $data = [
             'mahasiswa_id'    => $mahasiswaId,
-            'dpl_id'          => $dpl['id'],
+            'dpl_id'          => (int) $dpl['id'],
             'nilai_keaktifan' => $keaktifan,
             'nilai_logbook'   => $logbook,
             'nilai_laporan'   => $laporan,
             'nilai_akhir'     => $nilaiAkhir,
             'grade'           => $grade,
-            'prediksi_knn'    => $this->request->getPost('prediksi_knn'),
             'catatan'         => $this->request->getPost('catatan'),
         ];
 
         if ($existing) {
-            $penilaianModel->update($existing['id'], $data);
+            $penilaianModel->update((int) $existing['id'], $data);
+            $penilaianId = (int) $existing['id'];
         } else {
-            $penilaianModel->insert($data);
+            $penilaianId = (int) $penilaianModel->insert($data);
         }
-
-        $mhs = model(MahasiswaModel::class)->find($mahasiswaId);
 
         AuditLib::log(
             $existing ? 'update_nilai' : 'publish_nilai',
             'penilaian',
             'Nilai ' . ($mhs['nama'] ?? '') . ': ' . $nilaiAkhir . ' (Grade ' . $grade . ')',
-            $existing ? (int) $existing['id'] : null,
+            $penilaianId,
             $existing ? [
                 'nilai_akhir' => $existing['nilai_akhir'] ?? null,
                 'grade'       => $existing['grade'] ?? null,
             ] : null,
-            ['nilai_akhir' => $nilaiAkhir, 'grade' => $grade, 'prediksi_knn' => $data['prediksi_knn']]
+            ['nilai_akhir' => $nilaiAkhir, 'grade' => $grade]
         );
 
         $this->notify(
-            $mhs['user_id'],
+            (int) $mhs['user_id'],
             'Nilai Dipublikasikan',
             'Nilai akhir Anda: ' . $nilaiAkhir . ' (Grade ' . $grade . ')',
             'success',
@@ -145,6 +155,6 @@ class PenilaianController extends PanelController
             'success'
         );
 
-        return redirect()->to('/dpl/penilaian')->with('success', 'Penilaian disimpan.');
+        return redirect()->to('/dpl/penilaian')->with('success', 'Penilaian disimpan dan dapat dilihat mahasiswa.');
     }
 }

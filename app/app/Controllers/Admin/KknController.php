@@ -178,9 +178,7 @@ class KknController extends PanelController
             'periode'                => $this->request->getPost('periode'),
             'tanggal_mulai'          => $this->request->getPost('tanggal_mulai') ?: null,
             'tanggal_selesai'        => $this->request->getPost('tanggal_selesai') ?: null,
-            'alamat_penelitian'      => $this->request->getPost('alamat_penelitian'),
-            'dosen_pendamping'       => $this->request->getPost('dosen_pendamping'),
-            'no_hp_dosen_pendamping' => $this->request->getPost('no_hp_dosen_pendamping'),
+            'alamat_penelitian' => $this->request->getPost('alamat_penelitian'),
         ];
     }
 }

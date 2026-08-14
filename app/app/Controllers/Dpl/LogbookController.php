@@ -26,12 +26,18 @@ class LogbookController extends PanelController
 
     public function proses(int $id)
     {
-        $dpl        = model(DplModel::class)->findByUserId(current_user()['id']);
+        $dpl          = model(DplModel::class)->findByUserId((int) current_user()['id']);
         $logbookModel = model(LogbookModel::class);
-        $logbook    = $logbookModel->find($id);
+        $logbook      = $logbookModel->find($id);
 
         if (! $logbook || ! $dpl) {
             return redirect()->back()->with('error', 'Data tidak ditemukan.');
+        }
+
+        $mhs = model(MahasiswaModel::class)->getWithRelations((int) $logbook['mahasiswa_id']);
+
+        if (! $mhs || (int) ($mhs['dpl_id'] ?? 0) !== (int) $dpl['id']) {
+            return redirect()->back()->with('error', 'Logbook bukan dari mahasiswa bimbingan Anda.');
         }
 
         $action = $this->request->getPost('action');
@@ -44,8 +50,6 @@ class LogbookController extends PanelController
             'validated_at' => date('Y-m-d H:i:s'),
         ]);
 
-        $mhs = model(MahasiswaModel::class)->find($logbook['mahasiswa_id']);
-
         AuditLib::log(
             $status,
             'logbook',
@@ -56,7 +60,7 @@ class LogbookController extends PanelController
         );
 
         $this->notify(
-            $mhs['user_id'],
+            (int) $mhs['user_id'],
             'Logbook ' . stempel_label($status),
             'Logbook tanggal ' . format_tanggal($logbook['tanggal']) . ' ' . stempel_label($status),
             $status === 'divalidasi' ? 'success' : 'danger',

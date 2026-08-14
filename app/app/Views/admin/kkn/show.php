@@ -12,17 +12,10 @@ $ketuaId = (int) ($kelompok['ketua_mahasiswa_id'] ?? 0);
         <small><?= format_tanggal($kelompok['tanggal_mulai'] ?? null) ?> – <?= format_tanggal($kelompok['tanggal_selesai'] ?? null) ?></small>
     </div>
     <div class="info-card">
-        <span class="info-label">DPL</span>
+        <span class="info-label">DPL (Dosen Pembimbing Lapangan)</span>
         <strong><?= esc($kelompok['nama_dpl'] ?? 'Belum ditentukan') ?></strong>
         <?php if (! empty($kelompok['no_hp_dpl'])): ?>
             <small><?= esc($kelompok['no_hp_dpl']) ?></small>
-        <?php endif; ?>
-    </div>
-    <div class="info-card">
-        <span class="info-label">Dosen pendamping</span>
-        <strong><?= trim($kelompok['dosen_pendamping'] ?? '') !== '' ? esc($kelompok['dosen_pendamping']) : 'Belum diisi' ?></strong>
-        <?php if (! empty($kelompok['no_hp_dosen_pendamping'])): ?>
-            <small><?= esc($kelompok['no_hp_dosen_pendamping']) ?></small>
         <?php endif; ?>
     </div>
     <div class="info-card">

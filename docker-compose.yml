@@ -1,5 +1,3 @@
-version: '3.8'
- 
 services:
   app:
     build:
@@ -9,14 +7,29 @@ services:
     restart: unless-stopped
     ports:
       - "8083:80"
+    environment:
+      CI_ENVIRONMENT: development
+      "app.baseURL": http://localhost:8083/
+      "database.default.hostname": db
+      "database.default.database": kkn_tematik
+      "database.default.username": kkn_user
+      "database.default.password": kkn_pass
+      "database.default.DBDriver": MySQLi
+      "database.default.port": 3306
     volumes:
-      - ./app:/var/www/html
+      - app_uploads:/var/www/html/public/uploads
     depends_on:
       db:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost/login > /dev/null || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
     networks:
       - kkn_network
- 
+
   db:
     image: mysql:8.0
     container_name: kkn_db
@@ -30,32 +43,40 @@ services:
       MYSQL_PASSWORD: kkn_pass
     volumes:
       - db_data:/var/lib/mysql
-      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+      - ./sql/alter_evaluasi.sql:/docker-entrypoint-initdb.d/02-alter-evaluasi.sql:ro
+      - ./sql/alter_remove_knn.sql:/docker-entrypoint-initdb.d/03-alter-remove-knn.sql:ro
+      - ./sql/alter_2026_08.sql:/docker-entrypoint-initdb.d/04-alter-2026-08.sql:ro
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      timeout: 10s
-      retries: 5
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
     networks:
       - kkn_network
- 
+
   phpmyadmin:
-    image: phpmyadmin:latest
+    image: phpmyadmin:5-apache
     container_name: kkn_phpmyadmin
     restart: unless-stopped
     ports:
       - "8081:80"
     environment:
       PMA_HOST: db
+      PMA_PORT: 3306
       PMA_USER: root
       PMA_PASSWORD: root123
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     networks:
       - kkn_network
- 
+
 networks:
   kkn_network:
     driver: bridge
- 
+
 volumes:
+  app_uploads:
   db_data:

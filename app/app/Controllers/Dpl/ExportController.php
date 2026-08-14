@@ -101,14 +101,14 @@ class ExportController extends PanelController
                 $n['nilai_laporan'] ?? '',
                 $n['nilai_akhir'] ?? '',
                 $n['grade'] ?? '',
-                $n['prediksi_knn'] ?? '',
+                $n['catatan'] ?? '',
             ];
         }
 
         AuditLib::log('export', 'penilaian', 'DPL export nilai bimbingan (' . count($data) . ' baris)');
 
         return ExportLib::download('nilai_bimbingan_' . date('Ymd'), [
-            'NPM', 'Nama', 'Keaktifan', 'Logbook', 'Laporan', 'Nilai Akhir', 'Grade', 'Prediksi KNN',
+            'NPM', 'Nama', 'Keaktifan', 'Logbook', 'Laporan', 'Nilai Akhir', 'Grade', 'Catatan',
         ], $data);
     }
 }
