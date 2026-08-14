@@ -25,6 +25,14 @@ class ForgotPasswordController extends BaseController
 
     public function send()
     {
+        $rules = [
+            'email' => 'required|valid_email|max_length[100]',
+        ];
+
+        if (! $this->validate($rules)) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
         $email = $this->request->getPost('email');
         $user  = $this->userModel->where('email', $email)->where('is_active', 1)->first();
 

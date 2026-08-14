@@ -40,6 +40,10 @@ class KknController extends PanelController
 
     public function store()
     {
+        if (! $this->validateRules()) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
         $this->kelompokModel->insert($this->payload());
 
         return redirect()->to('/admin/kkn')->with('success', 'Kelompok KKN ditambahkan.');
@@ -155,6 +159,14 @@ class KknController extends PanelController
 
     public function update(int $id)
     {
+        if (! $this->kelompokModel->find($id)) {
+            return redirect()->to('/admin/kkn')->with('error', 'Data tidak ditemukan.');
+        }
+
+        if (! $this->validateRules()) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
         $this->kelompokModel->update($id, $this->payload());
 
         return redirect()->to('/admin/kkn')->with('success', 'Kelompok KKN diperbarui.');
@@ -180,5 +192,19 @@ class KknController extends PanelController
             'tanggal_selesai'        => $this->request->getPost('tanggal_selesai') ?: null,
             'alamat_penelitian' => $this->request->getPost('alamat_penelitian'),
         ];
+    }
+
+    private function validateRules(): bool
+    {
+        return $this->validate([
+            'nama_kelompok'      => 'required|min_length[3]|max_length[100]',
+            'dpl_id'             => 'permit_empty|is_natural_no_zero',
+            'lokasi_id'          => 'permit_empty|is_natural_no_zero',
+            'ketua_mahasiswa_id' => 'permit_empty|is_natural_no_zero',
+            'periode'            => 'permit_empty|max_length[50]',
+            'tanggal_mulai'      => 'permit_empty|valid_date[Y-m-d]',
+            'tanggal_selesai'    => 'permit_empty|valid_date[Y-m-d]',
+            'alamat_penelitian'  => 'permit_empty|max_length[255]',
+        ]);
     }
 }

@@ -11,7 +11,5 @@ class LokasiKknModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
     protected $allowedFields    = ['nama_desa', 'kecamatan', 'kabupaten'];
-    protected $useTimestamps    = true;
-    protected $createdField     = 'created_at';
-    protected $updatedField     = null;
+    protected $useTimestamps = false;
 }

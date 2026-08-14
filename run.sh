@@ -11,6 +11,7 @@ fi
 bash "$setup_script"
 
 printf '\nURL yang dapat digunakan:\n'
+printf '  Domain      : https://kkntematikukim.site\n'
 printf '  Lokal       : http://localhost:8083\n'
 printf '  phpMyAdmin  : http://localhost:8081\n'
 printf '  Database    : mysql://kkn_user:kkn_pass@localhost:3307/kkn_tematik\n'

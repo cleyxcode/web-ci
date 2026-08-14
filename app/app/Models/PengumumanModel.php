@@ -11,9 +11,7 @@ class PengumumanModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
     protected $allowedFields    = ['judul', 'isi', 'created_by'];
-    protected $useTimestamps    = true;
-    protected $createdField     = 'created_at';
-    protected $updatedField     = null;
+    protected $useTimestamps = false;
 
     public function getLatest(int $limit = 5): array
     {

@@ -100,6 +100,7 @@ fi
 log "Setup selesai"
 printf '%s\n' \
     "Aplikasi   : http://localhost:8083" \
+    "Domain     : https://kkntematikukim.site" \
     "phpMyAdmin : http://localhost:8081" \
     "DB host    : db" \
     "DB name    : kkn_tematik" \

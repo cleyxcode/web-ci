@@ -11,9 +11,7 @@ class DplModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
     protected $allowedFields    = ['user_id', 'nidn', 'nama', 'prodi', 'no_hp'];
-    protected $useTimestamps    = true;
-    protected $createdField     = 'created_at';
-    protected $updatedField     = null;
+    protected $useTimestamps = false;
 
     public function getWithUser(int $id): ?array
     {

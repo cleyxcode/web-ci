@@ -35,13 +35,26 @@ class LogbookController extends PanelController
             return redirect()->to('/mahasiswa/dashboard');
         }
 
+        if (! $this->validate([
+            'tanggal'         => 'required|valid_date[Y-m-d]',
+            'kegiatan'        => 'required|min_length[5]|max_length[5000]',
+            'lokasi_kegiatan' => 'permit_empty|max_length[255]',
+        ])) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $tanggal = (string) $this->request->getPost('tanggal');
+        if (strtotime($tanggal) > strtotime(date('Y-m-d'))) {
+            return redirect()->back()->withInput()->with('error', 'Tanggal kegiatan tidak boleh melebihi hari ini.');
+        }
+
         $dokumentasi = upload_file($this->request->getFile('dokumentasi'), 'logbook', ['jpg', 'jpeg', 'png']);
 
         model(LogbookModel::class)->insert([
             'mahasiswa_id'    => $mhs['id'],
             'tanggal'         => $this->request->getPost('tanggal'),
-            'kegiatan'        => $this->request->getPost('kegiatan'),
-            'lokasi_kegiatan' => $this->request->getPost('lokasi_kegiatan'),
+            'kegiatan'        => trim((string) $this->request->getPost('kegiatan')),
+            'lokasi_kegiatan' => trim((string) $this->request->getPost('lokasi_kegiatan')) ?: null,
             'dokumentasi'     => $dokumentasi,
             'status'          => 'menunggu',
         ]);

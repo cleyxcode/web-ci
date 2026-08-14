@@ -4,8 +4,8 @@
 
 set -uo pipefail
 
-BASE="http://localhost"
-CURL="/usr/bin/curl"
+BASE="http://localhost:8083"
+CURL="/usr/bin/curl --connect-to localhost:8083:172.17.0.1:8083"
 ADMIN_JAR="/tmp/admin_sess.txt"
 MHS_JAR="/tmp/mhs_sess.txt"
 PASS=0
@@ -36,8 +36,19 @@ warn() {
 http_code() {
     # $1=jar, $2=method, $3=url, $4=data(optional)
     local JAR="$1" METHOD="$2" URL="$3" DATA="${4:-}"
+    if [ "$METHOD" = "POST" ]; then
+        local CSRF
+        if [ ! -f "$JAR" ] || ! grep -q 'csrf_cookie_name' "$JAR"; then
+            $CURL -s -c "$JAR" -b "$JAR" "$BASE/login" -o /dev/null
+        fi
+        CSRF=$(awk '$6 == "csrf_cookie_name" { print "csrf_test_name=" $7 }' "$JAR" | tail -1)
+        if [ -n "$CSRF" ]; then
+            DATA="${DATA:+$DATA&}$CSRF"
+        fi
+    fi
+
     if [ -n "$DATA" ]; then
-        $CURL -s -c "$JAR" -b "$JAR" -X "$METHOD" "$URL" \
+        $CURL -s -c "$JAR" -b "$JAR" "$URL" \
           -d "$DATA" -w "%{http_code}" -o /tmp/ltest_body.txt -L
     else
         $CURL -s -c "$JAR" -b "$JAR" -X "$METHOD" "$URL" \
@@ -63,7 +74,8 @@ echo ""
 echo "── BLOK 1: Halaman Publik ──"
 
 CODE=$(http_code /tmp/anon_sess.txt GET "$BASE/")
-check "GET / → redirect ke login (200 setelah follow)" "$([ "$CODE" = "200" ] && echo 1 || echo 0)" "HTTP $CODE"
+check "GET / → landing page SEO (200)" "$([ "$CODE" = "200" ] && echo 1 || echo 0)" "HTTP $CODE"
+check "GET / → memuat judul monitoring KKN" "$(body_contains "Monitoring KKN Tematik UKIM")"
 
 CODE=$(http_code /tmp/anon_sess.txt GET "$BASE/login")
 check "GET /login tampil (200)" "$([ "$CODE" = "200" ] && echo 1 || echo 0)" "HTTP $CODE"
@@ -97,7 +109,9 @@ CODE=$(http_code /tmp/anon_sess.txt POST "$BASE/login" "login=' OR 1=1--&passwor
 check "POST /login SQL injection → bukan 500" \
   "$([ "$CODE" != "500" ] && echo 1 || echo 0)" "HTTP $CODE"
 IS_BLOCKED=$(body_contains "salah\|error\|login" && echo 1 || echo 0)
-check "POST /login SQL injection → tidak berhasil masuk" "$(body_contains 'Dashboard\|Selamat datang' | grep -q 1 && echo 0 || echo 1)"
+CODE=$(http_code /tmp/anon_sess.txt GET "$BASE/admin/dashboard")
+IS_LOGIN=$(body_contains "Username atau email")
+check "POST /login SQL injection → tidak berhasil masuk" "$IS_LOGIN" "HTTP $CODE"
 
 # Login admin valid
 CODE=$(http_code $ADMIN_JAR POST "$BASE/login" "login=admin&password=admin123")
@@ -146,10 +160,10 @@ check "POST /admin/mahasiswa password < 6 → ada error password" "$HAS_ERR"
 # Data valid → mahasiswa berhasil dibuat
 TS=$(date +%s)
 CODE=$(http_code $ADMIN_JAR POST "$BASE/admin/mahasiswa" \
-  "nama=Dian Prasetyo&username=dian$TS&email=dian$TS@ukim.ac.id&npm=$TS&password=dianpass99")
+  "nama=Dian Prasetyo&username=dian$TS&email=dian$TS@ukim.ac.id&npm=$TS&password=dianpass99&password_confirm=dianpass99")
 check "POST /admin/mahasiswa data valid → bukan 500" \
   "$([ "$CODE" != "500" ] && echo 1 || echo 0)" "HTTP $CODE"
-IS_SUCCESS=$(body_contains "berhasil\|success\|Mahasiswa")
+IS_SUCCESS=$(body_contains "Mahasiswa berhasil ditambahkan")
 check "POST /admin/mahasiswa data valid → mahasiswa terbuat" "$IS_SUCCESS"
 
 # ── BLOK 4: Admin — Tambah DPL (Validasi Input) ──────────────────────────────
@@ -168,7 +182,7 @@ CODE=$(http_code $ADMIN_JAR POST "$BASE/admin/dpl" \
   "nama=Dr. Test DPL&username=drdpl$TS&email=dpl$TS@ukim.ac.id&nidn=00123$TS&password=dplpass1")
 check "POST /admin/dpl data valid → bukan 500" \
   "$([ "$CODE" != "500" ] && echo 1 || echo 0)" "HTTP $CODE"
-IS_SUCCESS=$(body_contains "berhasil\|success\|DPL")
+IS_SUCCESS=$(body_contains "Akun DPL berhasil dibuat")
 check "POST /admin/dpl data valid → DPL terbuat" "$IS_SUCCESS"
 
 # ── BLOK 5: Admin — resetPassword (celah keamanan) ──────────────────────────
@@ -186,8 +200,8 @@ CODE=$(http_code $ADMIN_JAR POST "$BASE/admin/reset-password" \
   "user_id=0&password=apapun123")
 check "POST /admin/reset-password user_id=0 → bukan 500" \
   "$([ "$CODE" != "500" ] && echo 1 || echo 0)" "HTTP $CODE"
-# Catat: tidak ada error jika user tidak ada karena CI4 update() silent pada no-match
-warn "POST /admin/reset-password tidak validasi keberadaan user_id — celah keamanan"
+HAS_ERR=$(body_contains "tidak ditemukan\|error\|wajib")
+check "POST /admin/reset-password user_id=0 → ditolak" "$HAS_ERR"
 
 # Login kembali dengan password lama setelah reset (verifikasi perubahan)
 # Restore dulu ke admin123 agar session lain tidak rusak
@@ -200,15 +214,14 @@ check "POST /admin/reset-password restore password admin123 → bukan 500" \
 echo ""
 echo "── BLOK 6: Admin — Lokasi KKN ──"
 
-# Simpan lokasi dengan nama_desa kosong (tidak ada validasi di controller)
+# Simpan lokasi dengan nama_desa kosong
 CODE=$(http_code $ADMIN_JAR POST "$BASE/admin/lokasi" \
   "nama_desa=&kecamatan=&kabupaten=")
 check "POST /admin/lokasi nama_desa kosong → bukan 500" \
   "$([ "$CODE" != "500" ] && echo 1 || echo 0)" "HTTP $CODE"
-# Karena tidak ada validasi, ini mungkin menyimpan record kosong
-IS_SUCCESS=$(body_contains "berhasil\|success\|Lokasi")
+IS_SUCCESS=$(body_contains "Lokasi ditambahkan")
 if [ "$IS_SUCCESS" = "1" ]; then
-    warn "POST /admin/lokasi nama_desa kosong → berhasil disimpan! (tidak ada validasi required)"
+    check "POST /admin/lokasi nama_desa kosong → ditolak" "0" "data kosong tersimpan"
 else
     check "POST /admin/lokasi nama_desa kosong → ditolak" "1"
 fi
@@ -219,7 +232,7 @@ CODE=$(http_code $ADMIN_JAR POST "$BASE/admin/lokasi" \
   "nama_desa=Desa Test $TS&kecamatan=Kec Uji&kabupaten=Kab Uji")
 check "POST /admin/lokasi data valid → bukan 500" \
   "$([ "$CODE" != "500" ] && echo 1 || echo 0)" "HTTP $CODE"
-IS_SUCCESS=$(body_contains "berhasil\|success\|Lokasi")
+IS_SUCCESS=$(body_contains "Lokasi ditambahkan")
 check "POST /admin/lokasi data valid → tersimpan" "$IS_SUCCESS"
 
 # ── BLOK 7: Admin — Pengumuman (No Validation) ──────────────────────────────
@@ -230,17 +243,15 @@ CODE=$(http_code $ADMIN_JAR POST "$BASE/admin/pengumuman" \
   "judul=&isi=")
 check "POST /admin/pengumuman judul & isi kosong → bukan 500" \
   "$([ "$CODE" != "500" ] && echo 1 || echo 0)" "HTTP $CODE"
-IS_SUCCESS=$(body_contains "berhasil\|Dipublikasikan\|success")
-if [ "$IS_SUCCESS" = "1" ]; then
-    warn "POST /admin/pengumuman judul kosong → tersimpan! (tidak ada validasi required)"
-fi
+HAS_ERR=$(body_contains "wajib\|minimum\|error\|judul\|isi")
+check "POST /admin/pengumuman data kosong → ditolak" "$HAS_ERR"
 
 TS=$(date +%s)
 CODE=$(http_code $ADMIN_JAR POST "$BASE/admin/pengumuman" \
   "judul=Pengumuman Test $TS&isi=Isi pengumuman test untuk pengujian sistem.")
 check "POST /admin/pengumuman data valid → bukan 500" \
   "$([ "$CODE" != "500" ] && echo 1 || echo 0)" "HTTP $CODE"
-IS_SUCCESS=$(body_contains "berhasil\|success\|Pengumuman")
+IS_SUCCESS=$(body_contains "Pengumuman dipublikasikan")
 check "POST /admin/pengumuman data valid → tersimpan" "$IS_SUCCESS"
 
 # ── BLOK 8: Buat akun mahasiswa test untuk blok berikutnya ──────────────────
@@ -253,7 +264,7 @@ MHS_PASS="mhspass99"
 MHS_EMAIL="mhstest$TS@ukim.ac.id"
 
 CODE=$(http_code $ADMIN_JAR POST "$BASE/admin/mahasiswa" \
-  "nama=Mahasiswa Test&username=$MHS_USER&email=$MHS_EMAIL&npm=$MHS_NPM&password=$MHS_PASS")
+  "nama=Mahasiswa Test&username=$MHS_USER&email=$MHS_EMAIL&npm=$MHS_NPM&password=$MHS_PASS&password_confirm=$MHS_PASS")
 check "Buat akun mahasiswa test → bukan 500" \
   "$([ "$CODE" != "500" ] && echo 1 || echo 0)" "HTTP $CODE"
 
@@ -269,35 +280,29 @@ check "Login mahasiswa test → masuk panel" "$IS_LOGGED"
 echo ""
 echo "── BLOK 9: Mahasiswa — Submit Logbook ──"
 
-# Submit logbook tanpa data wajib (tidak ada validasi di controller)
+# Submit logbook tanpa data wajib
 CODE=$(http_code $MHS_JAR POST "$BASE/mahasiswa/logbook" \
   "tanggal=&kegiatan=&lokasi_kegiatan=")
 check "POST /mahasiswa/logbook semua kosong → bukan 500" \
   "$([ "$CODE" != "500" ] && echo 1 || echo 0)" "HTTP $CODE"
-IS_SUCCESS=$(body_contains "berhasil\|success\|Logbook")
-if [ "$IS_SUCCESS" = "1" ]; then
-    warn "POST /mahasiswa/logbook tanggal & kegiatan kosong → tersimpan! (tidak ada validasi)"
-fi
+HAS_ERR=$(body_contains "wajib\|minimum\|error\|tanggal\|kegiatan")
+check "POST /mahasiswa/logbook data kosong → ditolak" "$HAS_ERR"
 
 # Submit logbook tanggal tidak valid (format salah)
 CODE=$(http_code $MHS_JAR POST "$BASE/mahasiswa/logbook" \
   "tanggal=bukan-tanggal&kegiatan=Kegiatan test&lokasi_kegiatan=Lokasi test")
 check "POST /mahasiswa/logbook tanggal tidak valid → bukan 500" \
   "$([ "$CODE" != "500" ] && echo 1 || echo 0)" "HTTP $CODE"
-IS_SUCCESS=$(body_contains "berhasil\|success")
-if [ "$IS_SUCCESS" = "1" ]; then
-    warn "POST /mahasiswa/logbook tanggal 'bukan-tanggal' → tersimpan! (tidak ada validasi format tanggal)"
-fi
+HAS_ERR=$(body_contains "valid\|error\|tanggal")
+check "POST /mahasiswa/logbook tanggal tidak valid → ditolak" "$HAS_ERR"
 
 # Submit logbook tanggal masa depan (tidak ada validasi)
 CODE=$(http_code $MHS_JAR POST "$BASE/mahasiswa/logbook" \
   "tanggal=2099-12-31&kegiatan=Kegiatan masa depan&lokasi_kegiatan=Lokasi")
 check "POST /mahasiswa/logbook tanggal masa depan → bukan 500" \
   "$([ "$CODE" != "500" ] && echo 1 || echo 0)" "HTTP $CODE"
-IS_SUCCESS=$(body_contains "berhasil\|success")
-if [ "$IS_SUCCESS" = "1" ]; then
-    warn "POST /mahasiswa/logbook tanggal 2099-12-31 → tersimpan! (tidak ada validasi tanggal masa depan)"
-fi
+HAS_ERR=$(body_contains "tidak boleh\|error\|tanggal")
+check "POST /mahasiswa/logbook tanggal masa depan → ditolak" "$HAS_ERR"
 
 # Submit logbook dengan kegiatan teks sangat panjang (XSS attempt)
 CODE=$(http_code $MHS_JAR POST "$BASE/mahasiswa/logbook" \
@@ -323,32 +328,28 @@ CODE=$(http_code $MHS_JAR POST "$BASE/mahasiswa/laporan" \
   "judul=&deskripsi=Deskripsi test")
 check "POST /mahasiswa/laporan judul kosong → bukan 500" \
   "$([ "$CODE" != "500" ] && echo 1 || echo 0)" "HTTP $CODE"
-# Karena tidak ada file → akan kena error file dulu, tapi judul tidak divalidasi tersendiri
-warn "POST /mahasiswa/laporan tidak ada validasi judul kosong (hanya cek file)"
+HAS_ERR=$(body_contains "wajib\|minimum\|error\|judul")
+check "POST /mahasiswa/laporan judul kosong → ada error judul" "$HAS_ERR"
 
 # ── BLOK 11: Mahasiswa — Profil (Update tanpa validasi) ───────────────────────
 echo ""
 echo "── BLOK 11: Mahasiswa — Update Profil ──"
 
-# Email tidak valid — tidak ada validasi di update()
+# Email tidak valid
 CODE=$(http_code $MHS_JAR POST "$BASE/mahasiswa/profil" \
   "nama=Mahasiswa Test Updated&email=bukan-format-email")
 check "POST /mahasiswa/profil email tidak valid → bukan 500" \
   "$([ "$CODE" != "500" ] && echo 1 || echo 0)" "HTTP $CODE"
-IS_SUCCESS=$(body_contains "berhasil\|success\|Profil")
-if [ "$IS_SUCCESS" = "1" ]; then
-    warn "POST /mahasiswa/profil email tidak valid → tersimpan! (tidak ada validasi format email pada update)"
-fi
+HAS_ERR=$(body_contains "valid\|error\|email")
+check "POST /mahasiswa/profil email tidak valid → ditolak" "$HAS_ERR"
 
-# Nama kosong — tidak ada validasi
+# Nama kosong
 CODE=$(http_code $MHS_JAR POST "$BASE/mahasiswa/profil" \
   "nama=&email=")
 check "POST /mahasiswa/profil nama kosong → bukan 500" \
   "$([ "$CODE" != "500" ] && echo 1 || echo 0)" "HTTP $CODE"
-IS_SUCCESS=$(body_contains "berhasil\|success")
-if [ "$IS_SUCCESS" = "1" ]; then
-    warn "POST /mahasiswa/profil nama kosong → tersimpan! (tidak ada validasi required pada update profil)"
-fi
+HAS_ERR=$(body_contains "wajib\|minimum\|error\|nama")
+check "POST /mahasiswa/profil nama kosong → ditolak" "$HAS_ERR"
 
 # ── BLOK 12: Mahasiswa — Ganti Password ──────────────────────────────────────
 echo ""
@@ -385,17 +386,17 @@ echo "── BLOK 13: Role Protection ──"
 # Mahasiswa coba akses halaman admin
 CODE=$(http_code $MHS_JAR GET "$BASE/admin/dashboard")
 check "Mahasiswa GET /admin/dashboard → redirect/403 (bukan 200)" \
-  "$([ "$CODE" != "200" ] && echo 1 || echo 0)" "HTTP $CODE"
+  "$(body_contains "Mahasiswa")" "HTTP $CODE"
 
 # Mahasiswa coba akses halaman DPL
 CODE=$(http_code $MHS_JAR GET "$BASE/dpl/penilaian")
 check "Mahasiswa GET /dpl/penilaian → redirect/403 (bukan 200)" \
-  "$([ "$CODE" != "200" ] && echo 1 || echo 0)" "HTTP $CODE"
+  "$(body_contains "Mahasiswa")" "HTTP $CODE"
 
 # Anonymous akses panel mahasiswa
 CODE=$(http_code /tmp/anon_sess.txt GET "$BASE/mahasiswa/dashboard")
 check "Anonymous GET /mahasiswa/dashboard → redirect (bukan 200)" \
-  "$([ "$CODE" != "200" ] && echo 1 || echo 0)" "HTTP $CODE"
+  "$(body_contains "Username atau email")" "HTTP $CODE"
 
 # ── BLOK 14: Forgot Password flow ────────────────────────────────────────────
 echo ""
@@ -414,7 +415,8 @@ CODE=$(http_code /tmp/anon_sess.txt POST "$BASE/forgot-password" \
   "email=")
 check "POST /forgot-password email kosong → bukan 500" \
   "$([ "$CODE" != "500" ] && echo 1 || echo 0)" "HTTP $CODE"
-warn "POST /forgot-password tidak ada validasi format email (valid_email) — hanya cek DB lookup"
+HAS_ERR=$(body_contains "wajib\|valid\|error\|email")
+check "POST /forgot-password email kosong → ada pesan validasi" "$HAS_ERR"
 
 # ── Ringkasan ─────────────────────────────────────────────────────────────────
 TOTAL=$((PASS+FAIL+WARN))

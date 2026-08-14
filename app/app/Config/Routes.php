@@ -4,9 +4,7 @@ use CodeIgniter\Router\RouteCollection;
 
 /** @var RouteCollection $routes */
 
-$routes->get('/', static function () {
-    return redirect()->to('/login');
-});
+$routes->get('/', 'Home::index');
 
 // Auth
 $routes->get('login', 'Auth\LoginController::index');
@@ -69,6 +67,13 @@ $routes->group('admin', ['filter' => ['auth', 'role:admin']], static function ($
     $routes->post('lokasi/(:num)/delete', 'Admin\LokasiController::delete/$1');
 
     $routes->get('laporan', 'Admin\LaporanController::index');
+    $routes->get('audit', 'Admin\AuditController::index');
+
+    $routes->get('pengumuman', 'Admin\PengumumanController::index');
+    $routes->get('pengumuman/create', 'Admin\PengumumanController::create');
+    $routes->post('pengumuman', 'Admin\PengumumanController::store');
+    $routes->post('pengumuman/(:num)/delete', 'Admin\PengumumanController::delete/$1');
+    $routes->post('reset-password', 'Admin\PengumumanController::resetPassword');
 
     $routes->get('profil', 'Admin\ProfilController::index');
     $routes->post('profil', 'Admin\ProfilController::update');

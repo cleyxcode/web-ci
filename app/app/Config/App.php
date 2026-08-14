@@ -16,7 +16,19 @@ class App extends BaseConfig
      *
      * E.g., http://example.com/
      */
-    public string $baseURL = 'http://localhost:8083/';
+    public string $baseURL = 'https://kkntematikukim.site/';
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $host = strtolower((string) ($_SERVER['HTTP_HOST'] ?? ''));
+
+        if (preg_match('/^(localhost|127\.0\.0\.1)(:\d+)?$/', $host) === 1) {
+            $scheme = (! empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+            $this->baseURL = $scheme . '://' . $host . '/';
+        }
+    }
 
     /**
      * Allowed Hostnames in the Site URL other than the hostname in the baseURL.
@@ -29,7 +41,7 @@ class App extends BaseConfig
      *
      * @var list<string>
      */
-    public array $allowedHostnames = [];
+    public array $allowedHostnames = ['www.kkntematikukim.site'];
 
     /**
      * --------------------------------------------------------------------------

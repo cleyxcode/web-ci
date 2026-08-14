@@ -30,9 +30,16 @@ class PengumumanController extends PanelController
 
     public function store()
     {
+        if (! $this->validate([
+            'judul' => 'required|min_length[3]|max_length[200]',
+            'isi'   => 'required|min_length[3]',
+        ])) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
         $this->pengumumanModel->insert([
-            'judul'      => $this->request->getPost('judul'),
-            'isi'        => $this->request->getPost('isi'),
+            'judul'      => trim((string) $this->request->getPost('judul')),
+            'isi'        => trim((string) $this->request->getPost('isi')),
             'created_by' => current_user()['id'],
         ]);
 
@@ -60,8 +67,21 @@ class PengumumanController extends PanelController
 
     public function resetPassword()
     {
-        $userId   = $this->request->getPost('user_id');
-        $password = password_hash($this->request->getPost('password'), PASSWORD_BCRYPT);
+        if (! $this->validate([
+            'user_id' => 'required|is_natural_no_zero',
+            'password' => 'required|min_length[6]|max_length[72]',
+        ])) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $userId = (int) $this->request->getPost('user_id');
+        $user   = model(UserModel::class)->find($userId);
+
+        if (! $user) {
+            return redirect()->back()->withInput()->with('error', 'User tidak ditemukan.');
+        }
+
+        $password = password_hash((string) $this->request->getPost('password'), PASSWORD_BCRYPT);
 
         model(UserModel::class)->update($userId, ['password' => $password]);
 

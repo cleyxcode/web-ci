@@ -35,6 +35,13 @@ class LaporanController extends PanelController
             return redirect()->to('/mahasiswa/dashboard');
         }
 
+        if (! $this->validate([
+            'judul'     => 'required|min_length[5]|max_length[200]',
+            'deskripsi' => 'permit_empty|max_length[5000]',
+        ])) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
         $file = upload_file($this->request->getFile('file_laporan'), 'laporan', ['pdf']);
 
         if (! $file) {
@@ -43,8 +50,8 @@ class LaporanController extends PanelController
 
         model(LaporanModel::class)->insert([
             'mahasiswa_id' => $mhs['id'],
-            'judul'        => $this->request->getPost('judul'),
-            'deskripsi'    => $this->request->getPost('deskripsi'),
+            'judul'        => trim((string) $this->request->getPost('judul')),
+            'deskripsi'    => trim((string) $this->request->getPost('deskripsi')) ?: null,
             'file_laporan' => $file,
             'status'       => 'menunggu',
         ]);

@@ -1,2 +1,14 @@
 User-agent: *
-Disallow: 
+Allow: /
+
+Disallow: /admin/
+Disallow: /dpl/
+Disallow: /mahasiswa/
+Disallow: /login
+Disallow: /logout
+Disallow: /forgot-password
+Disallow: /otp-verify
+Disallow: /reset-password
+Disallow: /register
+
+Sitemap: https://kkntematikukim.site/sitemap.xml

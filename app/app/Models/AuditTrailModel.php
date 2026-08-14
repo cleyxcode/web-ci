@@ -14,9 +14,7 @@ class AuditTrailModel extends Model
         'user_id', 'user_nama', 'user_role', 'aksi', 'entitas',
         'entitas_id', 'deskripsi', 'data_lama', 'data_baru',
     ];
-    protected $useTimestamps    = true;
-    protected $createdField     = 'created_at';
-    protected $updatedField     = null;
+    protected $useTimestamps = false;
 
     public function getLatest(int $limit = 50): array
     {

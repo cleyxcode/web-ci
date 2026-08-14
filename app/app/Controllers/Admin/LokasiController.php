@@ -29,10 +29,14 @@ class LokasiController extends PanelController
 
     public function store()
     {
+        if (! $this->validateRules()) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
         $this->lokasiModel->insert([
-            'nama_desa' => $this->request->getPost('nama_desa'),
-            'kecamatan' => $this->request->getPost('kecamatan'),
-            'kabupaten' => $this->request->getPost('kabupaten'),
+            'nama_desa' => trim((string) $this->request->getPost('nama_desa')),
+            'kecamatan' => trim((string) $this->request->getPost('kecamatan')) ?: null,
+            'kabupaten' => trim((string) $this->request->getPost('kabupaten')) ?: null,
         ]);
 
         return redirect()->to('/admin/lokasi')->with('success', 'Lokasi ditambahkan.');
@@ -51,10 +55,18 @@ class LokasiController extends PanelController
 
     public function update(int $id)
     {
+        if (! $this->lokasiModel->find($id)) {
+            return redirect()->to('/admin/lokasi')->with('error', 'Data tidak ditemukan.');
+        }
+
+        if (! $this->validateRules()) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
         $this->lokasiModel->update($id, [
-            'nama_desa' => $this->request->getPost('nama_desa'),
-            'kecamatan' => $this->request->getPost('kecamatan'),
-            'kabupaten' => $this->request->getPost('kabupaten'),
+            'nama_desa' => trim((string) $this->request->getPost('nama_desa')),
+            'kecamatan' => trim((string) $this->request->getPost('kecamatan')) ?: null,
+            'kabupaten' => trim((string) $this->request->getPost('kabupaten')) ?: null,
         ]);
 
         return redirect()->to('/admin/lokasi')->with('success', 'Lokasi diperbarui.');
@@ -65,5 +77,14 @@ class LokasiController extends PanelController
         $this->lokasiModel->delete($id);
 
         return redirect()->to('/admin/lokasi')->with('success', 'Lokasi dihapus.');
+    }
+
+    private function validateRules(): bool
+    {
+        return $this->validate([
+            'nama_desa' => 'required|min_length[3]|max_length[100]',
+            'kecamatan' => 'permit_empty|max_length[100]',
+            'kabupaten' => 'permit_empty|max_length[100]',
+        ]);
     }
 }

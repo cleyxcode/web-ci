@@ -16,9 +16,7 @@ class KelompokKknModel extends Model
         'dosen_pendamping', 'no_hp_dosen_pendamping',
         'latitude', 'longitude', 'lokasi_gps_at',
     ];
-    protected $useTimestamps    = true;
-    protected $createdField     = 'created_at';
-    protected $updatedField     = null;
+    protected $useTimestamps = false;
 
     public function getAllWithRelations(): array
     {

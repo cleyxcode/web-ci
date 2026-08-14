@@ -9,6 +9,16 @@
 declare(strict_types=1);
 
 $base = getenv('KKN_BASE') ?: 'http://localhost:8083';
+$adminUser = getenv('KKN_ADMIN_USER') ?: 'admin';
+$adminPass = getenv('KKN_ADMIN_PASS') ?: 'admin123';
+$dplUser = getenv('KKN_DPL_USER') ?: 'dpl1';
+$dplPass = getenv('KKN_DPL_PASS') ?: 'admin123';
+$mhsKetuaUser = getenv('KKN_MHS_KETUA_USER') ?: '12155201220035';
+$mhsKetuaPass = getenv('KKN_MHS_KETUA_PASS') ?: 'mahasiswa123';
+$mhsAnggotaUser = getenv('KKN_MHS_ANGGOTA_USER') ?: '12155201220036';
+$mhsAnggotaPass = getenv('KKN_MHS_ANGGOTA_PASS') ?: 'mahasiswa123';
+$kelompokId = (int) (getenv('KKN_KELOMPOK_ID') ?: 1);
+$mhsKetuaId = (int) (getenv('KKN_MHS_KETUA_ID') ?: 1);
 $cookieDir = sys_get_temp_dir() . '/kkn_e2e_' . getmypid();
 @mkdir($cookieDir, 0700, true);
 
@@ -113,7 +123,8 @@ function login(string $role, string $user, string $password): bool
         ],
     ]);
 
-    $ok = in_array($res['code'], [302, 303], true);
+    $ok = in_array($res['code'], [302, 303], true)
+        && preg_match('#/((admin|dpl|mahasiswa)/dashboard)#', $res['headers']) === 1;
     ok($ok, "[{$role}] POST login {$user}", 'HTTP ' . $res['code']);
 
     return $ok;
@@ -142,15 +153,15 @@ function postFromPage(string $role, string $formPage, string $actionPath, array 
 out("=== KKN E2E Flow Test @ {$base} ===\n");
 
 out('## Auth / Login');
-login('admin', 'admin', 'admin123');
-login('dpl', 'dpl1', 'admin123');
-login('mhs_ketua', '12155201220035', 'mahasiswa123');
-login('mhs_anggota', '12155201220036', 'mahasiswa123');
+login('admin', $adminUser, $adminPass);
+login('dpl', $dplUser, $dplPass);
+login('mhs_ketua', $mhsKetuaUser, $mhsKetuaPass);
+login('mhs_anggota', $mhsAnggotaUser, $mhsAnggotaPass);
 
 out("\n## Admin pages");
 foreach ([
     '/admin/dashboard', '/admin/mahasiswa', '/admin/dpl', '/admin/kkn', '/admin/lokasi',
-    '/admin/laporan', '/admin/analitik', '/admin/export', '/admin/audit',
+    '/admin/laporan', '/admin/audit',
     '/admin/pengumuman', '/admin/profil', '/notifikasi',
 ] as $p) {
     $r = getAuthed('admin', $p);
@@ -158,10 +169,10 @@ foreach ([
 }
 
 out("\n## Admin: set ketua");
-$r = postFromPage('admin', '/admin/kkn/1', '/admin/kkn/1/ketua', ['ketua_mahasiswa_id' => '1']);
+$r = postFromPage('admin', "/admin/kkn/{$kelompokId}", "/admin/kkn/{$kelompokId}/ketua", ['ketua_mahasiswa_id' => (string) $mhsKetuaId]);
 ok(in_array($r['code'], [302, 303], true), 'Admin set ketua → redirect', 'HTTP ' . $r['code']);
-$show = getAuthed('admin', '/admin/kkn/1');
-ok(str_contains($show['body'], 'Clara') || str_contains($show['body'], 'Ketua'), 'Detail kelompok tampil ketua');
+$show = getAuthed('admin', "/admin/kkn/{$kelompokId}");
+ok(str_contains($show['body'], 'Ketua'), 'Detail kelompok tampil ketua');
 
 out("\n## Admin: lokasi");
 $r = postFromPage('admin', '/admin/lokasi/create', '/admin/lokasi', [
@@ -179,14 +190,6 @@ $r = postFromPage('admin', '/admin/pengumuman/create', '/admin/pengumuman', [
 ]);
 ok(in_array($r['code'], [302, 303], true), 'Admin buat pengumuman', 'HTTP ' . $r['code']);
 ok(str_contains(getAuthed('mhs_ketua', '/notifikasi')['body'], 'Pengumuman E2E'), 'Mahasiswa terima notif pengumuman');
-
-out("\n## Admin: export");
-foreach (['mahasiswa', 'logbook', 'laporan', 'nilai', 'kelompok'] as $ex) {
-    $r = http('GET', $base . '/admin/export/' . $ex, ['cookie' => jar('admin')]);
-    ok($r['code'] === 200 && strlen($r['body']) > 10, "Admin export {$ex} xls", 'HTTP ' . $r['code']);
-    $r2 = http('GET', $base . '/admin/export/' . $ex . '?format=csv', ['cookie' => jar('admin')]);
-    ok($r2['code'] === 200 && strlen($r2['body']) > 5, "Admin export {$ex} csv", 'HTTP ' . $r2['code']);
-}
 
 out("\n## Mahasiswa ketua: GPS");
 $tim = getAuthed('mhs_ketua', '/mahasiswa/tim');
@@ -223,8 +226,10 @@ postFromPage('mhs_ketua', '/mahasiswa/tim', '/mahasiswa/tim/gps', [
     'longitude' => '128',
 ]);
 // validasi harus menolak — koordinat tetap yang lama
+$timInvalid = getAuthed('mhs_ketua', '/mahasiswa/tim');
 ok(
-    ! str_contains(getAuthed('mhs_ketua', '/mahasiswa/tim')['body'], '999'),
+    str_contains($timInvalid['body'], '-3.6951234')
+        && ! str_contains($timInvalid['body'], 'data-lat="999"'),
     'GPS di luar rentang ditolak'
 );
 
@@ -306,9 +311,9 @@ if (preg_match('#dpl/laporan/(\d+)/review#', $lapPage['body'], $m)) {
 }
 
 out("\n## DPL: penilaian ");
-$form = getAuthed('dpl', '/dpl/penilaian/1');
-ok($form['code'] === 200 && str_contains($form['body'], 'Nilai akhir'), 'Form penilaian + prediksi KNN');
-$r = postFromPage('dpl', '/dpl/penilaian/1', '/dpl/penilaian/1', [
+$form = getAuthed('dpl', '/dpl/penilaian/' . $mhsKetuaId);
+ok($form['code'] === 200 && str_contains($form['body'], 'Nilai akhir'), 'Form penilaian');
+$r = postFromPage('dpl', '/dpl/penilaian/' . $mhsKetuaId, '/dpl/penilaian/' . $mhsKetuaId, [
     'nilai_keaktifan' => '85',
     'nilai_logbook'   => '80',
     'nilai_laporan'   => '90',
@@ -331,11 +336,7 @@ foreach (['logbook', 'laporan', 'nilai'] as $ex) {
     ok($r['code'] === 200 && strlen($r['body']) > 5, "DPL export {$ex}", 'HTTP ' . $r['code']);
 }
 
-out("\n## Admin: analitik & audit");
-$an = getAuthed('admin', '/admin/analitik');
-ok($an['code'] === 200 && (str_contains($an['body'], 'KNN') || str_contains($an['body'], 'chartGrade')), 'Analitik render OK');
-ok(str_contains($an['body'], 'data-map') || str_contains($an['body'], 'GPS'), 'Analitik peta GPS');
-
+out("\n## Admin: audit");
 $audit = getAuthed('admin', '/admin/audit');
 ok($audit['code'] === 200, 'Audit page OK');
 ok(

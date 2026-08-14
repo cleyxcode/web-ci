@@ -14,9 +14,7 @@ class LaporanModel extends Model
         'mahasiswa_id', 'judul', 'deskripsi', 'file_laporan',
         'status', 'catatan_dpl', 'reviewed_by', 'reviewed_at',
     ];
-    protected $useTimestamps = true;
-    protected $createdField  = 'created_at';
-    protected $updatedField  = null;
+    protected $useTimestamps = false;
 
     public function getByMahasiswa(int $mahasiswaId): array
     {

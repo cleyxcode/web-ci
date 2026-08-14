@@ -1304,3 +1304,262 @@ table.data tr.row-highlight td {
     padding: 4px;
   }
 }
+
+.seo-home {
+  background:
+    radial-gradient(ellipse 70% 55% at 0% 0%, rgba(27, 107, 138, 0.12), transparent 60%),
+    radial-gradient(ellipse 60% 45% at 100% 100%, rgba(196, 146, 10, 0.10), transparent 55%),
+    var(--kertas-lapangan);
+}
+
+.seo-nav,
+.seo-hero,
+.seo-section,
+.seo-cta,
+.seo-footer {
+  width: min(1120px, calc(100% - 48px));
+  margin-inline: auto;
+}
+
+.seo-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 24px 0;
+}
+
+.seo-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--tinta-arsip);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.seo-mark {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border: 1.5px solid var(--biru-laut);
+  border-radius: 10px;
+  color: var(--biru-laut);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+}
+
+.seo-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
+  gap: 72px;
+  align-items: center;
+  min-height: 620px;
+  padding: 72px 0 96px;
+}
+
+.seo-eyebrow,
+.seo-card-label,
+.seo-feature-number {
+  color: var(--biru-laut);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.seo-eyebrow {
+  margin: 0 0 14px;
+}
+
+.seo-hero h1 {
+  max-width: 720px;
+  margin: 0;
+  font-size: clamp(2.5rem, 6vw, 5.25rem);
+  line-height: 0.98;
+  letter-spacing: -0.065em;
+}
+
+.seo-lead {
+  max-width: 650px;
+  margin: 24px 0 0;
+  color: var(--abu-karang);
+  font-size: clamp(1rem, 2vw, 1.2rem);
+}
+
+.seo-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 30px;
+}
+
+.seo-hero-card {
+  padding: 30px;
+  background: var(--kapas-gading);
+  border: 1px solid var(--border-medium);
+  border-radius: 20px;
+  box-shadow: 0 24px 70px rgba(44, 40, 37, 0.08);
+  transform: rotate(2deg);
+}
+
+.seo-hero-card strong {
+  display: block;
+  margin-top: 14px;
+  font-size: 1.45rem;
+  line-height: 1.2;
+  letter-spacing: -0.035em;
+}
+
+.seo-card-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 32px;
+}
+
+.seo-card-grid span {
+  padding: 12px;
+  background: rgba(27, 107, 138, 0.07);
+  border-radius: 8px;
+  color: var(--biru-laut-gelap);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+}
+
+.seo-section {
+  padding: 64px 0;
+}
+
+.seo-section h2,
+.seo-cta h2 {
+  max-width: 700px;
+  margin: 0;
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  line-height: 1.05;
+  letter-spacing: -0.05em;
+}
+
+.seo-feature-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.seo-feature-card {
+  min-height: 230px;
+  padding: 24px;
+  background: rgba(253, 251, 247, 0.72);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-card);
+}
+
+.seo-feature-card h3 {
+  margin: 56px 0 8px;
+  font-size: 1.1rem;
+}
+
+.seo-feature-card p {
+  margin: 0;
+  color: var(--abu-karang);
+}
+
+.seo-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-top: 56px;
+  padding: 32px;
+  background: var(--tinta-arsip);
+  border-radius: var(--radius-card);
+  color: var(--kapas-gading);
+}
+
+.seo-cta .seo-eyebrow {
+  color: #86c4d9;
+}
+
+.seo-cta h2 {
+  color: #fff;
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+}
+
+.seo-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 32px 0;
+  color: var(--abu-karang);
+  font-size: 0.8rem;
+}
+
+@media (max-width: 800px) {
+  .seo-hero {
+    grid-template-columns: 1fr;
+    gap: 36px;
+    min-height: auto;
+    padding: 56px 0 72px;
+  }
+
+  .seo-hero-card {
+    max-width: 520px;
+    transform: none;
+  }
+
+  .seo-feature-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .seo-feature-card {
+    min-height: auto;
+  }
+
+  .seo-feature-card h3 {
+    margin-top: 32px;
+  }
+}
+
+@media (max-width: 520px) {
+  .seo-nav,
+  .seo-hero,
+  .seo-section,
+  .seo-cta,
+  .seo-footer {
+    width: min(100% - 32px, 1120px);
+  }
+
+  .seo-nav .btn {
+    padding-inline: 10px;
+    font-size: 0.76rem;
+  }
+
+  .seo-brand {
+    font-size: 0.85rem;
+  }
+
+  .seo-hero h1 {
+    font-size: 2.8rem;
+  }
+
+  .seo-actions,
+  .seo-actions .btn,
+  .seo-cta {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .seo-actions .btn {
+    width: 100%;
+  }
+
+  .seo-cta {
+    margin-top: 24px;
+  }
+
+  .seo-footer {
+    flex-direction: column;
+  }
+}

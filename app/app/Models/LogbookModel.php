@@ -14,9 +14,7 @@ class LogbookModel extends Model
         'mahasiswa_id', 'tanggal', 'kegiatan', 'lokasi_kegiatan', 'dokumentasi',
         'status', 'catatan_dpl', 'validated_by', 'validated_at',
     ];
-    protected $useTimestamps = true;
-    protected $createdField  = 'created_at';
-    protected $updatedField  = null;
+    protected $useTimestamps = false;
 
     public function getByMahasiswa(int $mahasiswaId): array
     {
