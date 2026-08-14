@@ -1,15 +1,13 @@
-# Disable directory browsing
-Options -Indexes
+DirectoryIndex index.php
 
 # ----------------------------------------------------------------------
 # Rewrite engine
 # ----------------------------------------------------------------------
 
 # Turning on the rewrite engine is necessary for the following rules and features.
-# FollowSymLinks must be enabled for this to work.
 <IfModule mod_rewrite.c>
-	Options +FollowSymlinks
 	RewriteEngine On
+	RewriteBase /
 
 	# If you installed CodeIgniter in a subfolder, you will need to
 	# change the following line to match the subfolder you need.
@@ -33,6 +31,7 @@ Options -Indexes
 	# Checks to see if the user is attempting to access a valid file,
 	# such as an image or css document, if this isn't true it sends the
 	# request to the front controller, index.php
+	RewriteRule ^index\.php(?:/|$) - [L]
 	RewriteCond %{REQUEST_FILENAME} !-f
 	RewriteCond %{REQUEST_FILENAME} !-d
 	RewriteRule ^([\s\S]*)$ index.php/$1 [L,NC,QSA]
@@ -47,7 +46,3 @@ Options -Indexes
 	# can be sent to index.php, and everything works as normal.
 	ErrorDocument 404 index.php
 </IfModule>
-
-# Disable server signature start
-ServerSignature Off
-# Disable server signature end

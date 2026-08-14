@@ -195,8 +195,8 @@ class Database extends Config
         parent::__construct();
 
         if (! is_file('/.dockerenv')) {
-            $this->default['hostname'] = '127.0.0.1';
-            $this->default['port']     = 3307;
+            $this->default['hostname'] = 'localhost';
+            $this->default['port']     = 3306;
         }
 
         // Ensure that we always set the database group to 'tests' if

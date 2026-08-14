@@ -27,6 +27,24 @@ Konfigurasi SEO tersedia di halaman publik domain, termasuk robots.txt, sitemap.
 
 Untuk verifikasi Google Search Console dengan metode tag HTML, salin hanya nilai content dari tag Google ke googleSiteVerification pada app/app/Config/Seo.php. Jika Google memberikan file HTML, simpan file tersebut langsung di app/public/ dengan nama persis dari Google, lalu rebuild image Docker. File harus dapat diakses melalui https://kkntematikukim.site/nama-file-verifikasi.html.
 
+## Deploy ke Hostinger Shared Hosting
+
+Hostinger shared hosting tidak menjalankan Docker Compose. Untuk CodeIgniter 4, arahkan document root domain ke folder app/public jika pengaturan domain Hostinger mengizinkannya. Jangan arahkan domain ke folder project utama karena folder tersebut tidak memiliki index.php publik.
+
+Jika document root tidak dapat diubah, gunakan struktur dua folder berikut:
+
+~~~text
+/home/akun/
+├── app/          ← isi dari repository/app/app
+├── vendor/       ← repository/app/vendor
+├── writable/     ← repository/app/writable
+└── public_html/  ← seluruh isi repository/app/public
+~~~
+
+File public_html/index.php sudah mencari ../app/Config/Paths.php. Atur PHP ke versi 8.2 atau lebih tinggi, import file SQL melalui phpMyAdmin Hostinger, lalu sesuaikan hostname, username, password, dan nama database di app/app/Config/Database.php. Database Hostinger biasanya memakai hostname localhost dan port 3306.
+
+Pastikan public_html/index.php dan public_html/.htaccess ada, file memiliki permission 644, folder 755, dan folder writable dapat ditulis PHP. Jika muncul 403, cek file tersembunyi .htaccess di public_html dan log error hosting.
+
 **4. Login phpMyAdmin:**
 - Server  : db
 - User    : root
