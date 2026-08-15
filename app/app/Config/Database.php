@@ -27,9 +27,9 @@ class Database extends Config
     public array $default = [
         'DSN'          => '',
         'hostname'     => 'db',
-        'username'     => 'kkn_user',
-        'password'     => 'kkn_pass',
-        'database'     => 'kkn_tematik',
+        'username'     => 'u508460740_ci',
+        'password'     => 'Cley.123',
+        'database'     => 'u508460740_ci',
         'DBDriver'     => 'MySQLi',
         'DBPrefix'     => '',
         'pConnect'     => false,
@@ -194,7 +194,11 @@ class Database extends Config
     {
         parent::__construct();
 
-        if (! is_file('/.dockerenv')) {
+        if (is_file('/.dockerenv')) {
+            $this->default['username'] = 'kkn_user';
+            $this->default['password'] = 'kkn_pass';
+            $this->default['database'] = 'kkn_tematik';
+        } else {
             $this->default['hostname'] = 'localhost';
             $this->default['port']     = 3306;
         }
