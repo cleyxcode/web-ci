@@ -1,13 +1,14 @@
 <?php if (empty($dpl)): ?>
     <div class="card"><p class="empty">Profil DPL belum terhubung ke akun Anda. Hubungi admin.</p></div>
 <?php else: ?>
+<div class="dashboard-page dashboard-dpl">
     <div class="hero-strip">
         <div class="periode">Antrian validasi</div>
         <h2 style="margin:0 0 8px;font-size:1.25rem">Halo, <?= esc($dpl['nama']) ?></h2>
         <p style="margin:0;color:var(--abu-karang);font-size:0.9rem">Prioritaskan logbook dan laporan yang menunggu stempel validasi.</p>
     </div>
 
-    <div class="stat-row">
+    <div class="stat-row dashboard-stat-row">
         <div class="stat">
             <div class="label">Mahasiswa bimbingan</div>
             <div class="value"><?= (int) ($jumlahMahasiswa ?? 0) ?></div>
@@ -24,7 +25,7 @@
             <div class="label">Evaluasi masuk</div>
             <div class="value"><?= (int) ($totalEvaluasi ?? 0) ?></div>
             <small>avg <?= $avgEvaluasi !== null ? esc((string) $avgEvaluasi) : '-' ?>/5</small>
-        </div>
+    </div>
     </div>
 
     <div class="dpl-workspace-grid" style="margin-bottom:16px">
@@ -127,5 +128,6 @@
                 </tbody>
             </table>
         </div>
+    </div>
     </div>
 <?php endif; ?>

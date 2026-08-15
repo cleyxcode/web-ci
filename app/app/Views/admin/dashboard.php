@@ -1,4 +1,5 @@
-<div class="stat-row">
+<div class="dashboard-page dashboard-admin">
+<div class="stat-row dashboard-stat-row">
     <div class="stat">
         <div class="label">Mahasiswa</div>
         <div class="value"><?= (int) ($totalMahasiswa ?? 0) ?></div>
@@ -25,18 +26,18 @@
     </div>
 </div>
 
-<div style="display:grid;grid-template-columns:1.2fr 1fr;gap:16px" class="dash-grid">
-    <div class="card">
+<div class="dashboard-grid dashboard-grid-wide">
+    <div class="card dashboard-panel chart-panel">
         <div class="card-head"><h2>Logbook per minggu</h2></div>
         <canvas id="chartLogbook" height="160"></canvas>
     </div>
-    <div class="card">
+    <div class="card dashboard-panel chart-panel">
         <div class="card-head"><h2>Status laporan</h2></div>
         <canvas id="chartLaporan" height="160"></canvas>
     </div>
 </div>
 
-<div class="card" style="margin-top:16px">
+<div class="card dashboard-panel dashboard-map-panel">
     <div class="card-head">
         <h2>Peta lokasi GPS kelompok</h2>
         <a href="<?= site_url('admin/kkn') ?>" class="btn btn-secondary btn-sm">Kelompok KKN</a>
@@ -50,7 +51,7 @@
     ]) ?>
 </div>
 
-<div class="card" style="margin-top:16px">
+<div class="card dashboard-panel dashboard-table-panel">
     <div class="card-head">
         <h2>Mahasiswa terbaru</h2>
         <div style="display:flex;gap:8px">
@@ -144,8 +145,4 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 </script>
-<style>
-@media (max-width: 900px) {
-  .dash-grid { grid-template-columns: 1fr !important; }
-}
-</style>
+</div>

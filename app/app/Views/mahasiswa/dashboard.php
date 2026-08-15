@@ -4,6 +4,7 @@ $alamatLokasi = format_alamat($m);
 $alamatPenelitian = trim($m['alamat_penelitian'] ?? '');
 ?>
 
+<div class="dashboard-page dashboard-mahasiswa">
 <div class="hero-strip">
     <div class="periode"><?= esc($m['periode'] ?? 'Periode KKN') ?></div>
     <h2 style="margin:0 0 4px;font-size:1.25rem"><?= esc($m['nama'] ?? 'Mahasiswa') ?></h2>
@@ -26,7 +27,7 @@ $alamatPenelitian = trim($m['alamat_penelitian'] ?? '');
     <div class="progress-bar"><span style="width:<?= (int) $progress ?>%"></span></div>
 </div>
 
-<div class="stat-row">
+<div class="stat-row dashboard-stat-row">
     <div class="stat">
         <div class="label">Logbook</div>
         <div class="value"><?= (int) ($totalLogbook ?? 0) ?></div>
@@ -74,7 +75,7 @@ $alamatPenelitian = trim($m['alamat_penelitian'] ?? '');
 </div>
 <?php endif; ?>
 
-<div class="quick-actions">
+<div class="quick-actions dashboard-quick-actions">
     <a href="<?= site_url('mahasiswa/logbook/create') ?>" class="quick-action">
         <?= view('partials/icon', ['name' => 'book']) ?>
         <span>Tambah logbook</span>
@@ -97,8 +98,8 @@ $alamatPenelitian = trim($m['alamat_penelitian'] ?? '');
     </a>
 </div>
 
-<div style="display:grid;grid-template-columns:1.2fr 0.8fr;gap:16px" class="dash-grid">
-    <div class="card">
+<div class="dashboard-grid dashboard-grid-wide">
+    <div class="card dashboard-panel dashboard-table-panel">
         <div class="card-head">
             <h2>Logbook terbaru</h2>
             <a href="<?= site_url('mahasiswa/logbook') ?>" class="btn btn-secondary btn-sm">Semua</a>
@@ -125,7 +126,7 @@ $alamatPenelitian = trim($m['alamat_penelitian'] ?? '');
             </table>
         </div>
     </div>
-    <div class="card">
+    <div class="card dashboard-panel">
         <div class="card-head"><h2>Pengumuman</h2></div>
         <?php if (empty($pengumuman)): ?>
             <p class="empty" style="padding:16px 0">Belum ada pengumuman.</p>
@@ -140,4 +141,4 @@ $alamatPenelitian = trim($m['alamat_penelitian'] ?? '');
         <?php endif; ?>
     </div>
 </div>
-<style>@media (max-width:900px){.dash-grid{grid-template-columns:1fr!important}}</style>
+</div>
