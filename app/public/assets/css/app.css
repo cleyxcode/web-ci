@@ -9,6 +9,24 @@
   --hijau-kelapa: #2D7A4F;
   --kuning-senja: #C4920A;
   --laterit-merah: #B83232;
+  --stat-blue-bg: #E8F3F7;
+  --stat-blue-border: #BFDDE7;
+  --stat-blue-ink: #17617A;
+  --stat-green-bg: #EAF5EE;
+  --stat-green-border: #C4E2CF;
+  --stat-green-ink: #276A43;
+  --stat-amber-bg: #FFF5D9;
+  --stat-amber-border: #EBD58E;
+  --stat-amber-ink: #8A6505;
+  --stat-coral-bg: #FBEAEC;
+  --stat-coral-border: #EAC6CB;
+  --stat-coral-ink: #9B303A;
+  --stat-violet-bg: #F1ECF8;
+  --stat-violet-border: #D9CBEA;
+  --stat-violet-ink: #68478B;
+  --stat-teal-bg: #E5F3F1;
+  --stat-teal-border: #BBDDD8;
+  --stat-teal-ink: #176C66;
   --border-lembut: rgba(44, 40, 37, 0.08);
   --border-medium: rgba(44, 40, 37, 0.14);
   --inset: #EDE9E3;
@@ -397,6 +415,125 @@ a:hover {
   letter-spacing: -0.03em;
   color: var(--tinta-arsip);
   line-height: 1.1;
+}
+
+.stat-tone-blue {
+  background: var(--stat-blue-bg);
+  border-color: var(--stat-blue-border);
+}
+
+.stat-tone-blue .label,
+.stat-tone-blue .value {
+  color: var(--stat-blue-ink);
+}
+
+.stat-tone-green {
+  background: var(--stat-green-bg);
+  border-color: var(--stat-green-border);
+}
+
+.stat-tone-green .label,
+.stat-tone-green .value {
+  color: var(--stat-green-ink);
+}
+
+.stat-tone-amber {
+  background: var(--stat-amber-bg);
+  border-color: var(--stat-amber-border);
+}
+
+.stat-tone-amber .label,
+.stat-tone-amber .value {
+  color: var(--stat-amber-ink);
+}
+
+.stat-tone-coral {
+  background: var(--stat-coral-bg);
+  border-color: var(--stat-coral-border);
+}
+
+.stat-tone-coral .label,
+.stat-tone-coral .value {
+  color: var(--stat-coral-ink);
+}
+
+.stat-tone-violet {
+  background: var(--stat-violet-bg);
+  border-color: var(--stat-violet-border);
+}
+
+.stat-tone-violet .label,
+.stat-tone-violet .value {
+  color: var(--stat-violet-ink);
+}
+
+.stat-tone-teal {
+  background: var(--stat-teal-bg);
+  border-color: var(--stat-teal-border);
+}
+
+.stat-tone-teal .label,
+.stat-tone-teal .value {
+  color: var(--stat-teal-ink);
+}
+
+.dashboard-filter-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 24px;
+  padding: 16px 18px;
+  background: var(--kapas-gading);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-card);
+}
+
+.dashboard-filter-copy {
+  display: grid;
+  gap: 2px;
+  min-width: 190px;
+}
+
+.dashboard-filter-kicker {
+  color: var(--biru-laut);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.dashboard-filter-copy strong {
+  font-size: 0.95rem;
+}
+
+.dashboard-filter-copy small {
+  color: var(--tinta-redup);
+  font-size: 0.75rem;
+}
+
+.dashboard-filter {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.dashboard-filter .field {
+  min-width: 150px;
+}
+
+.dashboard-filter .field label {
+  margin-bottom: 4px;
+  font-size: 0.68rem;
+}
+
+.dashboard-filter .field select,
+.dashboard-filter .field input {
+  min-height: 38px;
+  padding: 8px 10px;
+  font-size: 0.8rem;
 }
 
 .btn {
@@ -919,6 +1056,24 @@ table.data tr:hover td {
   --hijau-kelapa: #5cb87e;
   --kuning-senja: #e0b040;
   --laterit-merah: #e06060;
+  --stat-blue-bg: rgba(77, 163, 196, 0.16);
+  --stat-blue-border: rgba(77, 163, 196, 0.35);
+  --stat-blue-ink: #8bd0e7;
+  --stat-green-bg: rgba(92, 184, 126, 0.16);
+  --stat-green-border: rgba(92, 184, 126, 0.35);
+  --stat-green-ink: #8cdaa5;
+  --stat-amber-bg: rgba(224, 176, 64, 0.16);
+  --stat-amber-border: rgba(224, 176, 64, 0.35);
+  --stat-amber-ink: #f0ca6a;
+  --stat-coral-bg: rgba(224, 96, 96, 0.16);
+  --stat-coral-border: rgba(224, 96, 96, 0.35);
+  --stat-coral-ink: #f18d8d;
+  --stat-violet-bg: rgba(164, 132, 204, 0.16);
+  --stat-violet-border: rgba(164, 132, 204, 0.35);
+  --stat-violet-ink: #c7a9e8;
+  --stat-teal-bg: rgba(72, 177, 168, 0.16);
+  --stat-teal-border: rgba(72, 177, 168, 0.35);
+  --stat-teal-ink: #85d8d0;
   --border-lembut: rgba(232, 228, 222, 0.08);
   --border-medium: rgba(232, 228, 222, 0.14);
   --inset: #2e2a27;
@@ -1448,6 +1603,30 @@ table.data tr.row-highlight td {
 
   .dashboard-page .card-head > div {
     flex-wrap: wrap;
+  }
+
+  .dashboard-filter-card {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+
+  .dashboard-filter-copy {
+    min-width: 0;
+  }
+
+  .dashboard-filter {
+    align-items: stretch;
+    justify-content: stretch;
+  }
+
+  .dashboard-filter .field {
+    flex: 1 1 150px;
+  }
+
+  .dashboard-filter .btn {
+    flex: 1 1 auto;
   }
 
   .map-box,

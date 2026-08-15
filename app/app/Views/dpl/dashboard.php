@@ -9,24 +9,31 @@
     </div>
 
     <div class="stat-row dashboard-stat-row">
-        <div class="stat">
+        <div class="stat stat-tone-blue">
             <div class="label">Mahasiswa bimbingan</div>
             <div class="value"><?= (int) ($jumlahMahasiswa ?? 0) ?></div>
         </div>
-        <div class="stat">
+        <div class="stat stat-tone-coral">
             <div class="label">Logbook menunggu</div>
             <div class="value"><?= is_array($logbookPending ?? null) ? count($logbookPending) : (int) ($logbookPending ?? 0) ?></div>
         </div>
-        <div class="stat">
+        <div class="stat stat-tone-amber">
             <div class="label">Laporan menunggu</div>
             <div class="value"><?= is_array($laporanPending ?? null) ? count($laporanPending) : (int) ($laporanPending ?? 0) ?></div>
         </div>
-        <div class="stat">
+        <div class="stat stat-tone-violet">
             <div class="label">Evaluasi masuk</div>
             <div class="value"><?= (int) ($totalEvaluasi ?? 0) ?></div>
             <small>avg <?= $avgEvaluasi !== null ? esc((string) $avgEvaluasi) : '-' ?>/5</small>
     </div>
     </div>
+
+    <?= view('partials/logbook-filter', [
+        'filterRoute'  => site_url('dpl/dashboard'),
+        'filterPeriod' => $filterPeriod ?? 'minggu',
+        'filterDate'   => $filterDate ?? date('Y-m-d'),
+        'filterLabel'  => $filterLabel ?? 'Pilih rentang waktu',
+    ]) ?>
 
     <div class="dpl-workspace-grid" style="margin-bottom:16px">
         <div class="card">
@@ -95,7 +102,7 @@
 
     <div class="card">
         <div class="card-head">
-            <h2>Kegiatan terbaru</h2>
+            <h2>Kegiatan · <?= esc($filterLabel ?? 'Periode terpilih') ?></h2>
             <div style="display:flex;gap:8px">
                 <a href="<?= site_url('dpl/evaluasi') ?>" class="btn btn-secondary btn-sm">Evaluasi</a>
                 <a href="<?= site_url('dpl/logbook') ?>" class="btn btn-secondary btn-sm">Validasi</a>

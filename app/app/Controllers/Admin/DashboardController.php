@@ -21,11 +21,14 @@ class DashboardController extends PanelController
         $lokasiModel    = model(LokasiKknModel::class);
         $logbookModel   = model(LogbookModel::class);
         $laporanModel   = model(LaporanModel::class);
-
-        $logbookPerMinggu = $logbookModel->select("DATE_FORMAT(tanggal, '%Y-%u') as minggu, COUNT(*) as total")
-            ->groupBy('minggu')
-            ->orderBy('minggu', 'ASC')
-            ->findAll(8);
+        $filterPeriod   = $logbookModel->normalizePeriod($this->request->getGet('periode') ?: 'minggu');
+        $filterDate     = $logbookModel->normalizeAnchorDate($this->request->getGet('tanggal'));
+        $filterRange    = $logbookModel->resolvePeriod($filterPeriod, $filterDate);
+        $filterLabel    = $filterPeriod === 'hari'
+            ? 'Hari ' . format_tanggal($filterRange['start'])
+            : ($filterPeriod === 'minggu'
+                ? 'Minggu ' . format_tanggal($filterRange['start']) . ' – ' . format_tanggal($filterRange['end'])
+                : 'Semua periode');
 
         $laporanStatus = $laporanModel->select('status, COUNT(*) as total')
             ->groupBy('status')
@@ -38,9 +41,13 @@ class DashboardController extends PanelController
             'totalLokasi'      => $lokasiModel->countAllResults(),
             'totalKelompok'    => model(KelompokKknModel::class)->countAllResults(),
             'totalLogbook'     => $logbookModel->countAllResults(),
+            'filteredLogbook'  => $logbookModel->countByPeriod($filterPeriod, $filterDate),
             'totalLaporan'     => $laporanModel->countAllResults(),
             'mahasiswaTerbaru' => $mahasiswaModel->getAllWithRelations(),
-            'logbookPerMinggu' => $logbookPerMinggu,
+            'logbookPerMinggu' => $logbookModel->getDashboardSeries($filterPeriod, $filterDate),
+            'filterPeriod'     => $filterPeriod,
+            'filterDate'       => $filterDate,
+            'filterLabel'      => $filterLabel,
             'laporanStatus'    => $laporanStatus,
             'petaKelompok'     => model(KelompokKknModel::class)->getWithGps(),
         ]);

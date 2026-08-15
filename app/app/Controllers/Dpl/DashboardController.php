@@ -27,6 +27,14 @@ class DashboardController extends PanelController
         $laporanModel   = model(LaporanModel::class);
         $evaluasiModel  = model(EvaluasiModel::class);
         $kelompokModel  = model(\App\Models\KelompokKknModel::class);
+        $filterPeriod   = $logbookModel->normalizePeriod($this->request->getGet('periode') ?: 'minggu');
+        $filterDate     = $logbookModel->normalizeAnchorDate($this->request->getGet('tanggal'));
+        $filterRange    = $logbookModel->resolvePeriod($filterPeriod, $filterDate);
+        $filterLabel    = $filterPeriod === 'hari'
+            ? 'Hari ' . format_tanggal($filterRange['start'])
+            : ($filterPeriod === 'minggu'
+                ? 'Minggu ' . format_tanggal($filterRange['start']) . ' – ' . format_tanggal($filterRange['end'])
+                : 'Semua periode');
 
         $mahasiswa = $mahasiswaModel->getByDplId($dpl['id']);
 
@@ -38,7 +46,10 @@ class DashboardController extends PanelController
             'laporanPending'  => $laporanModel->getPendingByDpl($dpl['id']),
             'totalEvaluasi'   => $evaluasiModel->countAllEvaluasi((int) $dpl['id']),
             'avgEvaluasi'     => $evaluasiModel->averageRating((int) $dpl['id']),
-            'kegiatanTerbaru' => $logbookModel->getByDpl($dpl['id']),
+            'kegiatanTerbaru' => $logbookModel->getByDpl($dpl['id'], null, 'DESC', $filterPeriod, $filterDate),
+            'filterPeriod'    => $filterPeriod,
+            'filterDate'      => $filterDate,
+            'filterLabel'     => $filterLabel,
             'kelompok'        => $kelompokModel->getByDplId((int) $dpl['id']),
             'petaKelompok'    => $kelompokModel->getWithGps($dpl['id']),
         ]);

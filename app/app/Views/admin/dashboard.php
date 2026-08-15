@@ -1,34 +1,42 @@
 <div class="dashboard-page dashboard-admin">
 <div class="stat-row dashboard-stat-row">
-    <div class="stat">
+    <div class="stat stat-tone-blue">
         <div class="label">Mahasiswa</div>
         <div class="value"><?= (int) ($totalMahasiswa ?? 0) ?></div>
     </div>
-    <div class="stat">
+    <div class="stat stat-tone-violet">
         <div class="label">Kelompok KKN</div>
         <div class="value"><?= (int) ($totalKelompok ?? 0) ?></div>
     </div>
-    <div class="stat">
+    <div class="stat stat-tone-green">
         <div class="label">DPL</div>
         <div class="value"><?= (int) ($totalDpl ?? 0) ?></div>
     </div>
-    <div class="stat">
+    <div class="stat stat-tone-amber">
         <div class="label">Lokasi</div>
         <div class="value"><?= (int) ($totalLokasi ?? 0) ?></div>
     </div>
-    <div class="stat">
-        <div class="label">Logbook</div>
-        <div class="value"><?= (int) ($totalLogbook ?? 0) ?></div>
+    <div class="stat stat-tone-coral">
+        <div class="label">Logbook periode</div>
+        <div class="value"><?= (int) ($filteredLogbook ?? 0) ?></div>
+        <small><?= (int) ($totalLogbook ?? 0) ?> total</small>
     </div>
-    <div class="stat">
+    <div class="stat stat-tone-teal">
         <div class="label">Laporan</div>
         <div class="value"><?= (int) ($totalLaporan ?? 0) ?></div>
     </div>
 </div>
 
+<?= view('partials/logbook-filter', [
+    'filterRoute'  => site_url('admin/dashboard'),
+    'filterPeriod' => $filterPeriod ?? 'minggu',
+    'filterDate'   => $filterDate ?? date('Y-m-d'),
+    'filterLabel'  => $filterLabel ?? 'Pilih rentang waktu',
+]) ?>
+
 <div class="dashboard-grid dashboard-grid-wide">
     <div class="card dashboard-panel chart-panel">
-        <div class="card-head"><h2>Logbook per minggu</h2></div>
+        <div class="card-head"><h2>Logbook · <?= esc($filterLabel ?? 'Periode terpilih') ?></h2></div>
         <canvas id="chartLogbook" height="160"></canvas>
     </div>
     <div class="card dashboard-panel chart-panel">
@@ -93,8 +101,8 @@
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-  const minggu = <?= json_encode(array_column($logbookPerMinggu ?? [], 'minggu')) ?>;
-  const totalMinggu = <?= json_encode(array_map('intval', array_column($logbookPerMinggu ?? [], 'total'))) ?>;
+  const logbookLabels = <?= json_encode(array_column($logbookPerMinggu ?? [], 'label')) ?>;
+  const logbookTotals = <?= json_encode(array_map('intval', array_column($logbookPerMinggu ?? [], 'total'))) ?>;
   const statusLabels = <?= json_encode(array_column($laporanStatus ?? [], 'status')) ?>;
   const statusTotals = <?= json_encode(array_map('intval', array_column($laporanStatus ?? [], 'total'))) ?>;
   const ink = isDark ? '#E8E4DE' : '#2C2825';
@@ -105,10 +113,10 @@ document.addEventListener('DOMContentLoaded', () => {
     new Chart(document.getElementById('chartLogbook'), {
       type: 'bar',
       data: {
-        labels: minggu.length ? minggu : ['—'],
+        labels: logbookLabels.length ? logbookLabels.map((value) => value.length === 10 ? value.slice(8, 10) + '/' + value.slice(5, 7) : value) : ['—'],
         datasets: [{
           label: 'Logbook',
-          data: totalMinggu.length ? totalMinggu : [0],
+          data: logbookTotals.length ? logbookTotals : [0],
           backgroundColor: '#1B6B8A',
           borderRadius: 6,
           maxBarThickness: 28,

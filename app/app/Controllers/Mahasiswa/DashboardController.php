@@ -16,8 +16,16 @@ class DashboardController extends PanelController
         $detail = $mhs ? model(MahasiswaModel::class)->getWithRelations($mhs['id']) : null;
 
         $logbookModel = model(LogbookModel::class);
-        $totalLogbook = $mhs ? $logbookModel->where('mahasiswa_id', $mhs['id'])->countAllResults() : 0;
-        $validLogbook = $mhs ? $logbookModel->countByMahasiswaStatus($mhs['id'], 'divalidasi') : 0;
+        $filterPeriod = $logbookModel->normalizePeriod($this->request->getGet('periode') ?: 'minggu');
+        $filterDate   = $logbookModel->normalizeAnchorDate($this->request->getGet('tanggal'));
+        $filterRange  = $logbookModel->resolvePeriod($filterPeriod, $filterDate);
+        $filterLabel  = $filterPeriod === 'hari'
+            ? 'Hari ' . format_tanggal($filterRange['start'])
+            : ($filterPeriod === 'minggu'
+                ? 'Minggu ' . format_tanggal($filterRange['start']) . ' – ' . format_tanggal($filterRange['end'])
+                : 'Semua periode');
+        $totalLogbook = $mhs ? $logbookModel->countByMahasiswaPeriod($mhs['id'], $filterPeriod, $filterDate) : 0;
+        $validLogbook = $mhs ? $logbookModel->countByMahasiswaStatus($mhs['id'], 'divalidasi', $filterPeriod, $filterDate) : 0;
         $progress     = $totalLogbook > 0 ? round(($validLogbook / max($totalLogbook, 1)) * 100) : 0;
         $evaluasi     = $mhs ? model(EvaluasiModel::class)->findByMahasiswa((int) $mhs['id']) : null;
 
@@ -29,7 +37,10 @@ class DashboardController extends PanelController
             'validLogbook'  => $validLogbook,
             'totalLaporan'  => $mhs ? model(\App\Models\LaporanModel::class)->where('mahasiswa_id', $mhs['id'])->countAllResults() : 0,
             'evaluasi'      => $evaluasi,
-            'logbookTerbaru'=> $mhs ? $logbookModel->getByMahasiswa($mhs['id']) : [],
+            'logbookTerbaru'=> $mhs ? $logbookModel->getByMahasiswa($mhs['id'], $filterPeriod, $filterDate) : [],
+            'filterPeriod'  => $filterPeriod,
+            'filterDate'    => $filterDate,
+            'filterLabel'   => $filterLabel,
             'pengumuman'    => model(PengumumanModel::class)->getLatest(3),
             'petaKelompok'  => $detail && ! empty($detail['latitude']) ? [[
                 'latitude'       => $detail['latitude'],

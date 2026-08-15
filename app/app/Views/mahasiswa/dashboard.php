@@ -28,17 +28,17 @@ $alamatPenelitian = trim($m['alamat_penelitian'] ?? '');
 </div>
 
 <div class="stat-row dashboard-stat-row">
-    <div class="stat">
+    <div class="stat stat-tone-blue">
         <div class="label">Logbook</div>
         <div class="value"><?= (int) ($totalLogbook ?? 0) ?></div>
         <small><?= (int) ($validLogbook ?? 0) ?> divalidasi</small>
     </div>
-    <div class="stat">
+    <div class="stat stat-tone-green">
         <div class="label">Laporan</div>
         <div class="value"><?= (int) ($totalLaporan ?? 0) ?></div>
         <small>file terupload</small>
     </div>
-    <div class="stat">
+    <div class="stat stat-tone-amber">
         <div class="label">Evaluasi</div>
         <div class="value" style="font-size:1rem">
             <?php if (! empty($evaluasi)): ?>
@@ -49,16 +49,23 @@ $alamatPenelitian = trim($m['alamat_penelitian'] ?? '');
         </div>
         <small><?= ! empty($evaluasi) ? 'sudah dikirim' : 'isi evaluasi kegiatan' ?></small>
     </div>
-    <div class="stat">
+    <div class="stat stat-tone-violet">
         <div class="label">DPL</div>
         <div class="value" style="font-size:1rem"><?= esc($m['nama_dpl'] ?? '-') ?></div>
     </div>
-    <div class="stat">
+    <div class="stat stat-tone-teal">
         <div class="label">Periode</div>
         <div class="value" style="font-size:0.95rem"><?= format_tanggal($m['tanggal_mulai'] ?? null) ?></div>
         <small>s/d <?= format_tanggal($m['tanggal_selesai'] ?? null) ?></small>
     </div>
 </div>
+
+<?= view('partials/logbook-filter', [
+    'filterRoute'  => site_url('mahasiswa/dashboard'),
+    'filterPeriod' => $filterPeriod ?? 'minggu',
+    'filterDate'   => $filterDate ?? date('Y-m-d'),
+    'filterLabel'  => $filterLabel ?? 'Pilih rentang waktu',
+]) ?>
 
 <?php if (! empty($petaKelompok)): ?>
 <div class="card" style="margin-bottom:16px">
@@ -101,7 +108,7 @@ $alamatPenelitian = trim($m['alamat_penelitian'] ?? '');
 <div class="dashboard-grid dashboard-grid-wide">
     <div class="card dashboard-panel dashboard-table-panel">
         <div class="card-head">
-            <h2>Logbook terbaru</h2>
+            <h2>Logbook · <?= esc($filterLabel ?? 'Periode terpilih') ?></h2>
             <a href="<?= site_url('mahasiswa/logbook') ?>" class="btn btn-secondary btn-sm">Semua</a>
         </div>
         <div class="table-wrap">

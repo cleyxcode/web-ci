@@ -9,7 +9,7 @@ Jalankan via SSH:
   mv public_html/public/* public_html/
   rmdir public_html/public
 
-  Buat vendor dari komputer lokal menggunakan Composer Docker, lalu upload ke:
+  Buat vendor dari komputer lokal menggunakan Composer Docker, lalu upload ke:....
 
   /home/u508460740/domains/slategray-skunk-297972.hostingersite.com/vendor
 
