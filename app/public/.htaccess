@@ -15,13 +15,13 @@ DirectoryIndex index.php
 	# RewriteBase /
 
 	# Canonical host and HTTPS...
-	RewriteCond %{HTTP_HOST} ^www\.kkntematikukim\.site$ [NC]
-	RewriteRule ^ https://kkntematikukim.site%{REQUEST_URI} [R=301,L,NE]
+	RewriteCond %{HTTP_HOST} ^www\.slategray-skunk-297972\.hostingersite\.com$ [NC]
+	RewriteRule ^ https://slategray-skunk-297972.hostingersite.com%{REQUEST_URI} [R=301,L,NE]
 
-	RewriteCond %{HTTP_HOST} ^kkntematikukim\.site$ [NC]
+	RewriteCond %{HTTP_HOST} ^slategray-skunk-297972\.hostingersite\.com$ [NC]
 	RewriteCond %{HTTPS} !=on
 	RewriteCond %{HTTP:X-Forwarded-Proto} !https [NC]
-	RewriteRule ^ https://kkntematikukim.site%{REQUEST_URI} [R=301,L,NE]
+	RewriteRule ^ https://slategray-skunk-297972.hostingersite.com%{REQUEST_URI} [R=301,L,NE]
 
 	# Redirect Trailing Slashes...
 	RewriteCond %{REQUEST_FILENAME} !-d

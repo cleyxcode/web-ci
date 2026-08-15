@@ -10,7 +10,7 @@ final class SeoTest extends CIUnitTestCase
     {
         $seo = config('Seo');
 
-        $this->assertSame('https://kkntematikukim.site', $seo->siteUrl);
+        $this->assertSame('https://slategray-skunk-297972.hostingersite.com', $seo->siteUrl);
         $this->assertStringContainsString('KKN Tematik UKIM', $seo->defaultDescription);
         $this->assertContains('monitoring KKN Tematik UKIM', $seo->keywords);
         $this->assertSame('', $seo->googleSiteVerification);
@@ -21,8 +21,8 @@ final class SeoTest extends CIUnitTestCase
         $robots = (string) file_get_contents(FCPATH . 'robots.txt');
         $sitemap = (string) file_get_contents(FCPATH . 'sitemap.xml');
 
-        $this->assertStringContainsString('Sitemap: https://kkntematikukim.site/sitemap.xml', $robots);
-        $this->assertStringContainsString('<loc>https://kkntematikukim.site/</loc>', $sitemap);
+        $this->assertStringContainsString('Sitemap: https://slategray-skunk-297972.hostingersite.com/sitemap.xml', $robots);
+        $this->assertStringContainsString('<loc>https://slategray-skunk-297972.hostingersite.com/</loc>', $sitemap);
     }
 
     public function testRootRouteIsPublicLandingPage(): void

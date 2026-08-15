@@ -11,4 +11,4 @@ Disallow: /otp-verify
 Disallow: /reset-password
 Disallow: /register
 
-Sitemap: https://kkntematikukim.site/sitemap.xml
+Sitemap: https://slategray-skunk-297972.hostingersite.com/sitemap.xml

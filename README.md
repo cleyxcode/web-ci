@@ -20,12 +20,12 @@ Container dan image aplikasi lama akan dibersihkan terlebih dahulu. Volume datab
 
 **3. Akses di browser:**
 - App CI4     : http://localhost:8083
-- Domain SEO  : https://kkntematikukim.site
+- Domain SEO  : https://slategray-skunk-297972.hostingersite.com
 - phpMyAdmin  : http://localhost:8081
 
-Konfigurasi SEO tersedia di halaman publik domain, termasuk robots.txt, sitemap.xml, canonical URL, Open Graph, Twitter Card, dan JSON-LD. Arahkan DNS kkntematikukim.site ke server aplikasi dan aktifkan sertifikat TLS pada reverse proxy atau hosting agar domain dapat diakses melalui HTTPS.
+Konfigurasi SEO tersedia di halaman publik domain, termasuk robots.txt, sitemap.xml, canonical URL, Open Graph, Twitter Card, dan JSON-LD. Domain aktif: slategray-skunk-297972.hostingersite.com.
 
-Untuk verifikasi Google Search Console dengan metode tag HTML, salin hanya nilai content dari tag Google ke googleSiteVerification pada app/app/Config/Seo.php. Jika Google memberikan file HTML, simpan file tersebut langsung di app/public/ dengan nama persis dari Google, lalu rebuild image Docker. File harus dapat diakses melalui https://kkntematikukim.site/nama-file-verifikasi.html.
+Untuk verifikasi Google Search Console dengan metode tag HTML, salin hanya nilai content dari tag Google ke googleSiteVerification pada app/app/Config/Seo.php. Jika Google memberikan file HTML, simpan file tersebut langsung di app/public/ dengan nama persis dari Google, lalu upload ke public_html. File harus dapat diakses melalui https://slategray-skunk-297972.hostingersite.com/nama-file-verifikasi.html.
 
 ## Deploy ke Hostinger Shared Hosting
 
@@ -44,6 +44,10 @@ Jika document root tidak dapat diubah, gunakan struktur dua folder berikut:
 File public_html/index.php sudah mencari ../app/Config/Paths.php. Atur PHP ke versi 8.2 atau lebih tinggi, import file SQL melalui phpMyAdmin Hostinger, lalu sesuaikan hostname, username, password, dan nama database di app/app/Config/Database.php. Database Hostinger biasanya memakai hostname localhost dan port 3306.
 
 Pastikan public_html/index.php dan public_html/.htaccess ada, file memiliki permission 644, folder 755, dan folder writable dapat ditulis PHP. Jika muncul 403, cek file tersembunyi .htaccess di public_html dan log error hosting.
+
+### Debug 403 melalui URL
+
+Upload app/public/hostinger-debug.php ke public_html/Hostinger. Buka https://slategray-skunk-297972.hostingersite.com/hostinger-debug.php. File ini menampilkan status PHP, document root, permission, file CI4, folder writable, dan extension tanpa menampilkan password database. Hapus file tersebut setelah selesai debugging.
 
 **4. Login phpMyAdmin:**
 - Server  : db

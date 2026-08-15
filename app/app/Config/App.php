@@ -16,7 +16,7 @@ class App extends BaseConfig
      *
      * E.g., http://example.com/
      */
-    public string $baseURL = 'https://kkntematikukim.site/';
+    public string $baseURL = 'https://slategray-skunk-297972.hostingersite.com/';
 
     public function __construct()
     {
@@ -41,7 +41,7 @@ class App extends BaseConfig
      *
      * @var list<string>
      */
-    public array $allowedHostnames = ['www.kkntematikukim.site'];
+    public array $allowedHostnames = ['www.slategray-skunk-297972.hostingersite.com'];
 
     /**
      * --------------------------------------------------------------------------
