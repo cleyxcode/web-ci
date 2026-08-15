@@ -47,7 +47,7 @@ Pastikan public_html/index.php dan public_html/.htaccess ada, file memiliki perm
 
 ### Debug 403 melalui URL
 
-Upload app/public/hostinger-debug.php ke public_html/Hostinger. Buka https://slategray-skunk-297972.hostingersite.com/hostinger-debug.php. File ini menampilkan status PHP, document root, permission, file CI4, folder writable, dan extension tanpa menampilkan password database. Hapus file tersebut setelah selesai debugging.
+File tersedia di app/hostinger-debug.php dan app/public/hostinger-debug.php. Untuk URL utama, upload app/public/hostinger-debug.php ke public_html/Hostinger, lalu buka https://slategray-skunk-297972.hostingersite.com/hostinger-debug.php. File ini menampilkan status PHP, document root, permission, file CI4, folder writable, dan extension tanpa menampilkan password database. Hapus file tersebut setelah selesai debugging.
 
 **4. Login phpMyAdmin:**
 - Server  : db
