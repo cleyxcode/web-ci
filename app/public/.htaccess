@@ -14,14 +14,18 @@ DirectoryIndex index.php
 	# http://httpd.apache.org/docs/current/mod/mod_rewrite.html#rewritebase
 	# RewriteBase /
 
-	# Canonical host and HTTPS...
-	RewriteCond %{HTTP_HOST} ^www\.slategray-skunk-297972\.hostingersite\.com$ [NC]
-	RewriteRule ^ https://slategray-skunk-297972.hostingersite.com%{REQUEST_URI} [R=301,L,NE]
+	# Redirect the previous Hostinger domain to the new canonical domain.
+	RewriteCond %{HTTP_HOST} ^(www\.)?slategray-skunk-297972\.hostingersite\.com$ [NC]
+	RewriteRule ^ https://kkntematikukim.site%{REQUEST_URI} [R=301,L,NE]
 
-	RewriteCond %{HTTP_HOST} ^slategray-skunk-297972\.hostingersite\.com$ [NC]
+	# Canonical host and HTTPS for the production domain.
+	RewriteCond %{HTTP_HOST} ^www\.kkntematikukim\.site$ [NC]
+	RewriteRule ^ https://kkntematikukim.site%{REQUEST_URI} [R=301,L,NE]
+
+	RewriteCond %{HTTP_HOST} ^kkntematikukim\.site$ [NC]
 	RewriteCond %{HTTPS} !=on
 	RewriteCond %{HTTP:X-Forwarded-Proto} !https [NC]
-	RewriteRule ^ https://slategray-skunk-297972.hostingersite.com%{REQUEST_URI} [R=301,L,NE]
+	RewriteRule ^ https://kkntematikukim.site%{REQUEST_URI} [R=301,L,NE]
 
 	# Redirect Trailing Slashes...
 	RewriteCond %{REQUEST_FILENAME} !-d

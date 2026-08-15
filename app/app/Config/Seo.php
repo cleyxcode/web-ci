@@ -7,7 +7,7 @@ use CodeIgniter\Config\BaseConfig;
 class Seo extends BaseConfig
 {
     public string $siteName = 'KKN Tematik UKIM';
-    public string $siteUrl = 'https://slategray-skunk-297972.hostingersite.com';
+    public string $siteUrl = 'https://kkntematikukim.site';
     public string $defaultDescription = 'Monitoring KKN Tematik UKIM untuk mengelola kegiatan lapangan, logbook KKN, laporan, GPS tim, evaluasi, dan penilaian mahasiswa.';
     public array $keywords = [
         'KKN Tematik UKIM',
@@ -20,6 +20,6 @@ class Seo extends BaseConfig
         'penilaian KKN mahasiswa',
         'GPS lokasi KKN',
     ];
-    public string $googleSiteVerification = '';
+    public string $googleSiteVerification = 'ZisLNMIUr6B58UxNgfyKBnA4KUHayB6exKHeqvQetsw';
     public string $locale = 'id_ID';
 }

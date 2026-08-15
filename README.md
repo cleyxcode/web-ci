@@ -1,5 +1,4 @@
-# Sistem Monitoring KKN Tematik - UKIM
-**Clara Mustamu | NPM: 12155201220035**
+# Sistem Monitoring KKN Tematik
 
 ## Cara Menjalankan
 
@@ -20,12 +19,12 @@ Container dan image aplikasi lama akan dibersihkan terlebih dahulu. Volume datab
 
 **3. Akses di browser:**
 - App CI4     : http://localhost:8083
-- Domain SEO  : https://slategray-skunk-297972.hostingersite.com
+- Domain SEO  : https://kkntematikukim.site
 - phpMyAdmin  : http://localhost:8081
 
-Konfigurasi SEO tersedia di halaman publik domain, termasuk robots.txt, sitemap.xml, canonical URL, Open Graph, Twitter Card, dan JSON-LD. Domain aktif: slategray-skunk-297972.hostingersite.com.
+Konfigurasi SEO tersedia di halaman publik domain, termasuk robots.txt, sitemap.xml, canonical URL, Open Graph, Twitter Card, dan JSON-LD. Domain aktif: kkntematikukim.site.
 
-Untuk verifikasi Google Search Console dengan metode tag HTML, salin hanya nilai content dari tag Google ke googleSiteVerification pada app/app/Config/Seo.php. Jika Google memberikan file HTML, simpan file tersebut langsung di app/public/ dengan nama persis dari Google, lalu upload ke public_html. File harus dapat diakses melalui https://slategray-skunk-297972.hostingersite.com/nama-file-verifikasi.html.
+Untuk verifikasi Google Search Console dengan metode tag HTML, nilai content sudah dikonfigurasi di googleSiteVerification pada app/app/Config/Seo.php. Jika Google memberikan file HTML, simpan file tersebut langsung di app/public/ dengan nama persis dari Google, lalu upload ke public_html. File harus dapat diakses melalui https://kkntematikukim.site/nama-file-verifikasi.html.
 
 ## Deploy ke Hostinger Shared Hosting
 
@@ -47,7 +46,7 @@ Pastikan public_html/index.php dan public_html/.htaccess ada, file memiliki perm
 
 ### Debug 403 melalui URL
 
-File tersedia di app/hostinger-debug.php dan app/public/hostinger-debug.php. Untuk URL utama, upload app/public/hostinger-debug.php ke public_html/Hostinger, lalu buka https://slategray-skunk-297972.hostingersite.com/hostinger-debug.php. File ini menampilkan status PHP, document root, permission, file CI4, folder writable, dan extension tanpa menampilkan password database. Hapus file tersebut setelah selesai debugging.
+File tersedia di app/hostinger-debug.php dan app/public/hostinger-debug.php. Untuk URL utama, upload app/public/hostinger-debug.php ke public_html/Hostinger, lalu buka https://kkntematikukim.site/hostinger-debug.php. File ini menampilkan status PHP, document root, permission, file CI4, folder writable, dan extension tanpa menampilkan password database. Hapus file tersebut setelah selesai debugging.
 
 **4. Login phpMyAdmin:**
 - Server  : db
