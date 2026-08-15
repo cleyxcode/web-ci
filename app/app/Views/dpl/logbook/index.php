@@ -1,11 +1,28 @@
 <div class="card">
-    <div class="card-head"><h2>Antrian validasi logbook</h2></div>
+    <div class="card-head">
+        <h2>Antrian validasi logbook</h2>
+        <a href="<?= site_url('dpl/monitoring') ?>" class="btn btn-secondary btn-sm">Lihat monitoring</a>
+    </div>
+    <form method="get" class="filter-bar">
+        <div class="field">
+            <label for="logbook-status">Tampilkan status</label>
+            <select id="logbook-status" name="status">
+                <option value="">Semua status</option>
+                <option value="menunggu" <?= ($filterStatus ?? '') === 'menunggu' ? 'selected' : '' ?>>Menunggu</option>
+                <option value="divalidasi" <?= ($filterStatus ?? '') === 'divalidasi' ? 'selected' : '' ?>>Divalidasi</option>
+                <option value="ditolak" <?= ($filterStatus ?? '') === 'ditolak' ? 'selected' : '' ?>>Ditolak</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary btn-sm">Terapkan</button>
+        <?php if (! empty($filterStatus)): ?><a href="<?= site_url('dpl/logbook') ?>" class="btn btn-secondary btn-sm">Reset</a><?php endif; ?>
+    </form>
     <div class="table-wrap">
         <table class="data">
             <thead>
                 <tr>
                     <th>Tanggal</th>
                     <th>Mahasiswa</th>
+                    <th>Kelompok</th>
                     <th>Kegiatan</th>
                     <th>Dok</th>
                     <th>Status</th>
@@ -14,7 +31,7 @@
             </thead>
             <tbody>
             <?php if (empty($logbooks)): ?>
-                <tr><td colspan="6" class="empty">Tidak ada logbook.</td></tr>
+                <tr><td colspan="7" class="empty">Tidak ada logbook.</td></tr>
             <?php else: ?>
                 <?php foreach ($logbooks as $row): ?>
                     <tr>
@@ -22,6 +39,10 @@
                         <td>
                             <strong><?= esc($row['nama_mahasiswa'] ?? $row['nama'] ?? '-') ?></strong><br>
                             <span class="font-mono" style="font-size:0.75rem;color:var(--tinta-redup)"><?= esc($row['npm'] ?? '') ?></span>
+                        </td>
+                        <td>
+                            <?= esc($row['nama_kelompok'] ?? '-') ?><br>
+                            <span class="field-hint"><?= esc(format_alamat($row)) ?></span>
                         </td>
                         <td>
                             <?= esc($row['kegiatan']) ?>

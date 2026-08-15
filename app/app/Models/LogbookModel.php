@@ -25,22 +25,25 @@ class LogbookModel extends Model
 
     public function getPendingByDpl(int $dplId): array
     {
-        return $this->select('logbook.*, mahasiswa.nama as nama_mahasiswa, mahasiswa.npm')
-            ->join('mahasiswa', 'mahasiswa.id = logbook.mahasiswa_id')
-            ->join('kelompok_kkn', 'kelompok_kkn.id = mahasiswa.kelompok_id')
-            ->where('kelompok_kkn.dpl_id', $dplId)
-            ->where('logbook.status', 'menunggu')
-            ->orderBy('logbook.created_at', 'ASC')
-            ->findAll();
+        return $this->getByDpl($dplId, 'menunggu', 'ASC');
     }
 
-    public function getByDpl(int $dplId): array
+    public function getByDpl(int $dplId, ?string $status = null, string $direction = 'DESC'): array
     {
-        return $this->select('logbook.*, mahasiswa.nama as nama_mahasiswa, mahasiswa.npm')
+        $builder = $this->select('logbook.*, mahasiswa.nama as nama_mahasiswa, mahasiswa.npm,
+                kelompok_kkn.nama_kelompok, kelompok_kkn.periode,
+                lokasi_kkn.nama_desa, lokasi_kkn.kecamatan, lokasi_kkn.kabupaten')
             ->join('mahasiswa', 'mahasiswa.id = logbook.mahasiswa_id')
             ->join('kelompok_kkn', 'kelompok_kkn.id = mahasiswa.kelompok_id')
-            ->where('kelompok_kkn.dpl_id', $dplId)
-            ->orderBy('logbook.created_at', 'DESC')
+            ->join('lokasi_kkn', 'lokasi_kkn.id = kelompok_kkn.lokasi_id', 'left')
+            ->where('kelompok_kkn.dpl_id', $dplId);
+
+        if ($status !== null) {
+            $builder->where('logbook.status', $status);
+        }
+
+        return $builder
+            ->orderBy('logbook.created_at', strtoupper($direction) === 'ASC' ? 'ASC' : 'DESC')
             ->findAll();
     }
 

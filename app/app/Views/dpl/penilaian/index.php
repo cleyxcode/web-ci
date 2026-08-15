@@ -6,6 +6,7 @@
                 <tr>
                     <th>NPM</th>
                     <th>Nama</th>
+                    <th>Kelompok</th>
                     <th>Prodi</th>
                     <th>Status</th>
                     <th>Nilai</th>
@@ -14,12 +15,13 @@
             </thead>
             <tbody>
             <?php if (empty($mahasiswa)): ?>
-                <tr><td colspan="6" class="empty">Belum ada mahasiswa bimbingan. Admin menempatkan mahasiswa ke kelompok yang Anda bimbing.</td></tr>
+                <tr><td colspan="7" class="empty">Belum ada mahasiswa bimbingan. Admin menempatkan mahasiswa ke kelompok yang Anda bimbing.</td></tr>
             <?php else: ?>
                 <?php foreach ($mahasiswa as $row): ?>
                     <tr>
                         <td class="font-mono"><?= esc($row['npm']) ?></td>
                         <td><?= esc($row['nama']) ?></td>
+                        <td><?= esc($row['nama_kelompok'] ?? '-') ?></td>
                         <td><?= esc($row['prodi'] ?? '-') ?></td>
                         <td>
                             <?php if (! empty($row['sudah_dinilai'])): ?>

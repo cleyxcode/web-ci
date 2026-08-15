@@ -4,6 +4,19 @@
         <span class="font-mono" style="color:var(--abu-karang)"><?= esc($mahasiswa['npm'] ?? '') ?></span>
     </div>
 
+    <div class="info-grid" style="margin-bottom:16px">
+        <div class="info-card">
+            <span class="info-label">Kelompok</span>
+            <strong><?= esc($mahasiswa['nama_kelompok'] ?? 'Belum ditempatkan') ?></strong>
+            <small><?= esc(format_alamat($mahasiswa)) ?></small>
+        </div>
+        <div class="info-card">
+            <span class="info-label">Periode</span>
+            <strong><?= esc($mahasiswa['periode'] ?? '-') ?></strong>
+            <small><?= format_tanggal($mahasiswa['tanggal_mulai'] ?? null) ?> – <?= format_tanggal($mahasiswa['tanggal_selesai'] ?? null) ?></small>
+        </div>
+    </div>
+
     <div class="stat-row">
         <div class="stat"><div class="label">Logbook</div><div class="value"><?= (int) $jml_logbook ?></div></div>
         <div class="stat"><div class="label">Logbook valid</div><div class="value"><?= (int) $jml_logbook_valid ?></div></div>
@@ -27,7 +40,7 @@
     <?php endif; ?>
 
     <p class="field-hint" style="margin-bottom:16px">
-        Nilai akhir = keaktifan 30% + logbook 30% + laporan 40%. Grade otomatis jika dikosongkan.
+        Nilai akhir = keaktifan 30% + logbook 30% + laporan 40%. Grade dihitung otomatis dari nilai akhir.
     </p>
 
     <?php if (! empty(session('errors'))): ?>
@@ -54,13 +67,8 @@
                 <input type="number" step="0.01" min="0" max="100" name="nilai_laporan" value="<?= esc(old('nilai_laporan', $penilaian['nilai_laporan'] ?? '0')) ?>" required>
             </div>
             <div class="field">
-                <label>Grade (opsional, otomatis jika kosong)</label>
-                <select name="grade">
-                    <option value="">Otomatis</option>
-                    <?php foreach (['A', 'B', 'BC', 'C', 'D'] as $g): ?>
-                        <option value="<?= $g ?>" <?= old('grade', $penilaian['grade'] ?? '') === $g ? 'selected' : '' ?>><?= $g ?></option>
-                    <?php endforeach; ?>
-                </select>
+                <label>Grade otomatis</label>
+                <div class="input-readonly font-mono"><?= esc($penilaian['grade'] ?? 'Dihitung setelah disimpan') ?></div>
             </div>
         </div>
         <div class="field">

@@ -27,6 +27,60 @@
         </div>
     </div>
 
+    <div class="dpl-workspace-grid" style="margin-bottom:16px">
+        <div class="card">
+            <div class="card-head">
+                <h2>Prioritas hari ini</h2>
+                <a href="<?= site_url('dpl/logbook?status=menunggu') ?>" class="btn btn-secondary btn-sm">Buka antrian</a>
+            </div>
+            <?php if (empty($logbookPending) && empty($laporanPending)): ?>
+                <p class="empty">Semua pengajuan sudah diproses. Antrian Anda bersih.</p>
+            <?php else: ?>
+                <?php foreach (array_slice($logbookPending ?? [], 0, 3) as $row): ?>
+                    <div class="dpl-queue-item">
+                        <div>
+                            <strong>Logbook · <?= esc($row['nama_mahasiswa'] ?? '-') ?></strong>
+                            <small><?= esc($row['nama_kelompok'] ?? 'Tanpa kelompok') ?> · <?= format_tanggal($row['tanggal'] ?? null) ?></small>
+                        </div>
+                        <a href="<?= site_url('dpl/logbook?status=menunggu') ?>" class="btn btn-primary btn-sm">Proses</a>
+                    </div>
+                <?php endforeach; ?>
+                <?php foreach (array_slice($laporanPending ?? [], 0, 3) as $row): ?>
+                    <div class="dpl-queue-item">
+                        <div>
+                            <strong>Laporan · <?= esc($row['nama_mahasiswa'] ?? '-') ?></strong>
+                            <small><?= esc($row['nama_kelompok'] ?? 'Tanpa kelompok') ?> · <?= esc($row['judul'] ?? '-') ?></small>
+                        </div>
+                        <a href="<?= site_url('dpl/laporan?status=menunggu') ?>" class="btn btn-primary btn-sm">Review</a>
+                    </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </div>
+        <div class="card">
+            <div class="card-head">
+                <h2>Kelompok bimbingan</h2>
+                <a href="<?= site_url('dpl/monitoring') ?>" class="btn btn-secondary btn-sm">Monitoring</a>
+            </div>
+            <?php if (empty($kelompok)): ?>
+                <p class="empty">Belum ada kelompok yang ditetapkan admin untuk Anda.</p>
+            <?php else: ?>
+                <div class="dpl-group-list">
+                    <?php foreach ($kelompok as $group): ?>
+                        <div class="dpl-group-item">
+                            <div>
+                                <strong><?= esc($group['nama_kelompok']) ?></strong>
+                                <small><?= esc(format_alamat($group)) ?> · <?= (int) ($group['jumlah_anggota'] ?? 0) ?> mahasiswa</small>
+                            </div>
+                            <span class="stempel <?= ! empty($group['latitude']) && ! empty($group['longitude']) ? 'stempel-divalidasi' : 'stempel-menunggu' ?>">
+                                <?= ! empty($group['latitude']) && ! empty($group['longitude']) ? 'Ada titik' : 'Belum ada titik' ?>
+                            </span>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+
     <div class="card" style="margin-bottom:16px">
         <div class="card-head"><h2>Peta lokasi kelompok bimbingan</h2></div>
         <?= view('partials/map', [

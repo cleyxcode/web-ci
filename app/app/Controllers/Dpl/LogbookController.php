@@ -18,9 +18,13 @@ class LogbookController extends PanelController
             return redirect()->to('/dpl/dashboard');
         }
 
+        $status = $this->request->getGet('status');
+        $status = in_array($status, ['menunggu', 'divalidasi', 'ditolak'], true) ? $status : null;
+
         return $this->render('dpl/logbook/index', [
             'title'    => 'Validasi Logbook',
-            'logbooks' => model(LogbookModel::class)->getByDpl($dpl['id']),
+            'logbooks' => model(LogbookModel::class)->getByDpl($dpl['id'], $status),
+            'filterStatus' => $status,
         ]);
     }
 
@@ -40,15 +44,31 @@ class LogbookController extends PanelController
             return redirect()->back()->with('error', 'Logbook bukan dari mahasiswa bimbingan Anda.');
         }
 
-        $action = $this->request->getPost('action');
-        $status = $action === 'validasi' ? 'divalidasi' : 'ditolak';
+        if ($logbook['status'] !== 'menunggu') {
+            return redirect()->back()->with('error', 'Logbook ini sudah diproses dan tidak dapat diubah dari antrian.');
+        }
 
-        $logbookModel->update($id, [
+        $action = $this->request->getPost('action');
+
+        if (! in_array($action, ['validasi', 'tolak'], true)) {
+            return redirect()->back()->with('error', 'Aksi validasi tidak dikenali.');
+        }
+
+        $status = $action === 'validasi' ? 'divalidasi' : 'ditolak';
+        $catatan = trim((string) $this->request->getPost('catatan_dpl'));
+
+        if (mb_strlen($catatan) > 2000) {
+            return redirect()->back()->withInput()->with('error', 'Catatan DPL maksimal 2000 karakter.');
+        }
+
+        if (! $logbookModel->update($id, [
             'status'       => $status,
-            'catatan_dpl'  => $this->request->getPost('catatan_dpl'),
+            'catatan_dpl'  => $catatan !== '' ? $catatan : null,
             'validated_by' => $dpl['id'],
             'validated_at' => date('Y-m-d H:i:s'),
-        ]);
+        ])) {
+            return redirect()->back()->with('error', 'Status logbook gagal diperbarui.');
+        }
 
         AuditLib::log(
             $status,
@@ -57,6 +77,12 @@ class LogbookController extends PanelController
             $id,
             ['status' => $logbook['status']],
             ['status' => $status, 'catatan_dpl' => $this->request->getPost('catatan_dpl')]
+        );
+
+        $this->notifyAdmins(
+            'Logbook telah diproses DPL',
+            ($mhs['nama'] ?? 'Mahasiswa') . ' memiliki logbook yang ' . stempel_label($status) . ' oleh ' . ($dpl['nama'] ?? 'DPL') . '.',
+            $status === 'divalidasi' ? 'success' : 'warning'
         );
 
         $this->notify(

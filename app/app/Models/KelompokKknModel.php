@@ -60,4 +60,14 @@ class KelompokKknModel extends Model
 
         return $builder->findAll();
     }
+
+    public function getByDplId(int $dplId): array
+    {
+        return $this->select('kelompok_kkn.*, lokasi_kkn.nama_desa, lokasi_kkn.kecamatan, lokasi_kkn.kabupaten,
+            (SELECT COUNT(*) FROM mahasiswa WHERE mahasiswa.kelompok_id = kelompok_kkn.id) as jumlah_anggota')
+            ->join('lokasi_kkn', 'lokasi_kkn.id = kelompok_kkn.lokasi_id', 'left')
+            ->where('kelompok_kkn.dpl_id', $dplId)
+            ->orderBy('kelompok_kkn.nama_kelompok', 'ASC')
+            ->findAll();
+    }
 }

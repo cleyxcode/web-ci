@@ -26,6 +26,7 @@ class DashboardController extends PanelController
         $logbookModel   = model(LogbookModel::class);
         $laporanModel   = model(LaporanModel::class);
         $evaluasiModel  = model(EvaluasiModel::class);
+        $kelompokModel  = model(\App\Models\KelompokKknModel::class);
 
         $mahasiswa = $mahasiswaModel->getByDplId($dpl['id']);
 
@@ -38,7 +39,8 @@ class DashboardController extends PanelController
             'totalEvaluasi'   => $evaluasiModel->countAllEvaluasi((int) $dpl['id']),
             'avgEvaluasi'     => $evaluasiModel->averageRating((int) $dpl['id']),
             'kegiatanTerbaru' => $logbookModel->getByDpl($dpl['id']),
-            'petaKelompok'    => model(\App\Models\KelompokKknModel::class)->getWithGps($dpl['id']),
+            'kelompok'        => $kelompokModel->getByDplId((int) $dpl['id']),
+            'petaKelompok'    => $kelompokModel->getWithGps($dpl['id']),
         ]);
     }
 }

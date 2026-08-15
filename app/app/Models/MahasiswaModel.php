@@ -48,10 +48,15 @@ class MahasiswaModel extends Model
 
     public function getByDplId(int $dplId): array
     {
-        return $this->select('mahasiswa.*, users.email')
+        return $this->select('mahasiswa.*, users.email,
+            kelompok_kkn.nama_kelompok, kelompok_kkn.periode, kelompok_kkn.latitude, kelompok_kkn.longitude,
+            lokasi_kkn.nama_desa, lokasi_kkn.kecamatan, lokasi_kkn.kabupaten')
             ->join('users', 'users.id = mahasiswa.user_id')
             ->join('kelompok_kkn', 'kelompok_kkn.id = mahasiswa.kelompok_id')
+            ->join('lokasi_kkn', 'lokasi_kkn.id = kelompok_kkn.lokasi_id', 'left')
             ->where('kelompok_kkn.dpl_id', $dplId)
+            ->orderBy('kelompok_kkn.nama_kelompok', 'ASC')
+            ->orderBy('mahasiswa.nama', 'ASC')
             ->findAll();
     }
 

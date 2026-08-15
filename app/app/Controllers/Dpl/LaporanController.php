@@ -18,9 +18,13 @@ class LaporanController extends PanelController
             return redirect()->to('/dpl/dashboard');
         }
 
+        $status = $this->request->getGet('status');
+        $status = in_array($status, ['menunggu', 'diterima', 'ditolak'], true) ? $status : null;
+
         return $this->render('dpl/laporan/index', [
             'title'   => 'Review Laporan',
-            'laporan' => model(LaporanModel::class)->getByDpl($dpl['id']),
+            'laporan' => model(LaporanModel::class)->getByDpl($dpl['id'], $status),
+            'filterStatus' => $status,
         ]);
     }
 
@@ -40,15 +44,31 @@ class LaporanController extends PanelController
             return redirect()->back()->with('error', 'Laporan bukan dari mahasiswa bimbingan Anda.');
         }
 
-        $action = $this->request->getPost('action');
-        $status = $action === 'terima' ? 'diterima' : 'ditolak';
+        if ($laporan['status'] !== 'menunggu') {
+            return redirect()->back()->with('error', 'Laporan ini sudah direview dan tidak dapat diproses ulang dari antrian.');
+        }
 
-        $laporanModel->update($id, [
+        $action = $this->request->getPost('action');
+
+        if (! in_array($action, ['terima', 'tolak'], true)) {
+            return redirect()->back()->with('error', 'Aksi review tidak dikenali.');
+        }
+
+        $status = $action === 'terima' ? 'diterima' : 'ditolak';
+        $catatan = trim((string) $this->request->getPost('catatan_dpl'));
+
+        if (mb_strlen($catatan) > 2000) {
+            return redirect()->back()->withInput()->with('error', 'Catatan DPL maksimal 2000 karakter.');
+        }
+
+        if (! $laporanModel->update($id, [
             'status'      => $status,
-            'catatan_dpl' => $this->request->getPost('catatan_dpl'),
+            'catatan_dpl' => $catatan !== '' ? $catatan : null,
             'reviewed_by' => $dpl['id'],
             'reviewed_at' => date('Y-m-d H:i:s'),
-        ]);
+        ])) {
+            return redirect()->back()->with('error', 'Status laporan gagal diperbarui.');
+        }
 
         AuditLib::log(
             $status,
@@ -57,6 +77,12 @@ class LaporanController extends PanelController
             $id,
             ['status' => $laporan['status']],
             ['status' => $status, 'catatan_dpl' => $this->request->getPost('catatan_dpl')]
+        );
+
+        $this->notifyAdmins(
+            'Laporan telah direview DPL',
+            'Laporan "' . ($laporan['judul'] ?? 'Laporan') . '" milik ' . ($mhs['nama'] ?? 'Mahasiswa') . ' telah ' . stempel_label($status) . '.',
+            $status === 'diterima' ? 'success' : 'warning'
         );
 
         $this->notify(

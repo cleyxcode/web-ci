@@ -11,12 +11,26 @@
 
 <div class="card">
     <div class="card-head"><h2>Monitoring kegiatan mahasiswa</h2></div>
+    <form method="get" class="filter-bar">
+        <div class="field">
+            <label for="monitoring-status">Filter status</label>
+            <select id="monitoring-status" name="status">
+                <option value="">Semua status</option>
+                <option value="menunggu" <?= ($filterStatus ?? '') === 'menunggu' ? 'selected' : '' ?>>Menunggu</option>
+                <option value="divalidasi" <?= ($filterStatus ?? '') === 'divalidasi' ? 'selected' : '' ?>>Divalidasi</option>
+                <option value="ditolak" <?= ($filterStatus ?? '') === 'ditolak' ? 'selected' : '' ?>>Ditolak</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary btn-sm">Terapkan</button>
+        <?php if (! empty($filterStatus)): ?><a href="<?= site_url('dpl/monitoring') ?>" class="btn btn-secondary btn-sm">Reset</a><?php endif; ?>
+    </form>
     <div class="table-wrap">
         <table class="data">
             <thead>
                 <tr>
                     <th>Tanggal</th>
                     <th>Mahasiswa</th>
+                    <th>Kelompok</th>
                     <th>Kegiatan</th>
                     <th>Lokasi</th>
                     <th>Status</th>
@@ -24,12 +38,13 @@
             </thead>
             <tbody>
             <?php if (empty($logbooks)): ?>
-                <tr><td colspan="5" class="empty">Belum ada kegiatan.</td></tr>
+                <tr><td colspan="6" class="empty">Belum ada kegiatan.</td></tr>
             <?php else: ?>
                 <?php foreach ($logbooks as $row): ?>
                     <tr>
                         <td><?= format_tanggal($row['tanggal'] ?? null) ?></td>
                         <td><?= esc($row['nama_mahasiswa'] ?? $row['nama'] ?? '-') ?></td>
+                        <td><?= esc($row['nama_kelompok'] ?? '-') ?><br><span class="field-hint"><?= esc(format_alamat($row)) ?></span></td>
                         <td><?= esc($row['kegiatan']) ?></td>
                         <td><?= esc($row['lokasi_kegiatan'] ?? '-') ?></td>
                         <td><span class="<?= stempel_class($row['status']) ?>"><?= stempel_label($row['status']) ?></span></td>

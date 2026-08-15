@@ -93,7 +93,6 @@ class PenilaianController extends PanelController
             'nilai_keaktifan' => 'required|decimal|greater_than_equal_to[0]|less_than_equal_to[100]',
             'nilai_logbook'   => 'required|decimal|greater_than_equal_to[0]|less_than_equal_to[100]',
             'nilai_laporan'   => 'required|decimal|greater_than_equal_to[0]|less_than_equal_to[100]',
-            'grade'           => 'permit_empty|in_list[A,B,BC,C,D]',
             'catatan'         => 'permit_empty|max_length[2000]',
         ];
 
@@ -105,7 +104,7 @@ class PenilaianController extends PanelController
         $logbook    = (float) $this->request->getPost('nilai_logbook');
         $laporan    = (float) $this->request->getPost('nilai_laporan');
         $nilaiAkhir = NilaiLib::hitungNilaiAkhir($keaktifan, $logbook, $laporan);
-        $grade      = (string) ($this->request->getPost('grade') ?: NilaiLib::gradeFromScore($nilaiAkhir));
+        $grade      = NilaiLib::gradeFromScore($nilaiAkhir);
 
         $penilaianModel = model(PenilaianModel::class);
         $existing       = $penilaianModel->findByMahasiswa($mahasiswaId);
