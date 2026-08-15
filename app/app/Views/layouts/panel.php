@@ -23,6 +23,7 @@ $iconSvg = static function (string $name): string {
         'chart' => '<path stroke-linecap="round" stroke-linejoin="round" d="M4 19V5M4 19h16M8 17V10M12 17V7M16 17v-4"/>',
         'download' => '<path stroke-linecap="round" stroke-linejoin="round" d="M12 3v12m0 0 4-4m-4 4-4-4M5 21h14"/>',
         'clipboard' => '<path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2"/>',
+        'logout' => '<path stroke-linecap="round" stroke-linejoin="round" d="M10 17l5-5-5-5M15 12H3M21 19V5a2 2 0 0 0-2-2h-6"/>',
     ];
     $path = $icons[$name] ?? $icons['home'];
 
@@ -36,6 +37,7 @@ $initial = strtoupper(mb_substr($user['nama'] ?? 'U', 0, 1));
 $unread = (int) ($unreadCount ?? count($notifikasi ?? []));
 $profilUrl = match ($user['role'] ?? '') {
     'admin' => site_url('admin/profil'),
+    'dpl' => site_url('dpl/profil'),
     'mahasiswa' => site_url('mahasiswa/profil'),
     default => '#',
 };
@@ -146,11 +148,20 @@ $profilUrl = match ($user['role'] ?? '') {
 <nav class="mobile-nav">
     <?php foreach ($mobileMenus as $menu): ?>
         <?php $active = str_starts_with('/' . $uri, rtrim($menu['url'], '/')); ?>
-        <a class="<?= $active ? 'active' : '' ?>" href="<?= esc($menu['url']) ?>">
+        <a class="<?= $active ? 'active' : '' ?>" href="<?= esc($menu['url']) ?>" title="<?= esc($menu['label']) ?>">
             <?= $iconSvg($menu['icon'] ?? 'home') ?>
             <?= esc(explode(' ', $menu['label'])[0]) ?>
         </a>
     <?php endforeach; ?>
+    <?php $profileActive = str_starts_with('/' . $uri, rtrim($profilUrl, '/')); ?>
+    <a class="<?= $profileActive ? 'active' : '' ?>" href="<?= esc($profilUrl) ?>" title="Profil">
+        <?= $iconSvg('user') ?>
+        Profil
+    </a>
+    <a href="<?= site_url('logout') ?>" title="Keluar">
+        <?= $iconSvg('logout') ?>
+        Keluar
+    </a>
 </nav>
 
 <div id="toast" class="toast hidden" role="status" aria-live="polite">

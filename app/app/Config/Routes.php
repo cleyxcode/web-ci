@@ -97,6 +97,9 @@ $routes->group('dpl', ['filter' => ['auth', 'role:dpl']], static function ($rout
     $routes->get('export/logbook', 'Dpl\ExportController::logbook');
     $routes->get('export/laporan', 'Dpl\ExportController::laporan');
     $routes->get('export/nilai', 'Dpl\ExportController::nilai');
+    $routes->get('profil', 'Dpl\ProfilController::index');
+    $routes->post('profil', 'Dpl\ProfilController::update');
+    $routes->post('profil/password', 'Dpl\ProfilController::changePassword');
 });
 
 // Mahasiswa

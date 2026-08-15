@@ -534,6 +534,44 @@ a:hover {
   gap: 0 16px;
 }
 
+.field-full {
+  grid-column: 1 / -1;
+}
+
+.inline-create {
+  border: 1px solid var(--border-lembut);
+  border-radius: var(--radius-btn);
+  background: var(--inset);
+}
+
+.inline-create summary {
+  padding: 10px 12px;
+  color: var(--biru-laut-gelap);
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.inline-create-body {
+  padding: 0 12px 12px;
+  border-top: 1px solid var(--border-lembut);
+}
+
+.location-coordinates .field {
+  margin-bottom: 0;
+}
+
+.map-editor-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.map-editor-actions .field-hint {
+  margin: 0;
+}
+
 .form-actions {
   display: flex;
   gap: 10px;
@@ -794,14 +832,19 @@ table.data tr:hover td {
   }
 
   .mobile-nav a {
+    flex: 1 1 0;
+    min-width: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 2px;
     font-size: 0.65rem;
     color: var(--abu-karang);
-    padding: 4px 8px;
+    padding: 4px 2px;
     font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .mobile-nav a.active {

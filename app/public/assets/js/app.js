@@ -145,12 +145,112 @@
     });
   };
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initMaps);
-  } else {
+  const initMapEditors = () => {
+    if (!window.L) return;
+
+    document.querySelectorAll('[data-map-editor="1"]').forEach((el) => {
+      if (el.dataset.mapReady === '1') return;
+
+      const wrapper = el.closest('form') || document;
+      const latitudeInput = wrapper.querySelector('[data-location-latitude], #admin-location-latitude');
+      const longitudeInput = wrapper.querySelector('[data-location-longitude], #admin-location-longitude');
+      const status = wrapper.querySelector('[data-location-status]');
+      const useButton = wrapper.querySelector('[data-location-use]');
+      const clearButton = wrapper.querySelector('[data-location-clear]');
+      const initialLatitude = Number(el.dataset.lat);
+      const initialLongitude = Number(el.dataset.lng);
+      const hasInitialPoint = Number.isFinite(initialLatitude)
+        && Number.isFinite(initialLongitude)
+        && initialLatitude >= -90
+        && initialLatitude <= 90
+        && initialLongitude >= -180
+        && initialLongitude <= 180;
+      const defaultCenter = [-3.695, 128.183];
+      const map = L.map(el).setView(hasInitialPoint ? [initialLatitude, initialLongitude] : defaultCenter, hasInitialPoint ? 15 : 12);
+      let marker = null;
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap',
+        maxZoom: 19,
+      }).addTo(map);
+
+      const setStatus = (message) => {
+        if (status) status.textContent = message;
+      };
+
+      const setPoint = (latitude, longitude, updateInputs = true) => {
+        if (marker) {
+          marker.setLatLng([latitude, longitude]);
+        } else {
+          marker = L.marker([latitude, longitude]).addTo(map);
+        }
+
+        map.setView([latitude, longitude], Math.max(map.getZoom(), 15));
+
+        if (updateInputs) {
+          if (latitudeInput) latitudeInput.value = latitude.toFixed(7);
+          if (longitudeInput) longitudeInput.value = longitude.toFixed(7);
+        }
+
+        setStatus(`Titik dipilih: ${latitude.toFixed(7)}, ${longitude.toFixed(7)}`);
+      };
+
+      const clearPoint = () => {
+        if (marker) {
+          map.removeLayer(marker);
+          marker = null;
+        }
+
+        if (latitudeInput) latitudeInput.value = '';
+        if (longitudeInput) longitudeInput.value = '';
+        setStatus('Belum ada titik dipilih.');
+      };
+
+      const syncInputs = () => {
+        const latitude = Number(latitudeInput?.value);
+        const longitude = Number(longitudeInput?.value);
+
+        if (Number.isFinite(latitude) && Number.isFinite(longitude)
+          && latitude >= -90 && latitude <= 90 && longitude >= -180 && longitude <= 180) {
+          setPoint(latitude, longitude, false);
+        }
+      };
+
+      if (hasInitialPoint) setPoint(initialLatitude, initialLongitude, false);
+      el.addEventListener('click', () => map.invalidateSize());
+      map.on('click', (event) => setPoint(event.latlng.lat, event.latlng.lng));
+      latitudeInput?.addEventListener('change', syncInputs);
+      longitudeInput?.addEventListener('change', syncInputs);
+      clearButton?.addEventListener('click', clearPoint);
+      useButton?.addEventListener('click', () => {
+        if (! navigator.geolocation) {
+          setStatus('Browser tidak mendukung pengambilan lokasi.');
+          return;
+        }
+
+        setStatus('Mengambil lokasi perangkat…');
+        navigator.geolocation.getCurrentPosition(
+          (position) => setPoint(position.coords.latitude, position.coords.longitude),
+          () => setStatus('Lokasi perangkat tidak dapat diambil. Pilih titik di peta.'),
+          { enableHighAccuracy: true, timeout: 10000 }
+        );
+      });
+      el.dataset.mapReady = '1';
+      setTimeout(() => map.invalidateSize(), 120);
+    });
+  };
+
+  const initAllMaps = () => {
     initMaps();
+    initMapEditors();
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAllMaps);
+  } else {
+    initAllMaps();
   }
-  window.addEventListener('load', initMaps);
+  window.addEventListener('load', initAllMaps);
 
   /* ----- Pusher realtime ----- */
   if (window.KKN?.pusherEnabled && window.Pusher && window.KKN.userId) {

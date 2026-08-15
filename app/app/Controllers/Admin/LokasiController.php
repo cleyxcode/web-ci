@@ -3,6 +3,7 @@
 namespace App\Controllers\Admin;
 
 use App\Controllers\PanelController;
+use App\Models\KelompokKknModel;
 use App\Models\LokasiKknModel;
 
 class LokasiController extends PanelController
@@ -74,6 +75,14 @@ class LokasiController extends PanelController
 
     public function delete(int $id)
     {
+        $usedByGroups = model(KelompokKknModel::class)
+            ->where('lokasi_id', $id)
+            ->countAllResults();
+
+        if ($usedByGroups > 0) {
+            return redirect()->to('/admin/lokasi')->with('error', 'Lokasi tidak dapat dihapus karena sudah dipakai kelompok KKN.');
+        }
+
         $this->lokasiModel->delete($id);
 
         return redirect()->to('/admin/lokasi')->with('success', 'Lokasi dihapus.');

@@ -38,7 +38,7 @@ $ketuaId = (int) ($kelompok['ketua_mahasiswa_id'] ?? 0);
 <?php if ($hasGps): ?>
 <div class="card" style="margin-bottom:16px">
     <div class="card-head">
-        <h2>Peta lokasi GPS lapangan</h2>
+        <h2>Titik lokasi penelitian</h2>
         <small class="field-hint">Ditetapkan <?= format_tanggal($kelompok['lokasi_gps_at'] ?? null) ?></small>
     </div>
     <?= view('partials/map', [
@@ -49,7 +49,7 @@ $ketuaId = (int) ($kelompok['ketua_mahasiswa_id'] ?? 0);
     ]) ?>
 </div>
 <?php else: ?>
-<div class="alert alert-info" style="margin-bottom:16px">Lokasi GPS belum ditetapkan. Ketua kelompok dapat mengirim koordinat dari menu Tim KKN.</div>
+<div class="alert alert-info" style="margin-bottom:16px">Titik lokasi penelitian belum ditetapkan. Admin dapat memilihnya melalui tombol <strong>Edit info</strong>, atau ketua kelompok dapat mengirim koordinat dari menu Tim KKN.</div>
 <?php endif; ?>
 
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px" class="dash-grid">
