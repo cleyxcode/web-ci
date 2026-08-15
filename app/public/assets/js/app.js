@@ -30,17 +30,108 @@
     });
   }
 
-  /* ----- Toast ----- */
-  window.showToast = (msg, type = 'info') => {
-    const toast = document.getElementById('toast');
-    const msgEl = document.getElementById('toast-message');
-    if (!toast || !msgEl) return;
-    toast.className = `toast toast-${type}`;
-    msgEl.textContent = msg;
+  /* ----- UI notifications ----- */
+  const toastMeta = {
+    success: { title: 'Berhasil', icon: '✓' },
+    error: { title: 'Perlu diperiksa', icon: '!' },
+    danger: { title: 'Perlu diperiksa', icon: '!' },
+    warning: { title: 'Perhatian', icon: '!' },
+    info: { title: 'Informasi', icon: 'i' },
+  };
+  const toast = document.getElementById('toast');
+  const toastTitle = document.getElementById('toast-title');
+  const toastMessage = document.getElementById('toast-message');
+  const toastIcon = document.getElementById('toast-icon');
+  const toastClose = document.getElementById('toast-close');
+
+  const hideToast = () => {
+    if (toast) toast.classList.add('hidden');
+  };
+
+  window.showToast = (msg, type = 'info', title = '') => {
+    if (!toast || !toastMessage) return;
+    const safeType = toastMeta[type] ? type : 'info';
+    const meta = toastMeta[safeType];
+    toast.className = `toast toast-${safeType}`;
+    if (toastTitle) toastTitle.textContent = title || meta.title;
+    toastMessage.textContent = msg || '';
+    if (toastIcon) toastIcon.textContent = meta.icon;
     toast.classList.remove('hidden');
     clearTimeout(window._toastTimer);
-    window._toastTimer = setTimeout(() => toast.classList.add('hidden'), 4000);
+    window._toastTimer = setTimeout(hideToast, 5200);
   };
+
+  toastClose?.addEventListener('click', hideToast);
+
+  document.querySelectorAll('.flash-message[data-toast-message]').forEach((flash) => {
+    showToast(
+      flash.dataset.toastMessage,
+      flash.dataset.toastType || 'info',
+      flash.dataset.toastTitle || '',
+    );
+    flash.remove();
+  });
+
+  /* ----- Custom confirmation card: never use the browser confirm dialog ----- */
+  const confirmModal = document.getElementById('ui-confirm');
+  const confirmMessage = document.getElementById('ui-confirm-message');
+  const confirmSubmit = document.getElementById('ui-confirm-submit');
+  let pendingForm = null;
+  let lastFocusedElement = null;
+
+  const closeConfirm = () => {
+    if (!confirmModal) return;
+    confirmModal.classList.add('hidden');
+    pendingForm = null;
+    lastFocusedElement?.focus?.();
+  };
+
+  const openConfirm = (form) => {
+    if (!confirmModal || !confirmMessage || !confirmSubmit) return;
+    pendingForm = form;
+    lastFocusedElement = document.activeElement;
+    confirmMessage.textContent = form.dataset.confirm || 'Apakah Anda yakin ingin melanjutkan tindakan ini?';
+    confirmModal.classList.remove('hidden');
+    confirmSubmit.focus();
+  };
+
+  document.querySelectorAll('form[data-confirm]').forEach((form) => {
+    form.addEventListener('submit', (event) => {
+      if (form.dataset.confirmed === '1') return;
+      event.preventDefault();
+      openConfirm(form);
+    });
+  });
+
+  confirmSubmit?.addEventListener('click', () => {
+    if (!pendingForm) return closeConfirm();
+    pendingForm.dataset.confirmed = '1';
+    pendingForm.submit();
+  });
+
+  confirmModal?.querySelectorAll('[data-confirm-cancel]').forEach((button) => {
+    button.addEventListener('click', closeConfirm);
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && confirmModal && !confirmModal.classList.contains('hidden')) {
+      closeConfirm();
+    }
+  });
+
+  /* ----- Shared responsive table semantics ----- */
+  document.querySelectorAll('.table-wrap table.data').forEach((table) => {
+    const wrapper = table.closest('.table-wrap');
+    const headers = [...table.querySelectorAll('thead th')].map((header) => header.textContent.trim());
+    wrapper?.classList.add('responsive-table');
+    table.querySelectorAll('tbody tr').forEach((row) => {
+      row.querySelectorAll('td').forEach((cell, index) => {
+        if (!cell.classList.contains('empty') && !cell.dataset.label) {
+          cell.dataset.label = headers[index] || 'Data';
+        }
+      });
+    });
+  });
 
   /* ----- Notifications ----- */
   const notifBtn = document.getElementById('notif-btn');
@@ -157,8 +248,10 @@
       const status = wrapper.querySelector('[data-location-status]');
       const useButton = wrapper.querySelector('[data-location-use]');
       const clearButton = wrapper.querySelector('[data-location-clear]');
-      const initialLatitude = Number(el.dataset.lat);
-      const initialLongitude = Number(el.dataset.lng);
+      const rawLatitude = (el.dataset.lat || '').trim();
+      const rawLongitude = (el.dataset.lng || '').trim();
+      const initialLatitude = rawLatitude === '' ? NaN : Number(rawLatitude);
+      const initialLongitude = rawLongitude === '' ? NaN : Number(rawLongitude);
       const hasInitialPoint = Number.isFinite(initialLatitude)
         && Number.isFinite(initialLongitude)
         && initialLatitude >= -90
@@ -207,8 +300,10 @@
       };
 
       const syncInputs = () => {
-        const latitude = Number(latitudeInput?.value);
-        const longitude = Number(longitudeInput?.value);
+        const rawLatitude = (latitudeInput?.value || '').trim();
+        const rawLongitude = (longitudeInput?.value || '').trim();
+        const latitude = rawLatitude === '' ? NaN : Number(rawLatitude);
+        const longitude = rawLongitude === '' ? NaN : Number(rawLongitude);
 
         if (Number.isFinite(latitude) && Number.isFinite(longitude)
           && latitude >= -90 && latitude <= 90 && longitude >= -180 && longitude <= 180) {
@@ -257,7 +352,7 @@
     const pusher = new Pusher(window.KKN.pusherKey, { cluster: window.KKN.pusherCluster });
     const channel = pusher.subscribe(`user-${window.KKN.userId}`);
     channel.bind('notifikasi.new', (data) => {
-      showToast(data.judul || 'Notifikasi baru', data.type || 'info');
+      showToast(data.pesan || data.judul || 'Notifikasi baru', data.type || 'info', data.judul || 'Notifikasi baru');
       const dot = document.getElementById('notif-dot');
       if (!dot && notifBtn) {
         const span = document.createElement('span');
@@ -278,7 +373,7 @@
     channel.bind_global((event, data) => {
       if (event.startsWith('pusher:')) return;
       if (event !== 'notifikasi.new' && data?.nama_mahasiswa) {
-        showToast(`Aktivitas: ${data.nama_mahasiswa}`, 'info');
+        showToast(`Aktivitas: ${data.nama_mahasiswa}`, 'info', 'Aktivitas baru');
       }
     });
   }

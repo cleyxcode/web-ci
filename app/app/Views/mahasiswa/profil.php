@@ -3,6 +3,9 @@
 /** @var array $profil     — data dari tabel users (nama, email, username) */
 $npm = $mahasiswa['npm'] ?? '';
 $npmKosong = empty($npm) || str_starts_with($npm, 'TEMP_');
+$hasKelompok = ! empty($mahasiswa['kelompok_id']);
+$hasGps = ! empty($mahasiswa['latitude']) && ! empty($mahasiswa['longitude']);
+$isKetua = ! empty($isKetua);
 ?>
 
 <?php if ($npmKosong): ?>
@@ -87,7 +90,49 @@ $npmKosong = empty($npm) || str_starts_with($npm, 'TEMP_');
         </form>
     </div>
 
-    <!-- Kartu 3: Ubah password —— span dua kolom di layar lebar -->
+    <!-- Kartu 3: Lokasi KKN berbasis peta -->
+    <div class="card profile-location-card" style="grid-column:1/-1">
+        <div class="card-head">
+            <div>
+                <h2>Lokasi KKN</h2>
+                <p class="field-hint" style="margin:4px 0 0">Titik lokasi dipilih langsung lewat peta, bukan diketik sebagai data alokasi.</p>
+            </div>
+            <a href="<?= site_url('mahasiswa/tim') ?>" class="btn btn-secondary btn-sm">Buka tim KKN</a>
+        </div>
+
+        <?php if (! $hasKelompok): ?>
+            <p class="empty" style="padding:24px 0">Anda belum ditempatkan di kelompok KKN.</p>
+        <?php elseif ($isKetua): ?>
+            <form method="post" action="<?= site_url('mahasiswa/tim/gps') ?>" class="location-picker-form">
+                <?= csrf_field() ?>
+                <p class="location-picker-note">Sebagai ketua kelompok, klik peta untuk memindahkan titik lokasi penelitian.</p>
+                <div class="location-picker">
+                    <div id="student-profile-location-map" class="map-box map-box-lg" data-map-editor="1"
+                         data-lat="<?= esc($mahasiswa['latitude'] ?? '') ?>" data-lng="<?= esc($mahasiswa['longitude'] ?? '') ?>"></div>
+                    <input type="hidden" name="latitude" data-location-latitude value="<?= esc($mahasiswa['latitude'] ?? '') ?>" required>
+                    <input type="hidden" name="longitude" data-location-longitude value="<?= esc($mahasiswa['longitude'] ?? '') ?>" required>
+                </div>
+                <div class="map-editor-actions">
+                    <button type="button" class="btn btn-secondary btn-sm" data-location-use>Gunakan lokasi saya</button>
+                    <button type="button" class="btn btn-secondary btn-sm" data-location-clear>Hapus titik</button>
+                    <button type="submit" class="btn btn-primary btn-sm">Simpan titik lokasi</button>
+                    <span class="field-hint" data-location-status><?= $hasGps ? 'Titik tersimpan dan dapat diperbarui.' : 'Belum ada titik dipilih.' ?></span>
+                </div>
+            </form>
+        <?php elseif ($hasGps): ?>
+            <?= view('partials/map', [
+                'mapId'   => 'map-profil-mhs',
+                'markers' => [$mahasiswa],
+                'zoom'    => 15,
+                'class'   => 'map-box',
+            ]) ?>
+            <p class="field-hint" style="margin-top:8px">Titik lokasi ditetapkan oleh ketua kelompok.</p>
+        <?php else: ?>
+            <p class="empty" style="padding:24px 0">Lokasi GPS belum ditetapkan oleh ketua kelompok.</p>
+        <?php endif; ?>
+    </div>
+
+    <!-- Kartu 4: Ubah password —— span dua kolom di layar lebar -->
     <div class="card" style="grid-column:1/-1">
         <div class="card-head"><h2>Ubah Password</h2></div>
         <div style="max-width:420px">

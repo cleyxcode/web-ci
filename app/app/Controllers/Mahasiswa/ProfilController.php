@@ -11,12 +11,16 @@ class ProfilController extends PanelController
     public function index()
     {
         $user      = model(UserModel::class)->find(current_user()['id']);
-        $mahasiswa = model(MahasiswaModel::class)->findByUserId((int) current_user()['id']);
+        $mhsModel  = model(MahasiswaModel::class);
+        $mahasiswa = $mhsModel->findByUserId((int) current_user()['id']);
+        $detail    = $mahasiswa ? $mhsModel->getWithRelations((int) $mahasiswa['id']) : [];
 
         return $this->render('mahasiswa/profil', [
             'title'     => 'Profil Saya',
             'profil'    => $user,
-            'mahasiswa' => $mahasiswa ?? [],
+            'mahasiswa' => $detail ?: ($mahasiswa ?? []),
+            'isKetua'   => ! empty($detail['kelompok_id'])
+                && (int) ($detail['ketua_mahasiswa_id'] ?? 0) === (int) ($detail['id'] ?? 0),
         ]);
     }
 

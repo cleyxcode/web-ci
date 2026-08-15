@@ -24,7 +24,7 @@
         <button type="submit" class="btn btn-primary btn-sm">Terapkan</button>
         <?php if (! empty($filterStatus)): ?><a href="<?= site_url('dpl/monitoring') ?>" class="btn btn-secondary btn-sm">Reset</a><?php endif; ?>
     </form>
-    <div class="table-wrap">
+    <div class="table-wrap responsive-table">
         <table class="data">
             <thead>
                 <tr>
@@ -42,12 +42,12 @@
             <?php else: ?>
                 <?php foreach ($logbooks as $row): ?>
                     <tr>
-                        <td><?= format_tanggal($row['tanggal'] ?? null) ?></td>
-                        <td><?= esc($row['nama_mahasiswa'] ?? $row['nama'] ?? '-') ?></td>
-                        <td><?= esc($row['nama_kelompok'] ?? '-') ?><br><span class="field-hint"><?= esc(format_alamat($row)) ?></span></td>
-                        <td><?= esc($row['kegiatan']) ?></td>
-                        <td><?= esc($row['lokasi_kegiatan'] ?? '-') ?></td>
-                        <td><span class="<?= stempel_class($row['status']) ?>"><?= stempel_label($row['status']) ?></span></td>
+                        <td data-label="Tanggal"><?= format_tanggal($row['tanggal'] ?? null) ?></td>
+                        <td data-label="Mahasiswa"><?= esc($row['nama_mahasiswa'] ?? $row['nama'] ?? '-') ?></td>
+                        <td data-label="Kelompok"><?= esc($row['nama_kelompok'] ?? '-') ?><br><span class="field-hint"><?= esc(format_alamat($row)) ?></span></td>
+                        <td data-label="Kegiatan"><?= esc($row['kegiatan']) ?></td>
+                        <td data-label="Lokasi"><?= esc($row['lokasi_kegiatan'] ?? '-') ?></td>
+                        <td data-label="Status"><span class="<?= stempel_class($row['status']) ?>"><?= stempel_label($row['status']) ?></span></td>
                     </tr>
                 <?php endforeach; ?>
             <?php endif; ?>

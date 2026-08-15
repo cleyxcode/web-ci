@@ -1,10 +1,10 @@
 # KKN Tematik UKIM — Interface System
 
 ## Direction & Feel
-Utilitarian-academic, nuansa lapangan Maluku. Tenang, padat-informatif, borders-only depth.
+Field Command Center: utilitarian-academic dengan nuansa lapangan Maluku. Hangat seperti logbook, terarah seperti papan komando, dan peta menjadi sumber kebenaran lokasi.
 
 ## Depth Strategy
-Borders-only. No drop shadows. Surface elevation via lightness shift only.
+Quiet layered surfaces. Border rgba tetap menjadi struktur utama; kartu memakai shadow sangat lembut untuk terangkat dari kanvas, tanpa shadow dramatis.
 
 ## Spacing
 Base unit: 4px. Scale: 8, 12, 16, 24, 32, 48.
@@ -25,11 +25,14 @@ Base unit: 4px. Scale: 8, 12, 16, 24, 32, 48.
 Status badges use dashed border, slight rotation, uppercase mono. Classes: `.stempel`, `.stempel-menunggu`, `.stempel-divalidasi`, `.stempel-ditolak`, `.stempel-diterima`.
 
 ## Components
-- Sidebar: same bg as canvas, 240px, border-right
-- Buttons: 8px radius, primary fill biru-laut
-- Cards: 12px radius, kapas-gading, border only
-- Inputs: inset #EDE9E3, 8px radius
+- Sidebar: same world as canvas, 264px, border-right, active rail; collapses to horizontal bottom nav below 768px
+- Buttons: 10px radius, minimum 42px, primary fill biru-laut
+- Cards: 16px radius, kapas-gading, border rgba + whisper-soft shadow
+- Inputs: inset #EDE9E3, 10px radius, focus ring biru-laut
+- Map picker: Leaflet map with click/GPS controls; coordinate inputs are hidden implementation fields
 
 ## Role Layouts
 - auth.php — centered card login/OTP
 - panel.php — shared admin/dpl/mahasiswa shell
+- dpl dashboard — validation queue hero, action metric, responsive card-based tables
+- mahasiswa profile/tim — location card and map picker instead of manual coordinate allocation

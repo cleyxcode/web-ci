@@ -35,7 +35,7 @@
                         <td class="actions">
                             <a class="btn btn-primary btn-sm" href="<?= site_url('admin/kkn/' . $row['id']) ?>">Kelola</a>
                             <a class="btn btn-secondary btn-sm" href="<?= site_url('admin/kkn/' . $row['id'] . '/edit') ?>">Edit</a>
-                            <form method="post" action="<?= site_url('admin/kkn/' . $row['id'] . '/delete') ?>" onsubmit="return confirm('Hapus kelompok ini? Mahasiswa akan dikeluarkan.')">
+                            <form method="post" action="<?= site_url('admin/kkn/' . $row['id'] . '/delete') ?>" data-confirm="Hapus kelompok ini? Mahasiswa akan dikeluarkan dari kelompok.">
                                 <?= csrf_field() ?>
                                 <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
                             </form>

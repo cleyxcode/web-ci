@@ -51,7 +51,24 @@ $ketuaId = (int) ($k['ketua_mahasiswa_id'] ?? 0);
             <?php endif; ?>
         </div>
 
-        <?php if ($hasGps): ?>
+        <?php if ($isKetua): ?>
+            <form method="post" action="<?= site_url('mahasiswa/tim/gps') ?>" id="form-gps" class="location-picker-form">
+                    <?= csrf_field() ?>
+                    <p class="location-picker-note">Klik titik lokasi penelitian di peta, atau gunakan lokasi perangkat saat berada di lapangan.</p>
+                    <div class="location-picker">
+                        <div id="student-location-map" class="map-box map-box-lg" data-map-editor="1"
+                             data-lat="<?= esc($k['latitude'] ?? '') ?>" data-lng="<?= esc($k['longitude'] ?? '') ?>"></div>
+                        <input type="hidden" name="latitude" data-location-latitude value="<?= esc($k['latitude'] ?? '') ?>" required>
+                        <input type="hidden" name="longitude" data-location-longitude value="<?= esc($k['longitude'] ?? '') ?>" required>
+                    </div>
+                    <div class="map-editor-actions">
+                        <button type="button" class="btn btn-secondary" data-location-use>Gunakan lokasi saya</button>
+                        <button type="button" class="btn btn-secondary" data-location-clear>Hapus titik</button>
+                        <button type="submit" class="btn btn-primary">Simpan titik lokasi</button>
+                        <span class="field-hint" data-location-status><?= $hasGps ? 'Titik tersimpan. Anda dapat memindahkannya di peta.' : 'Belum ada titik dipilih.' ?></span>
+                    </div>
+            </form>
+        <?php elseif ($hasGps): ?>
             <?= view('partials/map', [
                 'mapId'   => 'map-tim',
                 'markers' => [$k],
@@ -59,40 +76,10 @@ $ketuaId = (int) ($k['ketua_mahasiswa_id'] ?? 0);
                 'class'   => 'map-box',
             ]) ?>
             <p class="field-hint" style="margin-top:8px">
-                Koordinat: <span class="font-mono"><?= esc($k['latitude']) ?>, <?= esc($k['longitude']) ?></span>
+                Titik resmi kelompok: <span class="font-mono"><?= esc($k['latitude']) ?>, <?= esc($k['longitude']) ?></span>
             </p>
-        <?php else: ?>
-            <p class="empty" style="padding:12px 0">Lokasi GPS belum ditetapkan oleh ketua kelompok.</p>
-        <?php endif; ?>
-
-        <?php if ($isKetua): ?>
-            <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border-lembut)">
-                <p style="margin:0 0 12px;font-size:0.9rem;color:var(--abu-karang)">
-                    Sebagai ketua, Anda dapat mengambil lokasi perangkat saat ini atau mengisi koordinat manual.
-                </p>
-                <form method="post" action="<?= site_url('mahasiswa/tim/gps') ?>" id="form-gps">
-                    <?= csrf_field() ?>
-                    <div class="form-grid">
-                        <div class="field">
-                            <label>Latitude</label>
-                            <input type="text" name="latitude" id="gps-lat" class="font-mono" required
-                                   value="<?= esc($k['latitude'] ?? '') ?>" placeholder="-3.6950000">
-                        </div>
-                        <div class="field">
-                            <label>Longitude</label>
-                            <input type="text" name="longitude" id="gps-lng" class="font-mono" required
-                                   value="<?= esc($k['longitude'] ?? '') ?>" placeholder="128.1830000">
-                        </div>
-                    </div>
-                    <div class="form-actions" style="border:none;padding-top:0">
-                        <button type="button" class="btn btn-secondary" id="btn-ambil-gps">Ambil lokasi perangkat</button>
-                        <button type="submit" class="btn btn-primary">Simpan lokasi GPS</button>
-                    </div>
-                    <p id="gps-status" class="field-hint"></p>
-                </form>
-            </div>
         <?php elseif (! $hasGps): ?>
-            <p class="field-hint">Hubungi ketua kelompok agar lokasi GPS lapangan ditetapkan.</p>
+            <p class="empty" style="padding:12px 0">Lokasi GPS belum ditetapkan oleh ketua kelompok.</p>
         <?php endif; ?>
     </div>
 
@@ -142,28 +129,4 @@ $ketuaId = (int) ($k['ketua_mahasiswa_id'] ?? 0);
         </div>
     </div>
 
-    <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const btn = document.getElementById('btn-ambil-gps');
-      const status = document.getElementById('gps-status');
-      if (btn) {
-        btn.addEventListener('click', () => {
-          if (!navigator.geolocation) {
-            status.textContent = 'Browser tidak mendukung geolocation.';
-            return;
-          }
-          status.textContent = 'Mengambil lokasi…';
-          navigator.geolocation.getCurrentPosition(
-            (pos) => {
-              document.getElementById('gps-lat').value = pos.coords.latitude.toFixed(7);
-              document.getElementById('gps-lng').value = pos.coords.longitude.toFixed(7);
-              status.textContent = 'Lokasi perangkat berhasil diambil. Klik Simpan untuk menyimpan.';
-            },
-            () => { status.textContent = 'Gagal mengambil lokasi. Izinkan akses lokasi di browser.'; },
-            { enableHighAccuracy: true, timeout: 15000 }
-          );
-        });
-      }
-    });
-    </script>
 <?php endif; ?>

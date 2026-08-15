@@ -67,7 +67,7 @@ $profilUrl = match ($user['role'] ?? '') {
 </head>
 <body>
 <div class="panel">
-    <aside class="sidebar">
+    <aside class="sidebar" aria-label="Navigasi utama">
         <div class="sidebar-brand">
             <a class="mark" href="<?= esc($menus[0]['url'] ?? '/') ?>">
                 <span>UK</span>
@@ -76,7 +76,7 @@ $profilUrl = match ($user['role'] ?? '') {
             <small>Monitoring lapangan</small>
         </div>
         <div class="nav-label">Menu</div>
-        <nav>
+        <nav class="sidebar-nav" aria-label="Menu panel">
             <?php foreach ($menus as $menu): ?>
                 <?php $active = str_starts_with('/' . $uri, rtrim($menu['url'], '/')) || $uri === ltrim($menu['url'], '/'); ?>
                 <a class="nav-item <?= $active ? 'active' : '' ?>" href="<?= esc($menu['url']) ?>">
@@ -101,7 +101,7 @@ $profilUrl = match ($user['role'] ?? '') {
         <header class="topbar">
             <div>
                 <h1><?= esc($title ?? '') ?></h1>
-                <p class="sub">Fakultas Ilmu Komputer · UKIM</p>
+                <p class="sub"><span class="topbar-pulse"></span> Fakultas Ilmu Komputer · UKIM</p>
             </div>
             <div class="topbar-actions">
                 <button type="button" class="theme-toggle" id="theme-toggle" title="Mode gelap/terang" aria-label="Toggle dark mode">
@@ -164,8 +164,29 @@ $profilUrl = match ($user['role'] ?? '') {
     </a>
 </nav>
 
-<div id="toast" class="toast hidden" role="status" aria-live="polite">
-    <span id="toast-message"></span>
+<div id="toast" class="toast hidden" role="status" aria-live="polite" aria-atomic="true">
+    <div class="toast-icon" id="toast-icon" aria-hidden="true">i</div>
+    <div class="toast-content">
+        <strong id="toast-title">Notifikasi</strong>
+        <p id="toast-message"></p>
+    </div>
+    <button type="button" class="toast-close" id="toast-close" aria-label="Tutup notifikasi">&times;</button>
+</div>
+
+<div id="ui-confirm" class="ui-modal hidden" role="dialog" aria-modal="true" aria-labelledby="ui-confirm-title" aria-describedby="ui-confirm-message">
+    <div class="ui-modal-backdrop" data-confirm-cancel></div>
+    <div class="ui-modal-card">
+        <div class="ui-modal-icon" aria-hidden="true">!</div>
+        <div class="ui-modal-content">
+            <p class="ui-modal-kicker">Konfirmasi tindakan</p>
+            <h2 id="ui-confirm-title">Lanjutkan tindakan ini?</h2>
+            <p id="ui-confirm-message"></p>
+            <div class="ui-modal-actions">
+                <button type="button" class="btn btn-secondary" data-confirm-cancel>Batal</button>
+                <button type="button" class="btn btn-danger-solid" id="ui-confirm-submit">Ya, lanjutkan</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>

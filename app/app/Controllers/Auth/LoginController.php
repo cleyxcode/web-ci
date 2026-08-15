@@ -40,7 +40,7 @@ class LoginController extends BaseController
         $user     = $this->userModel->findByLogin($login);
 
         if (! $user || ! password_verify($password, $user['password'])) {
-            return redirect()->back()->withInput()->with('error', 'Username/email atau password salah.');
+            return redirect()->back()->withInput()->with('error', 'Username, email, NPM, atau NIDN dan password tidak cocok.');
         }
 
         session()->set([
@@ -61,6 +61,11 @@ class LoginController extends BaseController
         session()->destroy();
 
         return redirect()->to('/login')->with('success', 'Anda telah logout.');
+    }
+
+    public function registrationDisabled()
+    {
+        return redirect()->to('/login')->with('warning', 'Pendaftaran ditutup. Akun mahasiswa dibuat oleh admin kampus.');
     }
 
     private function dashboardUrl(string $role): string

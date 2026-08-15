@@ -121,7 +121,7 @@ $allMhs = $mahasiswa ?? [];
                                     <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-5m-1.414-9.414a2 2 0 1 1 2.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                                 </a>
                                 <form method="post" action="<?= site_url('admin/mahasiswa/' . $row['id'] . '/delete') ?>"
-                                      onsubmit="return confirm('Hapus akun mahasiswa <?= esc($row['nama'] ?? '') ?>?')">
+                                      data-confirm="Hapus akun mahasiswa <?= esc($row['nama'] ?? '', 'attr') ?>?">
                                     <?= csrf_field() ?>
                                     <button type="submit" title="Hapus mahasiswa"
                                         style="display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:8px;background:var(--bg2,#f5f3f0);color:var(--ink,#2C2825);border:none;cursor:pointer;transition:background .15s"

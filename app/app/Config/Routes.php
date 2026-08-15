@@ -17,9 +17,9 @@ $routes->post('otp-verify', 'Auth\OtpController::verify');
 $routes->get('reset-password', 'Auth\OtpController::resetForm');
 $routes->post('reset-password', 'Auth\OtpController::reset');
 
-// Registrasi mahasiswa mandiri
-$routes->get('register', 'Auth\RegisterController::index');
-$routes->post('register', 'Auth\RegisterController::store');
+// Registrasi publik ditutup: seluruh akun mahasiswa dibuat oleh admin.
+$routes->get('register', 'Auth\LoginController::registrationDisabled');
+$routes->post('register', 'Auth\LoginController::registrationDisabled');
 
 // Notifikasi (semua role)
 $routes->group('', ['filter' => 'auth'], static function ($routes) {

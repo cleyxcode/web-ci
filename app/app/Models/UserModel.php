@@ -23,11 +23,16 @@ class UserModel extends Model
             return null;
         }
 
-        return $this->groupStart()
-            ->where('username', $login)
-            ->orWhere('email', $login)
+        return $this->select('users.*')
+            ->join('mahasiswa', 'mahasiswa.user_id = users.id', 'left')
+            ->join('dpl', 'dpl.user_id = users.id', 'left')
+            ->groupStart()
+            ->where('users.username', $login)
+            ->orWhere('users.email', $login)
+            ->orWhere('mahasiswa.npm', $login)
+            ->orWhere('dpl.nidn', $login)
             ->groupEnd()
-            ->where('is_active', 1)
+            ->where('users.is_active', 1)
             ->first();
     }
 }

@@ -26,7 +26,7 @@
                         <td><?= esc(format_alamat($row)) ?></td>
                         <td class="actions">
                             <a class="btn btn-secondary btn-sm" href="<?= site_url('admin/lokasi/' . $row['id'] . '/edit') ?>">Edit</a>
-                            <form method="post" action="<?= site_url('admin/lokasi/' . $row['id'] . '/delete') ?>" onsubmit="return confirm('Hapus lokasi ini?')">
+                            <form method="post" action="<?= site_url('admin/lokasi/' . $row['id'] . '/delete') ?>" data-confirm="Hapus lokasi ini dari daftar?">
                                 <?= csrf_field() ?>
                                 <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
                             </form>

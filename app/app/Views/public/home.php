@@ -67,7 +67,6 @@ $keywords = implode(', ', $seo->keywords);
                 <p class="seo-lead">Monitoring KKN Tematik UKIM membantu mahasiswa, DPL, dan admin mengelola kegiatan lapangan, logbook KKN, laporan, lokasi GPS, evaluasi, dan penilaian dalam satu sistem.</p>
                 <div class="seo-actions">
                     <a class="btn btn-primary" href="<?= site_url('login') ?>">Masuk ke dashboard</a>
-                    <a class="btn btn-secondary" href="<?= site_url('register') ?>">Daftar sebagai mahasiswa</a>
                 </div>
             </div>
             <div class="seo-hero-card" aria-label="Ringkasan fitur sistem">

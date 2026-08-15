@@ -96,16 +96,8 @@ $currentLongitude = old('longitude', $kelompok['longitude'] ?? '');
                 <label>Titik lokasi penelitian di peta</label>
                 <div class="field-hint" style="margin:0 0 8px">Klik peta untuk memilih titik. Koordinat ini menjadi titik resmi kelompok dan tetap dapat diperbarui ketua dari menu Tim KKN.</div>
                 <div id="admin-location-map" class="map-box map-box-lg" data-map-editor="1" data-lat="<?= esc($currentLatitude) ?>" data-lng="<?= esc($currentLongitude) ?>"></div>
-                <div class="form-grid location-coordinates" style="margin-top:12px">
-                    <div class="field">
-                        <label for="admin-location-latitude">Latitude</label>
-                        <input type="text" name="latitude" id="admin-location-latitude" class="font-mono" value="<?= esc($currentLatitude) ?>" placeholder="-3.6950000" inputmode="decimal">
-                    </div>
-                    <div class="field">
-                        <label for="admin-location-longitude">Longitude</label>
-                        <input type="text" name="longitude" id="admin-location-longitude" class="font-mono" value="<?= esc($currentLongitude) ?>" placeholder="128.1830000" inputmode="decimal">
-                    </div>
-                </div>
+                <input type="hidden" name="latitude" id="admin-location-latitude" data-location-latitude value="<?= esc($currentLatitude) ?>">
+                <input type="hidden" name="longitude" id="admin-location-longitude" data-location-longitude value="<?= esc($currentLongitude) ?>">
                 <div class="map-editor-actions">
                     <button type="button" class="btn btn-secondary btn-sm" data-location-use>Gunakan lokasi saya</button>
                     <button type="button" class="btn btn-secondary btn-sm" data-location-clear>Hapus titik</button>

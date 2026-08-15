@@ -2,10 +2,16 @@
     <div class="card"><p class="empty">Profil DPL belum terhubung ke akun Anda. Hubungi admin.</p></div>
 <?php else: ?>
 <div class="dashboard-page dashboard-dpl">
-    <div class="hero-strip">
+    <div class="hero-strip dpl-command-hero">
+        <div>
         <div class="periode">Antrian validasi</div>
-        <h2 style="margin:0 0 8px;font-size:1.25rem">Halo, <?= esc($dpl['nama']) ?></h2>
+        <h2>Halo, <?= esc($dpl['nama']) ?></h2>
         <p style="margin:0;color:var(--abu-karang);font-size:0.9rem">Prioritaskan logbook dan laporan yang menunggu stempel validasi.</p>
+        </div>
+        <div class="hero-metric">
+            <strong><?= (int) ($pendingTotal ?? (count($logbookPending ?? []) + count($laporanPending ?? []))) ?></strong>
+            <span>item perlu tindakan</span>
+        </div>
     </div>
 
     <div class="stat-row dashboard-stat-row">
@@ -36,7 +42,7 @@
     ]) ?>
 
     <div class="dpl-workspace-grid" style="margin-bottom:16px">
-        <div class="card">
+        <div class="card dpl-map-card">
             <div class="card-head">
                 <h2>Prioritas hari ini</h2>
                 <a href="<?= site_url('dpl/logbook?status=menunggu') ?>" class="btn btn-secondary btn-sm">Buka antrian</a>
@@ -108,7 +114,7 @@
                 <a href="<?= site_url('dpl/logbook') ?>" class="btn btn-secondary btn-sm">Validasi</a>
             </div>
         </div>
-        <div class="table-wrap">
+        <div class="table-wrap responsive-table">
             <table class="data">
                 <thead>
                     <tr>
@@ -125,10 +131,10 @@
                 <?php else: ?>
                     <?php foreach ($rows as $row): ?>
                         <tr>
-                            <td><?= format_tanggal($row['tanggal'] ?? null) ?></td>
-                            <td><?= esc($row['nama_mahasiswa'] ?? $row['nama'] ?? '-') ?></td>
-                            <td><?= esc(mb_strimwidth($row['kegiatan'] ?? '', 0, 60, '…')) ?></td>
-                            <td><span class="<?= stempel_class($row['status']) ?>"><?= stempel_label($row['status']) ?></span></td>
+                            <td data-label="Tanggal"><?= format_tanggal($row['tanggal'] ?? null) ?></td>
+                            <td data-label="Mahasiswa"><?= esc($row['nama_mahasiswa'] ?? $row['nama'] ?? '-') ?></td>
+                            <td data-label="Kegiatan"><?= esc(mb_strimwidth($row['kegiatan'] ?? '', 0, 60, '…')) ?></td>
+                            <td data-label="Status"><span class="<?= stempel_class($row['status']) ?>"><?= stempel_label($row['status']) ?></span></td>
                         </tr>
                     <?php endforeach; ?>
                 <?php endif; ?>

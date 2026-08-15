@@ -57,7 +57,7 @@
                         <td class="font-mono"><?= esc($row['no_hp'] ?? '-') ?></td>
                         <td class="actions">
                             <a class="btn btn-secondary btn-sm" href="<?= site_url('admin/dpl/' . $row['id'] . '/edit') ?>">Edit</a>
-                            <form method="post" action="<?= site_url('admin/dpl/' . $row['id'] . '/delete') ?>" onsubmit="return confirm('Hapus akun DPL ini?')">
+                            <form method="post" action="<?= site_url('admin/dpl/' . $row['id'] . '/delete') ?>" data-confirm="Hapus akun DPL ini? Akun tidak dapat dipulihkan dari halaman ini.">
                                 <?= csrf_field() ?>
                                 <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
                             </form>

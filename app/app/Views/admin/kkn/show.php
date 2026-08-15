@@ -91,7 +91,7 @@ $ketuaId = (int) ($kelompok['ketua_mahasiswa_id'] ?? 0);
                             </td>
                             <td><?= esc($mhs['prodi'] ?? '-') ?></td>
                             <td>
-                                <form method="post" action="<?= site_url('admin/kkn/' . $kelompok['id'] . '/anggota/' . $mhs['id'] . '/remove') ?>" onsubmit="return confirm('Keluarkan mahasiswa dari kelompok?')">
+                                <form method="post" action="<?= site_url('admin/kkn/' . $kelompok['id'] . '/anggota/' . $mhs['id'] . '/remove') ?>" data-confirm="Keluarkan mahasiswa ini dari kelompok?">
                                     <?= csrf_field() ?>
                                     <button type="submit" class="btn btn-danger btn-sm">Keluarkan</button>
                                 </form>

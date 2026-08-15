@@ -13,8 +13,9 @@
         <form method="post" action="<?= site_url('login') ?>">
             <?= csrf_field() ?>
             <div class="field">
-                <label for="login">Username atau email</label>
-                <input type="text" id="login" name="login" value="<?= esc(old('login')) ?>" required autofocus autocomplete="username">
+                <label for="login">Username, email, NPM, atau NIDN</label>
+                <input type="text" id="login" name="login" value="<?= esc(old('login')) ?>" required autofocus autocomplete="username" placeholder="Masukkan identitas login Anda">
+                <div class="field-hint">Mahasiswa gunakan NPM, DPL gunakan NIDN.</div>
             </div>
             <div class="field">
                 <label for="password">Password</label>
@@ -36,8 +37,8 @@
         </form>
         <p style="margin:20px 0 0;text-align:center;font-size:0.85rem;color:var(--abu-karang)">
             <a href="<?= site_url('forgot-password') ?>">Lupa password?</a>
-            &nbsp;·&nbsp;
-            <a href="<?= site_url('register') ?>">Daftar akun baru</a>
+            <br>
+            <span style="display:inline-block;margin-top:8px;color:var(--tinta-redup);font-size:0.78rem">Akun mahasiswa dibuat oleh admin kampus.</span>
         </p>
     </div>
 </div>
