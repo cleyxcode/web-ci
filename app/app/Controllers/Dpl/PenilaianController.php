@@ -65,7 +65,7 @@ class PenilaianController extends PanelController
         $jmlLaporan       = $laporanModel->where('mahasiswa_id', $mahasiswaId)->countAllResults();
         $jmlLaporanTerima = $laporanModel->where('mahasiswa_id', $mahasiswaId)->where('status', 'diterima')->countAllResults();
         $existing         = $penilaianModel->findByMahasiswa($mahasiswaId);
-        $evaluasi         = model(EvaluasiModel::class)->findByMahasiswa($mahasiswaId);
+        $evaluasi         = model(EvaluasiModel::class)->findByMahasiswaDpl($mahasiswaId);
 
         return $this->render('dpl/penilaian/form', [
             'title'             => 'Penilaian - ' . $mhs['nama'],

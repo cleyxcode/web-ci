@@ -96,7 +96,7 @@ $alamatPenelitian = trim($m['alamat_penelitian'] ?? '');
                     <small class="text-xs text-slate-400 mt-0.5 block">Terkirim</small>
                 <?php else: ?>
                     <strong class="block text-xl font-extrabold text-slate-900 dark:text-white">Belum</strong>
-                    <small class="text-xs text-rose-500 font-semibold">Isi evaluasi kegiatan!</small>
+                    <small class="text-xs text-rose-500 font-semibold">Menunggu evaluasi dari DPL</small>
                 <?php endif; ?>
             </div>
         </a>
@@ -159,7 +159,7 @@ $alamatPenelitian = trim($m['alamat_penelitian'] ?? '');
             <div class="quick-action_svg tone-rose">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="h-full w-full text-rose-600"><path stroke-linecap="round" stroke-linejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
             </div>
-            <span class="mt-2 text-sm text-rose-700 dark:text-rose-400"><?= ! empty($evaluasi) ? 'Lihat Evaluasi' : 'Isi Evaluasi' ?></span>
+            <span class="mt-2 text-sm text-rose-700 dark:text-rose-400"><?= ! empty($evaluasi) ? 'Lihat Evaluasi' : 'Menunggu Evaluasi' ?></span>
         </a>
         
         <a href="<?= site_url('mahasiswa/tim') ?>" class="quick-action">

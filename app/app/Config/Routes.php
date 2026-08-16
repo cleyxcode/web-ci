@@ -70,11 +70,9 @@ $routes->group('admin', ['filter' => ['auth', 'role:admin']], static function ($
     $routes->get('audit', 'Admin\AuditController::index');
 
     $routes->get('evaluasi', 'Admin\EvaluasiController::index');
-    $routes->get('evaluasi/create', 'Admin\EvaluasiController::create');
-    $routes->post('evaluasi', 'Admin\EvaluasiController::store');
-    $routes->get('evaluasi/(:num)/edit', 'Admin\EvaluasiController::edit/$1');
-    $routes->post('evaluasi/(:num)', 'Admin\EvaluasiController::update/$1');
-    $routes->post('evaluasi/(:num)/delete', 'Admin\EvaluasiController::delete/$1');
+    $routes->post('evaluasi/kriteria', 'Admin\EvaluasiController::storeCriteria');
+    $routes->post('evaluasi/kriteria/(:num)', 'Admin\EvaluasiController::updateCriteria/$1');
+    $routes->post('evaluasi/kriteria/(:num)/delete', 'Admin\EvaluasiController::deleteCriteria/$1');
     $routes->get('evaluasi/export', 'Admin\EvaluasiController::export');
 
     $routes->get('pengumuman', 'Admin\PengumumanController::index');
@@ -101,6 +99,8 @@ $routes->group('dpl', ['filter' => ['auth', 'role:dpl']], static function ($rout
     $routes->get('penilaian/(:num)', 'Dpl\PenilaianController::form/$1');
     $routes->post('penilaian/(:num)', 'Dpl\PenilaianController::save/$1');
     $routes->get('evaluasi', 'Dpl\EvaluasiController::index');
+    $routes->get('evaluasi/(:num)', 'Dpl\EvaluasiController::form/$1');
+    $routes->post('evaluasi/(:num)', 'Dpl\EvaluasiController::save/$1');
     $routes->get('export', 'Dpl\ExportController::index');
     $routes->get('export/logbook', 'Dpl\ExportController::logbook');
     $routes->get('export/laporan', 'Dpl\ExportController::laporan');
@@ -122,7 +122,6 @@ $routes->group('mahasiswa', ['filter' => ['auth', 'role:mahasiswa']], static fun
     $routes->post('laporan', 'Mahasiswa\LaporanController::store');
     $routes->get('nilai', 'Mahasiswa\NilaiController::index');
     $routes->get('evaluasi', 'Mahasiswa\EvaluasiController::index');
-    $routes->post('evaluasi', 'Mahasiswa\EvaluasiController::store');
     $routes->get('tim', 'Mahasiswa\TimController::index');
     $routes->post('tim/gps', 'Mahasiswa\TimController::setLokasiGps');
     $routes->get('profil', 'Mahasiswa\ProfilController::index');

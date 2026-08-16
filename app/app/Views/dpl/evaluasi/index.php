@@ -70,10 +70,13 @@ $pctEvaluasi = $totalMahasiswa > 0 ? round(($totalEvaluasi / $totalMahasiswa) * 
 
 <div class="card">
     <div class="card-head">
+        <div>
         <h2>
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="inline h-5 w-5 text-violet-500 mr-2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
-            Evaluasi Kegiatan Mahasiswa Bimbingan
+            Evaluasi Mahasiswa Bimbingan
         </h2>
+        <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Isi atau perbarui penilaian mahasiswa yang berada di kelompok Anda.</p>
+        </div>
     </div>
     <div class="table-wrap responsive-table">
         <table class="data w-full text-left">
@@ -88,12 +91,13 @@ $pctEvaluasi = $totalMahasiswa > 0 ? round(($totalEvaluasi / $totalMahasiswa) * 
                     <th>Kategori</th>
                     <th>Komentar</th>
                     <th>Tanggal</th>
+                    <th>Aksi</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-slate-100 dark:divide-slate-800/50">
             <?php if (empty($evaluasi)): ?>
                 <tr>
-                    <td colspan="9">
+                    <td colspan="10">
                         <div class="flex flex-col items-center justify-center py-14 px-6 text-center">
                             <div class="mx-auto mb-4 grid h-16 w-16 place-items-center rounded-2xl bg-violet-50 text-violet-300 dark:bg-violet-900/20 dark:text-violet-700">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" class="h-8 w-8">
@@ -101,7 +105,7 @@ $pctEvaluasi = $totalMahasiswa > 0 ? round(($totalEvaluasi / $totalMahasiswa) * 
                                 </svg>
                             </div>
                             <p class="text-sm font-bold text-slate-500 dark:text-slate-400">Belum ada evaluasi</p>
-                            <p class="mt-1 text-xs text-slate-400">Evaluasi dari mahasiswa bimbingan Anda akan muncul di sini</p>
+                            <p class="mt-1 text-xs text-slate-400">Evaluasi yang Anda isi untuk mahasiswa akan muncul di sini</p>
                         </div>
                     </td>
                 </tr>
@@ -139,6 +143,7 @@ $pctEvaluasi = $totalMahasiswa > 0 ? round(($totalEvaluasi / $totalMahasiswa) * 
                             </p>
                         </td>
                         <td data-label="Tanggal" class="text-xs whitespace-nowrap text-slate-500"><?= format_tanggal($row['created_at'] ?? null) ?></td>
+                        <td data-label="Aksi"><a href="<?= site_url('dpl/evaluasi/' . (int) $row['mahasiswa_id']) ?>" class="btn btn-secondary btn-sm">Ubah</a></td>
                     </tr>
                 <?php endforeach; ?>
             <?php endif; ?>
@@ -162,6 +167,7 @@ $pctEvaluasi = $totalMahasiswa > 0 ? round(($totalEvaluasi / $totalMahasiswa) * 
                     <th>NPM</th>
                     <th>Nama Mahasiswa</th>
                     <th>Program Studi</th>
+                    <th>Aksi</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-slate-50 dark:divide-slate-800/50">
@@ -170,6 +176,7 @@ $pctEvaluasi = $totalMahasiswa > 0 ? round(($totalEvaluasi / $totalMahasiswa) * 
                         <td data-label="NPM" class="font-mono text-sm text-slate-600 dark:text-slate-400"><?= esc($row['npm']) ?></td>
                         <td data-label="Nama" class="font-bold text-slate-900 dark:text-white"><?= esc($row['nama']) ?></td>
                         <td data-label="Prodi" class="text-sm text-slate-500"><?= esc($row['prodi'] ?? '-') ?></td>
+                        <td data-label="Aksi"><a href="<?= site_url('dpl/evaluasi/' . (int) $row['id']) ?>" class="btn btn-primary btn-sm">Beri evaluasi</a></td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>

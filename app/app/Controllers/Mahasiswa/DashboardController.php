@@ -27,7 +27,7 @@ class DashboardController extends PanelController
         $totalLogbook = $mhs ? $logbookModel->countByMahasiswaPeriod($mhs['id'], $filterPeriod, $filterDate) : 0;
         $validLogbook = $mhs ? $logbookModel->countByMahasiswaStatus($mhs['id'], 'divalidasi', $filterPeriod, $filterDate) : 0;
         $progress     = $totalLogbook > 0 ? round(($validLogbook / max($totalLogbook, 1)) * 100) : 0;
-        $evaluasi     = $mhs ? model(EvaluasiModel::class)->findByMahasiswa((int) $mhs['id']) : null;
+        $evaluasi     = $mhs ? model(EvaluasiModel::class)->findByMahasiswaDpl((int) $mhs['id']) : null;
 
         return $this->render('mahasiswa/dashboard', [
             'title'         => 'Dashboard Mahasiswa',
