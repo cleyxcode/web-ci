@@ -2,6 +2,11 @@
 set -Eeuo pipefail
 
 project_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+cd "$project_dir"
+
+# Ambil perubahan terbaru dari branch utama sebelum setup dijalankan.
+git pull origin main
+
 setup_script="$project_dir/setup-wsl.sh"
 
 if [[ ! -x "$setup_script" ]]; then
