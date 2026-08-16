@@ -75,7 +75,7 @@ $roleAccent = match ($role) {
 </head>
 <body class="min-h-screen bg-slate-50 font-['Nunito_Sans'] text-slate-800 antialiased dark:bg-slate-950 dark:text-slate-100">
 <div class="min-h-screen lg:flex">
-    <aside class="hidden w-[260px] shrink-0 flex-col bg-gradient-to-b <?= $roleTheme ?> px-4 py-5 text-white shadow-2xl shadow-indigo-950/10 lg:fixed lg:inset-y-0 lg:left-0 lg:flex" aria-label="Navigasi utama">
+    <aside class="panel-sidebar hidden w-[260px] shrink-0 flex-col overflow-y-auto overscroll-contain bg-gradient-to-b <?= $roleTheme ?> px-4 py-5 text-white shadow-2xl shadow-indigo-950/10 lg:fixed lg:inset-y-0 lg:left-0 lg:flex" aria-label="Navigasi utama">
         <a class="flex items-center gap-3 px-3" href="<?= esc($menus[0]['url'] ?? '/') ?>">
             <span class="grid h-10 w-10 place-items-center rounded-xl bg-white/15 ring-1 ring-white/25"><?= $iconSvg('check') ?></span>
             <span class="leading-tight"><strong class="block text-[15px] font-extrabold tracking-tight">KKN TEMATIK</strong><small class="text-[11px] font-semibold text-white/70">Monitoring System</small></span>

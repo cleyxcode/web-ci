@@ -26,6 +26,19 @@ input, select, textarea {
 .sidebar-link { transition: background-color 0.15s ease, color 0.15s ease, transform 0.1s ease; }
 .sidebar-link:hover { transform: translateX(2px); }
 
+/* -------- Scrollable desktop sidebar -------- */
+.panel-sidebar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.28) transparent;
+}
+.panel-sidebar::-webkit-scrollbar { width: 6px; }
+.panel-sidebar::-webkit-scrollbar-track { background: transparent; }
+.panel-sidebar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.28);
+  border-radius: 999px;
+}
+.panel-sidebar::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.48); }
+
 /* -------- Progress bar (mahasiswa hero) -------- */
 .progress-bar {
   height: 8px;
