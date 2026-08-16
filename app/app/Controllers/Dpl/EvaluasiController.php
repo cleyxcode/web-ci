@@ -65,7 +65,10 @@ final class EvaluasiController extends PanelController
             'title'    => 'Evaluasi Mahasiswa',
             'mahasiswa'=> $context['mahasiswa'],
             'evaluasi' => $context['evaluasi'],
-            'criteria' => model(EvaluasiKriteriaModel::class)->getActiveOrdered(),
+            'criteria' => model(EvaluasiKriteriaModel::class)->getForDpl(
+                (int) $context['dpl']['id'],
+                (int) $context['mahasiswa']['kelompok_id']
+            ),
         ]);
     }
 
@@ -76,7 +79,10 @@ final class EvaluasiController extends PanelController
             return redirect()->to('/dpl/evaluasi')->with('error', 'Mahasiswa bukan bagian dari kelompok bimbingan Anda.');
         }
 
-        $criteria = model(EvaluasiKriteriaModel::class)->getActiveOrdered();
+        $criteria = model(EvaluasiKriteriaModel::class)->getForDpl(
+            (int) $context['dpl']['id'],
+            (int) $context['mahasiswa']['kelompok_id']
+        );
         if ($criteria === []) {
             return redirect()->to('/dpl/evaluasi/' . $mahasiswaId)
                 ->with('error', 'Admin belum mengatur kriteria evaluasi.');

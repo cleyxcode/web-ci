@@ -17,6 +17,8 @@ final class CreateEvaluasiKriteria extends Migration
             . '`deskripsi` varchar(255) DEFAULT NULL,'
             . '`urutan` int(11) NOT NULL DEFAULT 0,'
             . '`aktif` tinyint(1) NOT NULL DEFAULT 1,'
+            . "`cakupan` varchar(20) NOT NULL DEFAULT 'semua',"
+            . '`target_id` int(11) DEFAULT NULL,'
             . '`created_by` int(11) DEFAULT NULL,'
             . '`created_at` datetime DEFAULT CURRENT_TIMESTAMP,'
             . '`updated_at` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,'
