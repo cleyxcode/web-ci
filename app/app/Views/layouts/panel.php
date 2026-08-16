@@ -178,7 +178,7 @@ $roleAccent = match ($role) {
 <script>
   window.KKN = { csrf: <?= json_encode(csrf_hash()) ?>, csrfName: <?= json_encode(csrf_token()) ?>, userId: <?= (int) ($user['id'] ?? 0) ?>, pusherKey: <?= json_encode($pusherKey ?? '') ?>, pusherCluster: <?= json_encode($pusherCluster ?? 'ap1') ?>, pusherEnabled: <?= json_encode(! empty($pusherEnabled)) ?>, notifReadUrl: <?= json_encode(site_url('notifikasi')) ?> };
 </script>
-<script src="<?= base_url('assets/js/app.js') ?>" defer></script>
+<script src="<?= base_url('assets/js/app.js') ?>?v=<?= (int) (@filemtime(FCPATH . 'assets/js/app.js') ?: 1) ?>" defer></script>
 <?php if (! empty($pusherEnabled) && ! empty($pusherKey)): ?><script src="https://js.pusher.com/8.2.0/pusher.min.js"></script><?php endif; ?>
 </body>
 </html>
