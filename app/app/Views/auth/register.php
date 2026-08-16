@@ -5,7 +5,7 @@
         <div class="auth-brand">
             <div class="mark">UK</div>
             <h1>Daftar Akun</h1>
-            <p>Buat akun mahasiswa KKN Tematik UKIM</p>
+            <p>Buat akun mahasiswa KKN Tematik FILKOM</p>
         </div>
 
         <?= view('partials/flash') ?>
@@ -67,16 +67,16 @@
                 </div>
             </div>
 
-            <div class="field-hint" style="margin-bottom:12px;padding:10px 12px;background:var(--bg-muted,#f5f4f1);border-radius:6px;font-size:0.82rem;line-height:1.5">
+            <div class="field-hint">
                 NPM, program studi, dan nomor HP dapat dilengkapi setelah masuk di halaman <strong>Profil</strong>.
             </div>
 
-            <button type="submit" class="btn btn-primary" style="width:100%;margin-top:4px">
+            <button type="submit" class="btn btn-primary">
                 Daftar
             </button>
         </form>
 
-        <p style="margin:20px 0 0;text-align:center;font-size:0.85rem;color:var(--abu-karang)">
+        <p>
             Sudah punya akun? <a href="<?= site_url('login') ?>">Masuk di sini</a>
         </p>
     </div>

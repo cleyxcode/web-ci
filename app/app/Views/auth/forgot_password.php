@@ -14,9 +14,9 @@
                 <label for="email">Email terdaftar</label>
                 <input type="email" id="email" name="email" value="<?= esc(old('email')) ?>" required autofocus>
             </div>
-            <button type="submit" class="btn btn-primary" style="width:100%">Kirim OTP</button>
+            <button type="submit" class="btn btn-primary">Kirim OTP</button>
         </form>
-        <p style="margin:20px 0 0;text-align:center;font-size:0.85rem">
+        <p>
             <a href="<?= site_url('login') ?>">← Kembali ke login</a>
         </p>
     </div>

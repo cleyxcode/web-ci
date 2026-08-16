@@ -22,23 +22,23 @@
                 <?php endfor; ?>
             </div>
 
-            <button type="submit" class="btn btn-primary" style="width:100%">
+            <button type="submit" class="btn btn-primary">
                 Verifikasi &amp; Buat Akun
             </button>
         </form>
 
-        <p style="margin:16px 0 0;text-align:center;font-size:0.85rem;color:var(--abu-karang)">
+        <p>
             Tidak menerima kode?
-            <form method="post" action="<?= site_url('register/resend') ?>" style="display:inline">
+            <form method="post" action="<?= site_url('register/resend') ?>">
                 <?= csrf_field() ?>
                 <button type="submit"
-                        style="background:none;border:none;cursor:pointer;color:var(--aksen-primary,#2D7A4F);font-size:0.85rem;padding:0;text-decoration:underline">
+                       >
                     Kirim ulang
                 </button>
             </form>
         </p>
 
-        <p style="margin:8px 0 0;text-align:center;font-size:0.82rem;color:var(--abu-karang)">
+        <p>
             Email salah?
             <a href="<?= site_url('register') ?>">Kembali ke formulir daftar</a>
         </p>

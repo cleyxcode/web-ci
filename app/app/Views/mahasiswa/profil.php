@@ -9,8 +9,8 @@ $isKetua = ! empty($isKetua);
 ?>
 
 <?php if ($npmKosong): ?>
-<div class="alert alert-warning" style="margin-bottom:16px;display:flex;align-items:flex-start;gap:10px">
-    <svg xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;margin-top:2px" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+<div class="alert alert-warning">
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
     </svg>
     <div>
@@ -21,7 +21,7 @@ $isKetua = ! empty($isKetua);
 </div>
 <?php endif; ?>
 
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px" class="dash-grid">
+<div class="dash-grid">
 
     <!-- Kartu 1: Info akun (nama, email) -->
     <div class="card">
@@ -56,15 +56,15 @@ $isKetua = ! empty($isKetua);
         <div class="card-head">
             <h2>Data Studi</h2>
             <?php if ($npmKosong): ?>
-                <span class="stempel stempel-menunggu" style="font-size:0.72rem">Belum lengkap</span>
+                <span class="stempel stempel-menunggu">Belum lengkap</span>
             <?php else: ?>
-                <span class="stempel stempel-diterima" style="font-size:0.72rem">Lengkap</span>
+                <span class="stempel stempel-diterima">Lengkap</span>
             <?php endif; ?>
         </div>
         <form method="post" action="<?= site_url('mahasiswa/profil/data') ?>">
             <?= csrf_field() ?>
             <div class="field">
-                <label for="p_npm">NPM <span style="color:#C0392B">*</span></label>
+                <label for="p_npm">NPM <span>*</span></label>
                 <input type="text" id="p_npm" name="npm"
                        value="<?= $npmKosong ? '' : esc(old('npm', $npm)) ?>"
                        required placeholder="Nomor Pokok Mahasiswa"
@@ -91,17 +91,25 @@ $isKetua = ! empty($isKetua);
     </div>
 
     <!-- Kartu 3: Lokasi KKN berbasis peta -->
-    <div class="card profile-location-card" style="grid-column:1/-1">
+    <div class="card profile-location-card">
         <div class="card-head">
             <div>
                 <h2>Lokasi KKN</h2>
-                <p class="field-hint" style="margin:4px 0 0">Titik lokasi dipilih langsung lewat peta, bukan diketik sebagai data alokasi.</p>
+                <p class="field-hint">Titik lokasi dipilih langsung lewat peta, bukan diketik sebagai data alokasi.</p>
             </div>
             <a href="<?= site_url('mahasiswa/tim') ?>" class="btn btn-secondary btn-sm">Buka tim KKN</a>
         </div>
 
         <?php if (! $hasKelompok): ?>
-            <p class="empty" style="padding:24px 0">Anda belum ditempatkan di kelompok KKN.</p>
+            <div class="flex flex-col items-center justify-center py-10 px-6 text-center">
+                <div class="mx-auto mb-4 grid h-16 w-16 place-items-center rounded-2xl bg-amber-50 text-amber-400 shadow-sm ring-1 ring-amber-100 dark:bg-amber-900/20 dark:ring-amber-900/50">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" class="h-8 w-8">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z"/>
+                    </svg>
+                </div>
+                <p class="text-sm font-bold text-slate-500 dark:text-slate-400">Belum Ada Kelompok</p>
+                <p class="mt-1 text-xs text-slate-400">Anda belum ditempatkan di kelompok KKN.</p>
+            </div>
         <?php elseif ($isKetua): ?>
             <form method="post" action="<?= site_url('mahasiswa/tim/gps') ?>" class="location-picker-form">
                 <?= csrf_field() ?>
@@ -126,16 +134,25 @@ $isKetua = ! empty($isKetua);
                 'zoom'    => 15,
                 'class'   => 'map-box',
             ]) ?>
-            <p class="field-hint" style="margin-top:8px">Titik lokasi ditetapkan oleh ketua kelompok.</p>
+            <p class="field-hint">Titik lokasi ditetapkan oleh ketua kelompok.</p>
         <?php else: ?>
-            <p class="empty" style="padding:24px 0">Lokasi GPS belum ditetapkan oleh ketua kelompok.</p>
+            <div class="flex flex-col items-center justify-center py-10 px-6 text-center">
+                <div class="mx-auto mb-4 grid h-16 w-16 place-items-center rounded-2xl bg-slate-100 text-slate-300 dark:bg-slate-800 dark:text-slate-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" class="h-8 w-8">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z"/>
+                    </svg>
+                </div>
+                <p class="text-sm font-bold text-slate-500 dark:text-slate-400">Belum Ada Lokasi</p>
+                <p class="mt-1 text-xs text-slate-400">Lokasi GPS belum ditetapkan oleh ketua kelompok.</p>
+            </div>
         <?php endif; ?>
     </div>
 
     <!-- Kartu 4: Ubah password —— span dua kolom di layar lebar -->
-    <div class="card" style="grid-column:1/-1">
+    <div class="card">
         <div class="card-head"><h2>Ubah Password</h2></div>
-        <div style="max-width:420px">
+        <div>
             <form method="post" action="<?= site_url('mahasiswa/profil/password') ?>">
                 <?= csrf_field() ?>
                 <div class="field">
@@ -166,8 +183,3 @@ $isKetua = ! empty($isKetua);
     </div>
 
 </div>
-
-<style>
-@media (max-width:900px) { .dash-grid { grid-template-columns: 1fr !important; } }
-@media (max-width:900px) { .dash-grid > .card[style*="grid-column"] { grid-column: unset !important; } }
-</style>

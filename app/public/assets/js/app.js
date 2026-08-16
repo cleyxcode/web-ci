@@ -30,6 +30,48 @@
     });
   }
 
+  /* ----- Dashboard count-up ----- */
+  const countUpElements = document.querySelectorAll('.js-count-up[data-count-up]');
+  const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+
+  const formatCount = (value, decimals, suffix) => {
+    const formatted = new Intl.NumberFormat('id-ID', {
+      minimumFractionDigits: decimals,
+      maximumFractionDigits: decimals,
+    }).format(value);
+
+    return `${formatted}${suffix}`;
+  };
+
+  countUpElements.forEach((element) => {
+    const target = Number(element.dataset.countUp);
+    const suffix = element.dataset.countSuffix || '';
+    const decimals = Number.isInteger(Number(element.dataset.countDecimals))
+      ? Number(element.dataset.countDecimals)
+      : (Number.isInteger(target) ? 0 : 2);
+
+    if (!Number.isFinite(target)) return;
+
+    if (reduceMotion || target === 0) {
+      element.textContent = formatCount(target, decimals, suffix);
+      return;
+    }
+
+    const duration = Math.min(1100, Math.max(500, 450 + Math.abs(target) * 8));
+    const startAt = performance.now();
+
+    const draw = (now) => {
+      const progress = Math.min(1, (now - startAt) / duration);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      element.textContent = formatCount(target * eased, decimals, suffix);
+
+      if (progress < 1) window.requestAnimationFrame(draw);
+    };
+
+    element.textContent = formatCount(0, decimals, suffix);
+    window.requestAnimationFrame(draw);
+  });
+
   /* ----- UI notifications ----- */
   const toastMeta = {
     success: { title: 'Berhasil', icon: '✓' },
@@ -52,7 +94,7 @@
     if (!toast || !toastMessage) return;
     const safeType = toastMeta[type] ? type : 'info';
     const meta = toastMeta[safeType];
-    toast.className = `toast toast-${safeType}`;
+    toast.className = `toast toast-${safeType} fixed bottom-24 right-4 z-50 flex w-[min(24rem,calc(100vw-2rem))] items-start gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-xl shadow-slate-900/10 dark:border-slate-700 dark:bg-slate-900`;
     if (toastTitle) toastTitle.textContent = title || meta.title;
     toastMessage.textContent = msg || '';
     if (toastIcon) toastIcon.textContent = meta.icon;
@@ -365,8 +407,8 @@
         const empty = list.querySelector('.notif-empty');
         if (empty) empty.remove();
         const item = document.createElement('div');
-        item.className = `notif-item unread notif-type-${data.type || 'info'}`;
-        item.innerHTML = `<strong>${data.judul}</strong><p>${data.pesan || ''}</p><small>Baru saja</small>`;
+        item.className = `notif-item unread notif-type-${data.type || 'info'} cursor-pointer bg-violet-50/60 px-4 py-3 transition hover:bg-slate-50 dark:bg-violet-950/20 dark:hover:bg-slate-800`;
+        item.innerHTML = `<strong class="block text-sm text-slate-800 dark:text-slate-100">${data.judul}</strong><p class="mt-1 text-xs text-slate-500">${data.pesan || ''}</p><small class="mt-1 block text-[11px] text-slate-400">Baru saja</small>`;
         list.prepend(item);
       }
     });

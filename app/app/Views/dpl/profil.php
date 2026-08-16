@@ -1,4 +1,4 @@
-<div class="dash-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+<div class="dash-grid">
     <div class="card">
         <div class="card-head"><h2>Data profil</h2></div>
         <form method="post" action="<?= site_url('dpl/profil') ?>">

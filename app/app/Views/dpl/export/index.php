@@ -1,6 +1,6 @@
-<div class="card" style="max-width:720px">
+<div class="card">
     <div class="card-head"><h2>Export laporan bimbingan</h2></div>
-    <p style="margin:0 0 16px;color:var(--abu-karang);font-size:0.9rem">Data mahasiswa bimbingan Anda. Excel (.xls) atau CSV.</p>
+    <p>Data mahasiswa bimbingan Anda. Excel (.xls) atau CSV.</p>
     <div class="export-grid">
         <div class="export-item">
             <strong>Logbook bimbingan</strong>

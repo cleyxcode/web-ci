@@ -1,4 +1,4 @@
-<div class="card" style="max-width:640px">
+<div class="card">
     <div class="card-head"><h2>Tambah logbook</h2></div>
     <form method="post" action="<?= site_url('mahasiswa/logbook') ?>" enctype="multipart/form-data">
         <?= csrf_field() ?>

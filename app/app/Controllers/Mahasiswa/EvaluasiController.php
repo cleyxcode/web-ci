@@ -22,9 +22,10 @@ class EvaluasiController extends PanelController
         $detail = model(MahasiswaModel::class)->getWithRelations((int) $mhs['id']);
 
         return $this->render('mahasiswa/evaluasi/index', [
-            'title'    => 'Evaluasi Kegiatan',
-            'mahasiswa'=> $detail,
-            'evaluasi' => model(EvaluasiModel::class)->findByMahasiswa((int) $mhs['id']),
+            'title'         => 'Evaluasi Kegiatan',
+            'mahasiswa'     => $detail,
+            'evaluasi'      => model(EvaluasiModel::class)->findByMahasiswa((int) $mhs['id']),
+            'evaluasiAdmin' => model(EvaluasiModel::class)->findByMahasiswaAndType((int) $mhs['id'], 'admin'),
         ]);
     }
 
@@ -47,6 +48,7 @@ class EvaluasiController extends PanelController
             'aspek_lokasi'       => 'required|integer|greater_than_equal_to[1]|less_than_equal_to[5]',
             'aspek_pelaksanaan'  => 'required|integer|greater_than_equal_to[1]|less_than_equal_to[5]',
             'komentar'           => 'permit_empty|max_length[2000]',
+            'kategori'           => 'required|max_length[100]',
         ];
 
         if (! $this->validate($rules)) {
@@ -58,7 +60,10 @@ class EvaluasiController extends PanelController
         $lokasi       = (int) $this->request->getPost('aspek_lokasi');
         $pelaksanaan  = (int) $this->request->getPost('aspek_pelaksanaan');
         $skorTotal    = EvaluasiModel::hitungSkor($rating, $bimbingan, $lokasi, $pelaksanaan);
-        $kategori     = EvaluasiModel::kategoriFromSkor($skorTotal);
+        $kategori     = trim((string) $this->request->getPost('kategori'));
+        if (empty($kategori)) {
+            $kategori = EvaluasiModel::kategoriFromSkor($skorTotal);
+        }
 
         $kelompokId = (int) ($mhs['kelompok_id'] ?? 0);
         $dplId      = null;
@@ -70,6 +75,7 @@ class EvaluasiController extends PanelController
 
         $data = [
             'mahasiswa_id'      => (int) $mhs['id'],
+            'tipe_evaluasi'     => 'mahasiswa',
             'kelompok_id'       => $kelompokId > 0 ? $kelompokId : null,
             'dpl_id'            => $dplId,
             'rating'            => $rating,

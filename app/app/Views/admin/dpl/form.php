@@ -1,7 +1,7 @@
 <?php $isEdit = ! empty($dpl); ?>
-<div class="card" style="max-width:720px">
+<div class="card">
     <div class="card-head"><h2><?= $isEdit ? 'Edit' : 'Buat akun' ?> DPL</h2></div>
-    <p style="margin:0 0 16px;color:var(--abu-karang);font-size:0.9rem">
+    <p>
         DPL (Dosen Pembimbing Lapangan) login memakai username &amp; password yang Anda buat di sini.
         Setelah disimpan, bagikan kredensial tersebut kepada dosen yang bersangkutan.
     </p>

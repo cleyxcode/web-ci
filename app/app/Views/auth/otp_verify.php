@@ -15,9 +15,9 @@
                     <input type="text" name="otp[]" maxlength="1" inputmode="numeric" pattern="[0-9]" required <?= $i === 0 ? 'autofocus' : '' ?>>
                 <?php endfor; ?>
             </div>
-            <button type="submit" class="btn btn-primary" style="width:100%">Verifikasi</button>
+            <button type="submit" class="btn btn-primary">Verifikasi</button>
         </form>
-        <p style="margin:20px 0 0;text-align:center;font-size:0.85rem">
+        <p>
             <a href="<?= site_url('forgot-password') ?>">Kirim ulang</a>
         </p>
     </div>

@@ -14,8 +14,11 @@ class EvaluasiModel extends Model
     protected $returnType       = 'array';
     protected $allowedFields    = [
         'mahasiswa_id',
+        'tipe_evaluasi',
         'kelompok_id',
         'dpl_id',
+        'penilai_id',
+        'detail_evaluasi',
         'rating',
         'aspek_bimbingan',
         'aspek_lokasi',
@@ -31,7 +34,14 @@ class EvaluasiModel extends Model
 
     public function findByMahasiswa(int $mahasiswaId): ?array
     {
-        return $this->where('mahasiswa_id', $mahasiswaId)->first();
+        return $this->findByMahasiswaAndType($mahasiswaId, 'mahasiswa');
+    }
+
+    public function findByMahasiswaAndType(int $mahasiswaId, string $tipeEvaluasi): ?array
+    {
+        return $this->where('mahasiswa_id', $mahasiswaId)
+            ->where('tipe_evaluasi', $tipeEvaluasi)
+            ->first();
     }
 
     /**
@@ -40,10 +50,11 @@ class EvaluasiModel extends Model
     public function getAllWithMahasiswa(): array
     {
         return $this->select('evaluasi.*, mahasiswa.npm, mahasiswa.nama as nama_mahasiswa, mahasiswa.prodi,
-                kelompok_kkn.nama_kelompok, dpl.nama as nama_dpl')
+                kelompok_kkn.nama_kelompok, dpl.nama as nama_dpl, penilai.nama as nama_penilai')
             ->join('mahasiswa', 'mahasiswa.id = evaluasi.mahasiswa_id')
             ->join('kelompok_kkn', 'kelompok_kkn.id = mahasiswa.kelompok_id', 'left')
             ->join('dpl', 'dpl.id = kelompok_kkn.dpl_id', 'left')
+            ->join('users penilai', 'penilai.id = evaluasi.penilai_id', 'left')
             ->orderBy('evaluasi.created_at', 'DESC')
             ->findAll();
     }
@@ -58,6 +69,7 @@ class EvaluasiModel extends Model
             ->join('mahasiswa', 'mahasiswa.id = evaluasi.mahasiswa_id')
             ->join('kelompok_kkn', 'kelompok_kkn.id = mahasiswa.kelompok_id')
             ->where('kelompok_kkn.dpl_id', $dplId)
+            ->where('evaluasi.tipe_evaluasi', 'mahasiswa')
             ->orderBy('evaluasi.created_at', 'DESC')
             ->findAll();
     }
@@ -70,7 +82,8 @@ class EvaluasiModel extends Model
         if ($dplId !== null) {
             $builder->join('mahasiswa', 'mahasiswa.id = evaluasi.mahasiswa_id')
                 ->join('kelompok_kkn', 'kelompok_kkn.id = mahasiswa.kelompok_id')
-                ->where('kelompok_kkn.dpl_id', $dplId);
+                ->where('kelompok_kkn.dpl_id', $dplId)
+                ->where('evaluasi.tipe_evaluasi', 'mahasiswa');
         }
 
         $row = $builder->get()->getRowArray();
@@ -92,6 +105,7 @@ class EvaluasiModel extends Model
             ->join('mahasiswa', 'mahasiswa.id = evaluasi.mahasiswa_id')
             ->join('kelompok_kkn', 'kelompok_kkn.id = mahasiswa.kelompok_id')
             ->where('kelompok_kkn.dpl_id', $dplId)
+            ->where('evaluasi.tipe_evaluasi', 'mahasiswa')
             ->countAllResults();
     }
 

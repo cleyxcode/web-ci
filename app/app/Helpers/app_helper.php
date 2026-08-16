@@ -69,9 +69,10 @@ if (! function_exists('panel_menus')) {
                 ['label' => 'Kelompok KKN', 'url' => '/admin/kkn', 'icon' => 'group', 'mobile' => true],
                 ['label' => 'Lokasi KKN', 'url' => '/admin/lokasi', 'icon' => 'map'],
                 ['label' => 'Laporan', 'url' => '/admin/laporan', 'icon' => 'doc', 'mobile' => true],
+                ['label' => 'Evaluasi', 'url' => '/admin/evaluasi', 'icon' => 'clipboard'],
                 ['label' => 'Pengumuman', 'url' => '/admin/pengumuman', 'icon' => 'bell'],
                 ['label' => 'Audit Trail', 'url' => '/admin/audit', 'icon' => 'history'],
-                ['label' => 'Profil', 'url' => '/admin/profil', 'icon' => 'user'],
+                ['label' => 'Pengaturan', 'url' => '/admin/profil', 'icon' => 'settings'],
             ],
             'dpl' => [
                 ['label' => 'Dashboard', 'url' => '/dpl/dashboard', 'icon' => 'home', 'mobile' => true],

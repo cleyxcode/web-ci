@@ -6,9 +6,9 @@ $selectedMemberIds = is_array($selectedMemberIds) ? array_map('intval', $selecte
 $currentLatitude = old('latitude', $kelompok['latitude'] ?? '');
 $currentLongitude = old('longitude', $kelompok['longitude'] ?? '');
 ?>
-<div class="card" style="max-width:860px">
+<div class="card">
     <div class="card-head"><h2><?= $isEdit ? 'Edit' : 'Tambah' ?> kelompok KKN</h2></div>
-    <p class="field-hint" style="margin:-8px 0 18px">Atur DPL, lokasi penelitian, titik peta, anggota, dan ketua dari halaman ini. Data tersimpan bersama agar alur kelompok tetap sinkron.</p>
+    <p class="field-hint">Atur DPL, lokasi penelitian, titik peta, anggota, dan ketua dari halaman ini. Data tersimpan bersama agar alur kelompok tetap sinkron.</p>
     <form method="post" action="<?= $isEdit ? site_url('admin/kkn/' . $kelompok['id']) : site_url('admin/kkn') ?>">
         <?= csrf_field() ?>
         <div class="form-grid">
@@ -94,7 +94,7 @@ $currentLongitude = old('longitude', $kelompok['longitude'] ?? '');
             </div>
             <div class="field field-full">
                 <label>Titik lokasi penelitian di peta</label>
-                <div class="field-hint" style="margin:0 0 8px">Klik peta untuk memilih titik. Koordinat ini menjadi titik resmi kelompok dan tetap dapat diperbarui ketua dari menu Tim KKN.</div>
+                <div class="field-hint">Klik peta untuk memilih titik. Koordinat ini menjadi titik resmi kelompok dan tetap dapat diperbarui ketua dari menu Tim KKN.</div>
                 <div id="admin-location-map" class="map-box map-box-lg" data-map-editor="1" data-lat="<?= esc($currentLatitude) ?>" data-lng="<?= esc($currentLongitude) ?>"></div>
                 <input type="hidden" name="latitude" id="admin-location-latitude" data-location-latitude value="<?= esc($currentLatitude) ?>">
                 <input type="hidden" name="longitude" id="admin-location-longitude" data-location-longitude value="<?= esc($currentLongitude) ?>">
@@ -120,9 +120,19 @@ $currentLongitude = old('longitude', $kelompok['longitude'] ?? '');
                     </div>
                     <div class="field-hint"><?= $isEdit ? 'Centang mahasiswa yang ingin dimasukkan ke kelompok ini.' : 'Centang anggota yang akan menjadi bagian kelompok ini.' ?></div>
                 <?php elseif ($isEdit): ?>
-                    <div class="empty">Semua mahasiswa sudah ditempatkan di kelompok lain.</div>
+                    <div class="flex flex-col items-center justify-center py-8 px-6 text-center rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
+                        <div class="mx-auto mb-3 grid h-12 w-12 place-items-center rounded-xl bg-slate-100 text-slate-400 dark:bg-slate-800 dark:text-slate-500">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" class="h-6 w-6"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>
+                        </div>
+                        <p class="text-sm font-bold text-slate-500 dark:text-slate-400">Semua mahasiswa sudah ditempatkan di kelompok lain.</p>
+                    </div>
                 <?php else: ?>
-                    <div class="empty">Belum ada mahasiswa tanpa kelompok.</div>
+                    <div class="flex flex-col items-center justify-center py-8 px-6 text-center rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800">
+                        <div class="mx-auto mb-3 grid h-12 w-12 place-items-center rounded-xl bg-slate-100 text-slate-400 dark:bg-slate-800 dark:text-slate-500">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" class="h-6 w-6"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z"/></svg>
+                        </div>
+                        <p class="text-sm font-bold text-slate-500 dark:text-slate-400">Belum ada mahasiswa tanpa kelompok.</p>
+                    </div>
                 <?php endif; ?>
             </div>
         </div>

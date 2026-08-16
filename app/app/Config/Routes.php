@@ -69,6 +69,14 @@ $routes->group('admin', ['filter' => ['auth', 'role:admin']], static function ($
     $routes->get('laporan', 'Admin\LaporanController::index');
     $routes->get('audit', 'Admin\AuditController::index');
 
+    $routes->get('evaluasi', 'Admin\EvaluasiController::index');
+    $routes->get('evaluasi/create', 'Admin\EvaluasiController::create');
+    $routes->post('evaluasi', 'Admin\EvaluasiController::store');
+    $routes->get('evaluasi/(:num)/edit', 'Admin\EvaluasiController::edit/$1');
+    $routes->post('evaluasi/(:num)', 'Admin\EvaluasiController::update/$1');
+    $routes->post('evaluasi/(:num)/delete', 'Admin\EvaluasiController::delete/$1');
+    $routes->get('evaluasi/export', 'Admin\EvaluasiController::export');
+
     $routes->get('pengumuman', 'Admin\PengumumanController::index');
     $routes->get('pengumuman/create', 'Admin\PengumumanController::create');
     $routes->post('pengumuman', 'Admin\PengumumanController::store');

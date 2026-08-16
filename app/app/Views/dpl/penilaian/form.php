@@ -1,10 +1,10 @@
-<div class="card" style="max-width:760px">
+<div class="card">
     <div class="card-head">
         <h2><?= esc($mahasiswa['nama'] ?? '') ?></h2>
-        <span class="font-mono" style="color:var(--abu-karang)"><?= esc($mahasiswa['npm'] ?? '') ?></span>
+        <span class="font-mono"><?= esc($mahasiswa['npm'] ?? '') ?></span>
     </div>
 
-    <div class="info-grid" style="margin-bottom:16px">
+    <div class="info-grid">
         <div class="info-card">
             <span class="info-label">Kelompok</span>
             <strong><?= esc($mahasiswa['nama_kelompok'] ?? 'Belum ditempatkan') ?></strong>
@@ -25,26 +25,26 @@
     </div>
 
     <?php if (! empty($evaluasi)): ?>
-        <div class="alert alert-info" style="margin-bottom:16px">
+        <div class="alert alert-info">
             <strong>Evaluasi kegiatan dari mahasiswa:</strong>
             rating <?= (int) $evaluasi['rating'] ?>/5
             · bimbingan <?= (int) ($evaluasi['aspek_bimbingan'] ?? 0) ?>
             · lokasi <?= (int) ($evaluasi['aspek_lokasi'] ?? 0) ?>
             · pelaksanaan <?= (int) ($evaluasi['aspek_pelaksanaan'] ?? 0) ?>
             <?php if (! empty($evaluasi['komentar'])): ?>
-                <br><span style="opacity:.85"><?= esc($evaluasi['komentar']) ?></span>
+                <br><span><?= esc($evaluasi['komentar']) ?></span>
             <?php endif; ?>
         </div>
     <?php else: ?>
-        <p class="field-hint" style="margin-bottom:16px">Mahasiswa belum mengirim evaluasi kegiatan.</p>
+        <p class="field-hint">Mahasiswa belum mengirim evaluasi kegiatan.</p>
     <?php endif; ?>
 
-    <p class="field-hint" style="margin-bottom:16px">
+    <p class="field-hint">
         Nilai akhir = keaktifan 30% + logbook 30% + laporan 40%. Grade dihitung otomatis dari nilai akhir.
     </p>
 
     <?php if (! empty(session('errors'))): ?>
-        <ul class="alert alert-danger" style="margin-bottom:16px">
+        <ul class="alert alert-danger">
             <?php foreach ((array) session('errors') as $err): ?>
                 <li><?= esc(is_array($err) ? implode(', ', $err) : $err) ?></li>
             <?php endforeach; ?>

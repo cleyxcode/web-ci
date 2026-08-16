@@ -18,7 +18,7 @@
                 <label for="password_confirm">Konfirmasi password</label>
                 <input type="password" id="password_confirm" name="password_confirm" required minlength="6">
             </div>
-            <button type="submit" class="btn btn-primary" style="width:100%">Simpan Password</button>
+            <button type="submit" class="btn btn-primary">Simpan Password</button>
         </form>
     </div>
 </div>

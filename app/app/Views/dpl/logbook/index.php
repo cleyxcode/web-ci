@@ -31,14 +31,26 @@
             </thead>
             <tbody>
             <?php if (empty($logbooks)): ?>
-                <tr><td colspan="7" class="empty">Tidak ada logbook.</td></tr>
+                <tr>
+                    <td colspan="7">
+                        <div class="flex flex-col items-center justify-center py-14 px-6 text-center">
+                            <div class="mx-auto mb-4 grid h-16 w-16 place-items-center rounded-2xl bg-slate-100 text-slate-300 dark:bg-slate-800 dark:text-slate-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" class="h-8 w-8">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25"/>
+                                </svg>
+                            </div>
+                            <p class="text-sm font-bold text-slate-500 dark:text-slate-400">Tidak ada logbook</p>
+                            <p class="mt-1 text-xs text-slate-400">Mahasiswa bimbingan Anda belum mencatat kegiatan</p>
+                        </div>
+                    </td>
+                </tr>
             <?php else: ?>
                 <?php foreach ($logbooks as $row): ?>
                     <tr>
                         <td data-label="Tanggal"><?= format_tanggal($row['tanggal'] ?? null) ?></td>
                         <td data-label="Mahasiswa">
                             <strong><?= esc($row['nama_mahasiswa'] ?? $row['nama'] ?? '-') ?></strong><br>
-                            <span class="font-mono" style="font-size:0.75rem;color:var(--tinta-redup)"><?= esc($row['npm'] ?? '') ?></span>
+                            <span class="font-mono"><?= esc($row['npm'] ?? '') ?></span>
                         </td>
                         <td data-label="Kelompok">
                             <?= esc($row['nama_kelompok'] ?? '-') ?><br>
@@ -58,16 +70,16 @@
                         <td data-label="Status"><span class="<?= stempel_class($row['status']) ?>"><?= stempel_label($row['status']) ?></span></td>
                         <td data-label="Aksi">
                             <?php if ($row['status'] === 'menunggu'): ?>
-                                <form method="post" action="<?= site_url('dpl/logbook/' . $row['id'] . '/proses') ?>" style="display:flex;flex-direction:column;gap:6px;min-width:180px">
+                                <form method="post" action="<?= site_url('dpl/logbook/' . $row['id'] . '/proses') ?>">
                                     <?= csrf_field() ?>
-                                    <input type="text" name="catatan_dpl" placeholder="Catatan (opsional)" style="padding:6px 8px;background:var(--inset);border:1px solid var(--border-lembut);border-radius:6px;font-size:0.8rem">
+                                    <input type="text" name="catatan_dpl" placeholder="Catatan (opsional)">
                                     <div class="actions">
                                         <button type="submit" name="action" value="validasi" class="btn btn-success btn-sm">Validasi</button>
                                         <button type="submit" name="action" value="tolak" class="btn btn-danger btn-sm">Tolak</button>
                                     </div>
                                 </form>
                             <?php else: ?>
-                                <span style="color:var(--tinta-redup);font-size:0.8rem">Selesai</span>
+                                <span>Selesai</span>
                             <?php endif; ?>
                         </td>
                     </tr>

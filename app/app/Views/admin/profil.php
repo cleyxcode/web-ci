@@ -1,4 +1,4 @@
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px" class="dash-grid">
+<div class="dash-grid">
     <div class="card">
         <div class="card-head"><h2>Data profil</h2></div>
         <form method="post" action="<?= site_url('admin/profil') ?>">
@@ -65,4 +65,3 @@
         </form>
     </div>
 </div>
-<style>@media (max-width:900px){.dash-grid{grid-template-columns:1fr!important}}</style>

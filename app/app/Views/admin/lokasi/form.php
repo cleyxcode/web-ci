@@ -1,5 +1,5 @@
 <?php $isEdit = ! empty($lokasi); ?>
-<div class="card" style="max-width:640px">
+<div class="card">
     <div class="card-head"><h2><?= $isEdit ? 'Edit' : 'Tambah' ?> lokasi</h2></div>
     <form method="post" action="<?= $isEdit ? site_url('admin/lokasi/' . $lokasi['id']) : site_url('admin/lokasi') ?>">
         <?= csrf_field() ?>
@@ -12,7 +12,7 @@
                 <label>Kecamatan</label>
                 <input type="text" name="kecamatan" value="<?= esc(old('kecamatan', $lokasi['kecamatan'] ?? '')) ?>">
             </div>
-            <div class="field" style="grid-column:1/-1">
+            <div class="field">
                 <label>Kabupaten</label>
                 <input type="text" name="kabupaten" value="<?= esc(old('kabupaten', $lokasi['kabupaten'] ?? '')) ?>">
                 <div class="field-hint">Contoh: Maluku Tengah, Kota Ambon</div>

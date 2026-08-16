@@ -1,4 +1,4 @@
-<div class="card" style="max-width:720px">
+<div class="card">
     <div class="card-head"><h2>Buat pengumuman</h2></div>
     <form method="post" action="<?= site_url('admin/pengumuman') ?>">
         <?= csrf_field() ?>
