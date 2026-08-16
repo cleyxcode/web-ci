@@ -10,6 +10,21 @@ fi
 
 bash "$setup_script"
 
+# Jalankan seluruh migration CodeIgniter setelah service dan database siap.
+# Ini membuat database lokal selalu mengikuti migration terbaru yang ada di repo,
+# termasuk tabel evaluasi_kriteria dan cakupan kriterianya.
+if docker compose version >/dev/null 2>&1; then
+    compose_command=(docker compose)
+elif command -v docker-compose >/dev/null 2>&1; then
+    compose_command=(docker-compose)
+else
+    printf '\nERROR: Docker Compose tidak tersedia untuk menjalankan migration.\n' >&2
+    exit 1
+fi
+
+printf '\n==> Menjalankan migration database terbaru\n'
+"${compose_command[@]}" exec -T app php spark migrate --all
+
 printf '\nURL yang dapat digunakan:\n'
 printf '  Domain      : https://kkntematikukim.site\n'
 printf '  Lokal       : http://localhost:8083\n'
