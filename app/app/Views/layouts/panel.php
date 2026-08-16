@@ -93,17 +93,6 @@ $roleAccent = match ($role) {
                 </a>
             <?php endforeach; ?>
         </nav>
-        <div class="mt-auto rounded-2xl border border-white/15 bg-white/10 p-2 shadow-lg shadow-slate-950/10">
-            <div class="flex items-center gap-2 px-2 pb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-white/45">
-                <span class="grid h-7 w-7 place-items-center rounded-lg bg-white/10 text-white/80"><?= $iconSvg('logout') ?></span>
-                <span>Sesi akun</span>
-            </div>
-            <a class="group flex min-h-11 items-center gap-3 rounded-xl bg-white/10 px-3 py-2.5 text-[13px] font-extrabold text-white transition hover:bg-white hover:text-violet-800 focus:outline-none focus:ring-2 focus:ring-white/70" href="<?= site_url('logout') ?>">
-                <span class="h-[18px] w-[18px]"><?= $iconSvg('logout') ?></span>
-                <span class="flex-1">Keluar dari akun</span>
-                <span aria-hidden="true" class="text-white/50 transition group-hover:translate-x-0.5">→</span>
-            </a>
-        </div>
     </aside>
 
     <div class="min-w-0 flex-1 lg:ml-[260px]">
@@ -122,7 +111,26 @@ $roleAccent = match ($role) {
                         </div>
                     </div>
                 </div>
-                <a href="<?= esc($profilUrl) ?>" class="flex items-center gap-2 rounded-xl p-1.5 transition hover:bg-slate-100 dark:hover:bg-slate-800" aria-label="Buka profil"><span class="grid h-8 w-8 place-items-center rounded-full bg-gradient-to-br from-violet-500 to-indigo-600 text-xs font-extrabold text-white"><?= esc($initial) ?></span><span class="hidden max-w-32 sm:block"><strong class="block truncate text-xs text-slate-800 dark:text-white"><?= esc($user['nama'] ?? 'Pengguna') ?></strong><small class="block text-[11px] text-slate-400"><?= esc(ucfirst($role)) ?></small></span></a>
+                <div class="relative" id="profile-wrap">
+                    <button type="button" id="profile-btn" class="flex max-w-[13rem] items-center gap-2 rounded-xl p-1.5 text-left transition hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-violet-300 dark:hover:bg-slate-800 dark:focus:ring-violet-800" aria-label="Buka menu profil" aria-expanded="false" aria-controls="profile-panel">
+                        <span class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-gradient-to-br <?= esc($roleAccent) ?> text-xs font-extrabold text-white shadow-sm"><?= esc($initial) ?></span>
+                        <span class="hidden min-w-0 sm:block"><strong class="block truncate text-xs text-slate-800 dark:text-white"><?= esc($user['nama'] ?? 'Pengguna') ?></strong><small class="block text-[11px] text-slate-400"><?= esc(ucfirst($role)) ?></small></span>
+                        <svg aria-hidden="true" class="hidden h-4 w-4 shrink-0 text-slate-400 sm:block" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6"/></svg>
+                    </button>
+                    <div id="profile-panel" class="absolute right-0 top-full z-50 mt-2 hidden w-[min(18rem,calc(100vw-1rem))] max-w-[calc(100vw-1rem)] overflow-hidden rounded-2xl border border-slate-200 bg-white p-2 shadow-xl shadow-slate-900/15 dark:border-slate-700 dark:bg-slate-900" role="menu">
+                        <a href="<?= esc($profilUrl) ?>" class="flex items-center gap-3 rounded-xl px-3 py-2.5 transition hover:bg-violet-50 dark:hover:bg-violet-950/30" role="menuitem">
+                            <span class="grid h-9 w-9 place-items-center rounded-xl bg-violet-100 text-violet-700 dark:bg-violet-950/60 dark:text-violet-300"><?= $iconSvg('user') ?></span>
+                            <span class="min-w-0"><strong class="block text-sm font-extrabold text-slate-800 dark:text-white">Profil saya</strong><small class="block truncate text-xs text-slate-400">Kelola informasi akun</small></span>
+                        </a>
+                        <div class="my-1 border-t border-slate-100 dark:border-slate-800"></div>
+                        <form method="get" action="<?= site_url('logout') ?>" data-confirm="Anda akan keluar dari akun. Lanjutkan?">
+                            <button type="submit" class="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-rose-600 transition hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-950/30" role="menuitem">
+                                <span class="grid h-9 w-9 place-items-center rounded-xl bg-rose-100 dark:bg-rose-950/50"><?= $iconSvg('logout') ?></span>
+                                <span><strong class="block text-sm font-extrabold">Keluar dari akun</strong><small class="block text-xs text-rose-400">Akhiri sesi saat ini</small></span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
             </div>
         </header>
 

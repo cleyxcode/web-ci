@@ -1,39 +1,63 @@
 <?php
 $allMhs = $mahasiswa ?? [];
 ?>
-<div>
-    <div>
-        <h1>Manajemen Akun Mahasiswa</h1>
-        <p><?= count($allMhs) ?> mahasiswa terdaftar</p>
+<div class="mb-5 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div class="min-w-0">
+        <p class="mb-1 text-[11px] font-extrabold uppercase tracking-[0.16em] text-violet-600 dark:text-violet-300">Direktori akademik</p>
+        <h1 class="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">Manajemen Mahasiswa</h1>
+        <p class="mt-1 text-sm font-semibold text-slate-500 dark:text-slate-400">Kelola akun, kelompok KKN, dan kontak mahasiswa dalam satu tempat.</p>
     </div>
-    <a href="<?= site_url('admin/mahasiswa/create') ?>" class="btn btn-primary">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/></svg>
-        Tambah Mahasiswa
+    <a href="<?= site_url('admin/mahasiswa/create') ?>" class="btn btn-primary w-full gap-2 sm:w-auto">
+        <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/></svg>
+        <span>Tambah Mahasiswa</span>
     </a>
 </div>
 
 <!-- Search & Filter -->
-<div class="card">
-    <div>
-        <div>
-            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path stroke-linecap="round" d="m21 21-4.35-4.35"/></svg>
-            <input type="text" id="mhs-search" placeholder="Cari nama, NPM, email, prodi..." autocomplete="off"
-               >
+<div class="card mb-5 overflow-hidden border-violet-100/80 p-0 dark:border-violet-900/50">
+    <div class="border-b border-slate-100 bg-gradient-to-r from-violet-50/80 to-indigo-50/50 px-4 py-4 dark:border-slate-800 dark:from-violet-950/30 dark:to-slate-900">
+        <div class="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+                <h2 class="text-sm font-extrabold text-slate-900 dark:text-white">Cari dan saring mahasiswa</h2>
+                <p class="mt-0.5 text-xs font-semibold text-slate-500 dark:text-slate-400">Gunakan nama, NPM, email, prodi, atau kelompok.</p>
+            </div>
+            <span class="hidden rounded-full bg-white/80 px-3 py-1 text-[11px] font-extrabold text-violet-700 shadow-sm sm:inline-flex dark:bg-slate-800 dark:text-violet-300">Filter cepat</span>
         </div>
-        <select id="mhs-filter-kelompok">
-            <option value="">Semua Kelompok</option>
-            <?php foreach ($kelompok ?? [] as $k): ?>
-                <option value="<?= esc($k['nama_kelompok']) ?>"><?= esc($k['nama_kelompok']) ?></option>
-            <?php endforeach; ?>
-            <option value="-">Belum ada kelompok</option>
-        </select>
-        <div id="mhs-count-info"></div>
+    </div>
+    <div class="grid gap-3 p-4 lg:grid-cols-[minmax(0,1fr)_minmax(220px,280px)_auto] lg:items-end">
+        <label class="block min-w-0">
+            <span class="mb-1.5 block text-xs font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-400">Pencarian</span>
+            <span class="relative block">
+                <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-violet-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path stroke-linecap="round" d="m21 21-4.35-4.35"/></svg>
+                <input type="search" id="mhs-search" class="!pl-10" placeholder="Cari nama, NPM, email, atau prodi..." autocomplete="off" aria-label="Cari mahasiswa">
+            </span>
+        </label>
+        <label class="block min-w-0">
+            <span class="mb-1.5 block text-xs font-extrabold uppercase tracking-wider text-slate-500 dark:text-slate-400">Kelompok</span>
+            <select id="mhs-filter-kelompok" aria-label="Filter kelompok mahasiswa">
+                <option value="">Semua kelompok</option>
+                <?php foreach ($kelompok ?? [] as $k): ?>
+                    <option value="<?= esc($k['nama_kelompok']) ?>"><?= esc($k['nama_kelompok']) ?></option>
+                <?php endforeach; ?>
+                <option value="-">Belum ada kelompok</option>
+            </select>
+        </label>
+        <div id="mhs-count-info" class="min-h-10 rounded-xl bg-slate-50 px-3 py-2.5 text-center text-xs font-extrabold text-slate-500 dark:bg-slate-800/70 dark:text-slate-400 lg:min-w-32"><?= count($allMhs) ?> mahasiswa</div>
     </div>
 </div>
 
 <!-- Table -->
-<div class="card">
-    <div class="table-wrap">
+<div class="card overflow-hidden p-0">
+    <div class="flex items-center justify-between border-b border-slate-100 px-4 py-4 dark:border-slate-800 sm:px-5">
+        <div>
+            <h2 class="text-sm font-extrabold text-slate-900 dark:text-white">Daftar mahasiswa</h2>
+            <p class="mt-0.5 text-xs font-semibold text-slate-400"><?= count($allMhs) ?> akun terdaftar</p>
+        </div>
+        <span class="grid h-9 w-9 place-items-center rounded-xl bg-violet-50 text-violet-600 dark:bg-violet-950/40 dark:text-violet-300" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm13 10v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </span>
+    </div>
+    <div class="table-wrap px-3 pb-3 sm:px-5 sm:pb-5">
         <table class="data" id="mhs-table">
             <thead>
                 <tr>
@@ -74,16 +98,16 @@ $allMhs = $mahasiswa ?? [];
                         data-email="<?= strtolower(esc($row['email'] ?? '')) ?>"
                         data-prodi="<?= strtolower(esc($row['prodi'] ?? '')) ?>"
                         data-kelompok="<?= esc($hasKelompok ? $row['nama_kelompok'] : '-') ?>">
-                        <td>
+                        <td data-label="Profil">
                             <div>
                                 <?= esc($initial) ?>
                             </div>
                         </td>
-                        <td>
+                        <td data-label="Nama & akun">
                             <div><?= esc($row['nama'] ?? '-') ?></div>
                             <div><?= esc($row['email'] ?? '-') ?></div>
                         </td>
-                        <td>
+                        <td data-label="NPM">
                             <?php if ($npmTemp): ?>
                                 <span>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
@@ -93,8 +117,8 @@ $allMhs = $mahasiswa ?? [];
                                 <span class="font-mono"><?= esc($npm) ?></span>
                             <?php endif; ?>
                         </td>
-                        <td><?= esc($row['prodi'] ?? '-') ?></td>
-                        <td>
+                        <td data-label="Program studi"><?= esc($row['prodi'] ?? '-') ?></td>
+                        <td data-label="Kelompok KKN">
                             <?php if ($hasKelompok): ?>
                                 <span>
                                     <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" fill="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="12"/></svg>
@@ -107,7 +131,7 @@ $allMhs = $mahasiswa ?? [];
                                 </span>
                             <?php endif; ?>
                         </td>
-                        <td>
+                        <td data-label="Kontak">
                             <?php if (! empty($row['no_hp'])): ?>
                                 <a href="https://wa.me/<?= preg_replace('/\D/', '', $row['no_hp']) ?>" target="_blank" rel="noopener"
                                   >
@@ -118,7 +142,7 @@ $allMhs = $mahasiswa ?? [];
                                 <span>—</span>
                             <?php endif; ?>
                         </td>
-                        <td>
+                        <td data-label="Aksi">
                             <div>
                                 <a href="<?= site_url('admin/mahasiswa/' . $row['id'] . '/edit') ?>" title="Edit akun mahasiswa" class="grid h-8 w-8 place-items-center rounded-lg bg-slate-100 text-slate-600 transition hover:bg-blue-100 hover:text-blue-700">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h11a2 2 0 0 0 2-2v-5m-1.414-9.414a2 2 0 1 1 2.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
@@ -184,7 +208,7 @@ $allMhs = $mahasiswa ?? [];
 
         if (noResult) noResult.classList.toggle('hidden', !(visible === 0 && total > 0));
         if (countInfo) {
-            countInfo.textContent = (q || grp) ? `Menampilkan ${visible} dari ${total}` : '';
+            countInfo.textContent = (q || grp) ? `Menampilkan ${visible} dari ${total}` : `${total} mahasiswa`;
         }
     }
 

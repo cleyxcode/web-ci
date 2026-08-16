@@ -246,6 +246,38 @@
     });
   }
 
+  /* ----- Profile menu and logout confirmation ----- */
+  const profileBtn = document.getElementById('profile-btn');
+  const profilePanel = document.getElementById('profile-panel');
+  const profileWrap = document.getElementById('profile-wrap');
+
+  const closeProfileMenu = () => {
+    if (!profilePanel || !profileBtn) return;
+    profilePanel.classList.add('hidden');
+    profileBtn.setAttribute('aria-expanded', 'false');
+  };
+
+  if (profileBtn && profilePanel) {
+    profileBtn.addEventListener('click', (event) => {
+      event.stopPropagation();
+      const isOpen = !profilePanel.classList.contains('hidden');
+      profilePanel.classList.toggle('hidden', isOpen);
+      profileBtn.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
+      if (!isOpen && notifPanel && notifBtn) {
+        notifPanel.setAttribute('hidden', '');
+        notifBtn.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    profilePanel.addEventListener('click', (event) => event.stopPropagation());
+    document.addEventListener('click', (event) => {
+      if (profileWrap && !profileWrap.contains(event.target)) closeProfileMenu();
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') closeProfileMenu();
+    });
+  }
+
   /* ----- Leaflet maps (data-map + data-points) ----- */
   const initMaps = () => {
     if (!window.L) return;
