@@ -7,10 +7,13 @@ $flashMessages = [
 $errors = session()->getFlashdata('errors');
 
 if (! empty($errors)) {
-    $flashMessages['error'] = implode(' • ', array_map(
+    $errorList = array_map(
         static fn ($error) => is_array($error) ? implode(', ', $error) : (string) $error,
         (array) $errors
-    ));
+    );
+    $flashMessages['error'] = count($errorList) > 1 
+        ? implode("\n", $errorList)
+        : (reset($errorList) ?: '');
 }
 
 $flashIcons = [
@@ -39,16 +42,28 @@ $iconStyles = [
 
 foreach ($flashMessages as $type => $message):
     if (! $message) { continue; }
+    $lines = explode("\n", (string) $message);
+    $singleLine = count($lines) === 1;
 ?>
     <div class="flash-message mb-4 flex items-start gap-3 rounded-xl border p-3.5 text-sm <?= $flashStyles[$type] ?? '' ?>"
          role="alert"
          data-toast-type="<?= esc($type) ?>"
          data-toast-title="<?= esc($flashTitles[$type] ?? 'Notifikasi') ?>"
-         data-toast-message="<?= esc((string) $message, 'attr') ?>">
+         data-toast-message="<?= esc(($singleLine ? (string) $message : $lines[0]), 'attr') ?>">
         <span class="mt-0.5 shrink-0 <?= $iconStyles[$type] ?? '' ?>"><?= $flashIcons[$type] ?? '' ?></span>
         <div class="min-w-0 flex-1">
             <strong class="block font-extrabold"><?= esc($flashTitles[$type] ?? 'Notifikasi') ?></strong>
-            <p class="mt-0.5 opacity-90"><?= esc((string) $message) ?></p>
+            <?php if ($singleLine): ?>
+                <p class="mt-0.5 opacity-90"><?= esc((string) $message) ?></p>
+            <?php else: ?>
+                <ul class="mt-1.5 space-y-1 opacity-90">
+                    <?php foreach ($lines as $line): ?>
+                        <?php if (! empty($line)): ?>
+                            <li class="flex gap-2"><span class="shrink-0">•</span><span><?= esc($line) ?></span></li>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                </ul>
+            <?php endif; ?>
         </div>
     </div>
 <?php endforeach; ?>

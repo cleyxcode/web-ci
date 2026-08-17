@@ -287,3 +287,146 @@ html { scroll-behavior: smooth; }
 [data-theme="dark"] .leaflet-tile {
   filter: brightness(0.75) invert(1) contrast(1.15) hue-rotate(200deg) saturate(0.6);
 }
+
+/* -------- Toast Animations -------- */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideOutDown {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+}
+
+.toast:not(.hidden) {
+  animation: slideInUp 0.3s ease-out;
+}
+
+.toast.opacity-0.translate-y-2 {
+  animation: slideOutDown 0.3s ease-out;
+}
+
+/* Toast type-specific styling */
+.toast-success {
+  border-color: rgba(16, 185, 129, 0.3);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(5, 150, 105, 0.02) 100%);
+}
+
+.toast-error,
+.toast-danger {
+  border-color: rgba(239, 68, 68, 0.3);
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.05) 0%, rgba(220, 38, 38, 0.02) 100%);
+}
+
+.toast-warning {
+  border-color: rgba(245, 158, 11, 0.3);
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.05) 0%, rgba(217, 119, 6, 0.02) 100%);
+}
+
+.toast-info {
+  border-color: rgba(59, 130, 246, 0.3);
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(37, 99, 235, 0.02) 100%);
+}
+
+[data-theme="dark"] .toast-success {
+  border-color: rgba(16, 185, 129, 0.4);
+}
+
+[data-theme="dark"] .toast-error,
+[data-theme="dark"] .toast-danger {
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+[data-theme="dark"] .toast-warning {
+  border-color: rgba(245, 158, 11, 0.4);
+}
+
+[data-theme="dark"] .toast-info {
+  border-color: rgba(59, 130, 246, 0.4);
+}
+
+/* -------- Flash Message Animations -------- */
+.flash-message {
+  animation: slideInUp 0.3s ease-out;
+}
+
+/* -------- Confirm Dialog Animation -------- */
+#ui-confirm:not(.hidden) > div:first-child {
+  animation: fadeIn 0.2s ease-out;
+}
+
+#ui-confirm:not(.hidden) > div:last-child {
+  animation: scaleIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* -------- Responsive Toast Positioning -------- */
+@media (max-width: 640px) {
+  .toast {
+    right: 0.5rem !important;
+    left: 0.5rem !important;
+    bottom: 6rem !important;
+  }
+}
+
+/* -------- Notification Panel Improvements -------- */
+.notif-item {
+  transition: all 0.2s ease;
+}
+
+.notif-item.unread {
+  animation: highlightFlash 0.3s ease-out;
+}
+
+@keyframes highlightFlash {
+  0% {
+    background-color: transparent;
+  }
+  50% {
+    background-color: rgba(139, 92, 246, 0.2);
+  }
+  100% {
+    background-color: rgba(139, 92, 246, 0.06);
+  }
+}
+
+.dot {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}

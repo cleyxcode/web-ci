@@ -74,11 +74,31 @@
 
   /* ----- UI notifications ----- */
   const toastMeta = {
-    success: { title: 'Berhasil', icon: '✓' },
-    error: { title: 'Perlu diperiksa', icon: '!' },
-    danger: { title: 'Perlu diperiksa', icon: '!' },
-    warning: { title: 'Perhatian', icon: '!' },
-    info: { title: 'Informasi', icon: 'i' },
+    success: { 
+      title: 'Berhasil', 
+      icon: '✓',
+      style: 'border-emerald-200 bg-emerald-50 text-emerald-900 dark:border-emerald-900/50 dark:bg-emerald-950/30 dark:text-emerald-100'
+    },
+    error: { 
+      title: 'Perlu diperiksa', 
+      icon: '!',
+      style: 'border-rose-200 bg-rose-50 text-rose-900 dark:border-rose-900/50 dark:bg-rose-950/30 dark:text-rose-100'
+    },
+    danger: { 
+      title: 'Perlu diperiksa', 
+      icon: '!',
+      style: 'border-rose-200 bg-rose-50 text-rose-900 dark:border-rose-900/50 dark:bg-rose-950/30 dark:text-rose-100'
+    },
+    warning: { 
+      title: 'Perhatian', 
+      icon: '⚠',
+      style: 'border-amber-200 bg-amber-50 text-amber-900 dark:border-amber-900/50 dark:bg-amber-950/30 dark:text-amber-100'
+    },
+    info: { 
+      title: 'Informasi', 
+      icon: 'ℹ',
+      style: 'border-blue-200 bg-blue-50 text-blue-900 dark:border-blue-900/50 dark:bg-blue-950/30 dark:text-blue-100'
+    },
   };
   const toast = document.getElementById('toast');
   const toastTitle = document.getElementById('toast-title');
@@ -87,20 +107,36 @@
   const toastClose = document.getElementById('toast-close');
 
   const hideToast = () => {
-    if (toast) toast.classList.add('hidden');
+    if (toast) {
+      toast.classList.add('opacity-0', 'translate-y-2');
+      setTimeout(() => {
+        toast.classList.add('hidden');
+        toast.classList.remove('opacity-0', 'translate-y-2');
+      }, 300);
+    }
   };
 
   window.showToast = (msg, type = 'info', title = '') => {
     if (!toast || !toastMessage) return;
     const safeType = toastMeta[type] ? type : 'info';
     const meta = toastMeta[safeType];
-    toast.className = `toast toast-${safeType} fixed bottom-24 right-4 z-50 flex w-[min(24rem,calc(100vw-2rem))] items-start gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-xl shadow-slate-900/10 dark:border-slate-700 dark:bg-slate-900`;
+    const iconBg = {
+      success: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300',
+      error: 'bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300',
+      danger: 'bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300',
+      warning: 'bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300',
+      info: 'bg-blue-100 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300',
+    };
+    toast.className = `toast toast-${safeType} fixed bottom-28 right-4 z-50 flex w-[min(24rem,calc(100vw-2rem))] items-start gap-3 rounded-2xl border p-4 shadow-xl shadow-slate-900/10 transition-all duration-300 ${meta.style}`;
     if (toastTitle) toastTitle.textContent = title || meta.title;
-    toastMessage.textContent = msg || '';
-    if (toastIcon) toastIcon.textContent = meta.icon;
-    toast.classList.remove('hidden');
+    if (toastMessage) toastMessage.textContent = msg || '';
+    if (toastIcon) {
+      toastIcon.className = `grid h-8 w-8 shrink-0 place-items-center rounded-xl font-extrabold ${iconBg[safeType] || iconBg.info}`;
+      toastIcon.textContent = meta.icon;
+    }
+    toast.classList.remove('hidden', 'opacity-0', 'translate-y-2');
     clearTimeout(window._toastTimer);
-    window._toastTimer = setTimeout(hideToast, 5200);
+    window._toastTimer = setTimeout(hideToast, 5500);
   };
 
   toastClose?.addEventListener('click', hideToast);
@@ -118,6 +154,8 @@
   const confirmModal = document.getElementById('ui-confirm');
   const confirmMessage = document.getElementById('ui-confirm-message');
   const confirmSubmit = document.getElementById('ui-confirm-submit');
+  const confirmIcon = document.getElementById('ui-confirm-icon');
+  const confirmType = document.getElementById('ui-confirm-type');
   let pendingForm = null;
   let lastFocusedElement = null;
 
@@ -132,8 +170,29 @@
     if (!confirmModal || !confirmMessage || !confirmSubmit) return;
     pendingForm = form;
     lastFocusedElement = document.activeElement;
+    const isDanger = form.dataset.confirmDanger === '1' || form.dataset.confirmType === 'danger';
+    
     confirmMessage.textContent = form.dataset.confirm || 'Apakah Anda yakin ingin melanjutkan tindakan ini?';
     confirmModal.classList.remove('hidden');
+    
+    if (confirmIcon) {
+      confirmIcon.className = isDanger 
+        ? 'mb-4 grid h-11 w-11 place-items-center rounded-xl bg-rose-100 text-xl font-extrabold text-rose-600 dark:bg-rose-950/60 dark:text-rose-300'
+        : 'mb-4 grid h-11 w-11 place-items-center rounded-xl bg-blue-100 text-xl font-extrabold text-blue-600 dark:bg-blue-950/60 dark:text-blue-300';
+      confirmIcon.textContent = isDanger ? '!' : '?';
+    }
+    
+    if (confirmType) {
+      confirmType.textContent = isDanger ? 'Tindakan berbahaya' : 'Konfirmasi tindakan';
+    }
+    
+    if (confirmSubmit) {
+      confirmSubmit.className = isDanger
+        ? 'rounded-xl bg-rose-600 px-4 py-2 text-sm font-extrabold text-white transition hover:bg-rose-700 dark:bg-rose-700 dark:hover:bg-rose-800'
+        : 'rounded-xl bg-blue-600 px-4 py-2 text-sm font-extrabold text-white transition hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800';
+      confirmSubmit.textContent = isDanger ? 'Ya, hapus' : 'Ya, lanjutkan';
+    }
+    
     confirmSubmit.focus();
   };
 
@@ -199,17 +258,20 @@
       notifPanel.toggleAttribute('hidden', !open);
       notifBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
 
-      // Saat panel DIBUKA — hapus dot merah & tandai semua dibaca
       if (open) {
         const dot = document.getElementById('notif-dot');
         if (dot) {
           dot.remove();
-          // Tandai semua sebagai dibaca di server (silent)
           const cfg = window.KKN || {};
-          postForm(`${cfg.notifReadUrl}/read-all`).then(() => {
-            document.querySelectorAll('.notif-item.unread').forEach((el) => el.classList.remove('unread'));
-            if (readAllBtn) readAllBtn.remove();
-          }).catch(() => {});
+          try {
+            const res = await postForm(`${cfg.notifReadUrl}/markAllRead`);
+            if (res.ok) {
+              document.querySelectorAll('.notif-item.unread').forEach((el) => el.classList.remove('unread'));
+              if (readAllBtn) readAllBtn.remove();
+            }
+          } catch (err) {
+            console.error('Failed to mark notifications as read:', err);
+          }
         }
       }
     });
@@ -225,12 +287,19 @@
       item.addEventListener('click', async () => {
         const id = item.dataset.id;
         const cfg = window.KKN || {};
-        const res = await postForm(`${cfg.notifReadUrl}/${id}/read`);
-        if (res.ok) {
-          item.classList.remove('unread');
-          const dot = document.getElementById('notif-dot');
-          const data = await res.json();
-          if (dot && data.unreadCount === 0) dot.remove();
+        try {
+          const res = await postForm(`${cfg.notifReadUrl}/markRead/${id}`);
+          if (res.ok) {
+            item.classList.remove('unread');
+            const dot = document.getElementById('notif-dot');
+            const data = await res.json();
+            if (dot && data.unreadCount === 0) dot.remove();
+          } else {
+            showToast('Gagal menandai notifikasi dibaca', 'error');
+          }
+        } catch (err) {
+          console.error('Error marking notification as read:', err);
+          showToast('Terjadi kesalahan', 'error');
         }
       });
     });
@@ -239,13 +308,18 @@
   if (readAllBtn) {
     readAllBtn.addEventListener('click', async () => {
       const cfg = window.KKN || {};
-      const res = await postForm(`${cfg.notifReadUrl}/read-all`);
-      if (res.ok) {
-        document.querySelectorAll('.notif-item.unread').forEach((el) => el.classList.remove('unread'));
-        const dot = document.getElementById('notif-dot');
-        if (dot) dot.remove();
-        readAllBtn.remove();
-        showToast('Semua notifikasi ditandai dibaca', 'success');
+      try {
+        const res = await postForm(`${cfg.notifReadUrl}/markAllRead`);
+        if (res.ok) {
+          document.querySelectorAll('.notif-item.unread').forEach((el) => el.classList.remove('unread'));
+          const dot = document.getElementById('notif-dot');
+          if (dot) dot.remove();
+          readAllBtn.remove();
+          showToast('Semua notifikasi ditandai dibaca', 'success');
+        }
+      } catch (err) {
+        console.error('Error marking all notifications as read:', err);
+        showToast('Gagal menandai semua notifikasi', 'error');
       }
     });
   }

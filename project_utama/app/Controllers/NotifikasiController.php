@@ -42,6 +42,16 @@ class NotifikasiController extends PanelController
         return redirect()->back()->with('success', 'Semua notifikasi ditandai dibaca.');
     }
 
+    public function readAll()
+    {
+        return $this->markAllRead();
+    }
+
+    public function read(int $id)
+    {
+        return $this->markRead($id);
+    }
+
     public function apiList()
     {
         $user  = current_user();
