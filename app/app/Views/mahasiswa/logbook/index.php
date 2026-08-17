@@ -13,12 +13,13 @@
                     <th>Dok</th>
                     <th>Status</th>
                     <th>Catatan DPL</th>
+                    <th>Aksi</th>
                 </tr>
             </thead>
             <tbody>
             <?php if (empty($logbooks)): ?>
                 <tr>
-                    <td colspan="6">
+                    <td colspan="7">
                         <div class="flex flex-col items-center justify-center py-14 px-6 text-center">
                             <div class="mx-auto mb-4 grid h-16 w-16 place-items-center rounded-2xl bg-slate-100 text-slate-300 dark:bg-slate-800 dark:text-slate-600">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" class="h-8 w-8">
@@ -49,6 +50,17 @@
                         </td>
                         <td><span class="<?= stempel_class($row['status']) ?>"><?= stempel_label($row['status']) ?></span></td>
                         <td><?= esc($row['catatan_dpl'] ?? '-') ?></td>
+                        <td class="actions">
+                            <?php if (($row['status'] ?? 'menunggu') === 'menunggu'): ?>
+                                <a href="<?= site_url('mahasiswa/logbook/' . (int) $row['id'] . '/edit') ?>" class="btn btn-secondary btn-sm">Edit</a>
+                                <form method="post" action="<?= site_url('mahasiswa/logbook/' . (int) $row['id'] . '/delete') ?>" data-confirm="Hapus logbook ini? Tindakan ini tidak dapat dibatalkan.">
+                                    <?= csrf_field() ?>
+                                    <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+                                </form>
+                            <?php else: ?>
+                                <span class="text-xs text-slate-400">—</span>
+                            <?php endif; ?>
+                        </td>
                     </tr>
                 <?php endforeach; ?>
             <?php endif; ?>

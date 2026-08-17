@@ -10,6 +10,7 @@ use App\Models\DplModel;
 use App\Models\EvaluasiKriteriaModel;
 use App\Models\EvaluasiModel;
 use App\Models\MahasiswaModel;
+use App\Models\KelompokKknModel;
 
 final class EvaluasiController extends PanelController
 {
@@ -44,6 +45,12 @@ final class EvaluasiController extends PanelController
             'avgRating'      => $evaluasiModel->averageRating((int) $dpl['id']),
             'totalEvaluasi'  => count($evaluasi),
             'totalMahasiswa' => count($mahasiswa),
+            'kelompok'       => model(KelompokKknModel::class)->getByDplId((int) $dpl['id']),
+            'criteria'       => array_values(array_filter(
+                model(EvaluasiKriteriaModel::class)->getActiveOrdered(),
+                static fn (array $row): bool => ($row['cakupan'] ?? 'semua') === 'semua'
+                    || (int) ($row['target_id'] ?? 0) === (int) $dpl['id']
+            )),
         ]);
     }
 
@@ -176,6 +183,103 @@ final class EvaluasiController extends PanelController
         );
 
         return redirect()->to('/dpl/evaluasi')->with('success', 'Evaluasi DPL berhasil disimpan.');
+    }
+
+    public function groupForm(int $kelompokId): string
+    {
+        $dpl = $this->currentDpl();
+        $kelompok = $dpl ? model(KelompokKknModel::class)->where('id', $kelompokId)->where('dpl_id', $dpl['id'])->first() : null;
+        if (! $kelompok) {
+            return redirect()->to('/dpl/evaluasi')->with('error', 'Kelompok bukan bagian dari bimbingan Anda.');
+        }
+
+        $students = model(MahasiswaModel::class)->getByKelompokId($kelompokId);
+        $evaluasi = [];
+        foreach ($students as $student) {
+            $evaluasi[(int) $student['id']] = model(EvaluasiModel::class)->findByMahasiswaDpl((int) $student['id']);
+        }
+
+        return $this->render('dpl/evaluasi/group-form', [
+            'title' => 'Evaluasi Satu Kelompok', 'kelompok' => $kelompok, 'mahasiswa' => $students,
+            'evaluasi' => $evaluasi,
+            'criteria' => model(EvaluasiKriteriaModel::class)->getForDpl((int) $dpl['id'], $kelompokId),
+        ]);
+    }
+
+    public function saveGroup(int $kelompokId)
+    {
+        $dpl = $this->currentDpl();
+        $kelompok = $dpl ? model(KelompokKknModel::class)->where('id', $kelompokId)->where('dpl_id', $dpl['id'])->first() : null;
+        if (! $kelompok) {
+            return redirect()->to('/dpl/evaluasi')->with('error', 'Kelompok bukan bagian dari bimbingan Anda.');
+        }
+
+        $criteria = model(EvaluasiKriteriaModel::class)->getForDpl((int) $dpl['id'], $kelompokId);
+        $students = model(MahasiswaModel::class)->getByKelompokId($kelompokId);
+        $ratings = $this->request->getPost('ratings');
+        $comments = $this->request->getPost('komentar');
+        $model = model(EvaluasiModel::class);
+        $errors = [];
+
+        foreach ($students as $student) {
+            $studentId = (int) $student['id'];
+            foreach ($criteria as $criterion) {
+                $value = (int) ($ratings[$studentId][$criterion['id']] ?? 0);
+                if ($value < 1 || $value > 5) {
+                    $errors['rating_' . $studentId . '_' . $criterion['id']] = 'Lengkapi semua rating untuk ' . $student['nama'] . '.';
+                }
+            }
+        }
+        if ($errors !== []) {
+            return redirect()->back()->withInput()->with('errors', $errors);
+        }
+
+        foreach ($students as $student) {
+            $studentId = (int) $student['id']; $detail = []; $total = 0;
+            foreach ($criteria as $criterion) {
+                $value = (int) $ratings[$studentId][$criterion['id']]; $total += $value;
+                $detail[] = ['id' => (int) $criterion['id'], 'nama' => $criterion['nama'], 'deskripsi' => $criterion['deskripsi'] ?? '', 'rating' => $value];
+            }
+            $score = round($total / max(count($detail), 1), 2);
+            $data = ['mahasiswa_id' => $studentId, 'tipe_evaluasi' => 'dpl', 'kelompok_id' => $kelompokId, 'dpl_id' => (int) $dpl['id'], 'penilai_id' => (int) current_user()['id'], 'detail_evaluasi' => json_encode($detail, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES), 'rating' => $score, 'aspek_bimbingan' => round($score), 'aspek_lokasi' => round($score), 'aspek_pelaksanaan' => round($score), 'skor_total' => $score, 'kategori' => EvaluasiModel::kategoriFromSkor((float) $score), 'komentar' => trim((string) ($comments[$studentId] ?? '')), 'rekomendasi' => trim((string) ($comments[$studentId] ?? ''))];
+            $existing = $model->findByMahasiswaDpl($studentId);
+            $existing ? $model->update((int) $existing['id'], $data) : $model->insert($data);
+        }
+
+        $this->notifyAdmins('Evaluasi kelompok baru', 'DPL ' . $dpl['nama'] . ' mengirim evaluasi untuk kelompok ' . ($kelompok['nama_kelompok'] ?? '-') . '.', 'info');
+        return redirect()->to('/dpl/evaluasi')->with('success', 'Evaluasi seluruh anggota kelompok berhasil disimpan.');
+    }
+
+    public function storeCriteria()
+    {
+        $dpl = $this->currentDpl();
+        if (! $dpl) return redirect()->to('/dpl/evaluasi')->with('error', 'Profil DPL tidak ditemukan.');
+        if (! $this->validate(['nama' => 'required|min_length[3]|max_length[150]', 'deskripsi' => 'permit_empty|max_length[255]'])) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+        $model = model(EvaluasiKriteriaModel::class);
+        $model->insert(['nama' => trim((string) $this->request->getPost('nama')), 'deskripsi' => trim((string) $this->request->getPost('deskripsi')) ?: null, 'urutan' => $model->nextOrder(), 'aktif' => 1, 'cakupan' => 'dpl', 'target_id' => (int) $dpl['id'], 'created_by' => (int) current_user()['id']]);
+        return redirect()->to('/dpl/evaluasi')->with('success', 'Pertanyaan evaluasi baru berhasil ditambahkan.');
+    }
+
+    public function updateCriteria(int $id)
+    {
+        $dpl = $this->currentDpl(); $model = model(EvaluasiKriteriaModel::class); $criterion = $model->find($id);
+        if (! $dpl || ! $criterion) return redirect()->to('/dpl/evaluasi')->with('error', 'Pertanyaan evaluasi tidak ditemukan.');
+        if (! $this->validate(['nama' => 'required|min_length[3]|max_length[150]', 'deskripsi' => 'permit_empty|max_length[255]'])) return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        // DPL boleh menyesuaikan pertanyaan global dan pertanyaan miliknya sendiri.
+        if (($criterion['cakupan'] ?? 'semua') === 'dpl' && (int) ($criterion['target_id'] ?? 0) !== (int) $dpl['id']) return redirect()->to('/dpl/evaluasi')->with('error', 'Pertanyaan ini milik DPL lain.');
+        $model->update($id, ['nama' => trim((string) $this->request->getPost('nama')), 'deskripsi' => trim((string) $this->request->getPost('deskripsi')) ?: null]);
+        return redirect()->to('/dpl/evaluasi')->with('success', 'Pertanyaan evaluasi berhasil diperbarui.');
+    }
+
+    public function deleteCriteria(int $id)
+    {
+        $dpl = $this->currentDpl(); $model = model(EvaluasiKriteriaModel::class); $criterion = $model->find($id);
+        if (! $dpl || ! $criterion) return redirect()->to('/dpl/evaluasi')->with('error', 'Pertanyaan evaluasi tidak ditemukan.');
+        if (($criterion['cakupan'] ?? 'semua') !== 'dpl' || (int) ($criterion['target_id'] ?? 0) !== (int) $dpl['id']) return redirect()->to('/dpl/evaluasi')->with('error', 'Pertanyaan bawaan global tidak dapat dihapus, hanya dapat disesuaikan.');
+        $model->delete($id);
+        return redirect()->to('/dpl/evaluasi')->with('success', 'Pertanyaan tambahan dihapus.');
     }
 
     /** @return array<string, array<string, mixed>>|null */

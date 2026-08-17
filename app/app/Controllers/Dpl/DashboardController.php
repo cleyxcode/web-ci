@@ -17,7 +17,7 @@ class DashboardController extends PanelController
 
         if (! $dpl) {
             return $this->render('dpl/dashboard', [
-                'title' => 'Dashboard DPL',
+                'title' => 'Dashboard Dosen Pembimbing Lapangan',
                 'dpl'   => null,
             ]);
         }
@@ -37,9 +37,28 @@ class DashboardController extends PanelController
                 : 'Semua periode');
 
         $mahasiswa = $mahasiswaModel->getByDplId($dpl['id']);
+        $allLogbook = $logbookModel->getByDpl((int) $dpl['id']);
+        $statusChart = [];
+        foreach (['menunggu' => 'Menunggu', 'divalidasi' => 'Divalidasi', 'ditolak' => 'Ditolak'] as $status => $label) {
+            $statusChart[] = ['label' => $label, 'total' => count(array_filter($allLogbook, static fn (array $row): bool => ($row['status'] ?? '') === $status))];
+        }
+        $completionChart = [
+            ['label' => 'Sudah dievaluasi', 'total' => (int) $evaluasiModel->countAllEvaluasi((int) $dpl['id'])],
+            ['label' => 'Belum dievaluasi', 'total' => max(0, count($mahasiswa) - (int) $evaluasiModel->countAllEvaluasi((int) $dpl['id']))],
+        ];
+        $activityByDate = [];
+        foreach ($allLogbook as $row) {
+            $date = (string) ($row['tanggal'] ?? '');
+            if ($date !== '') $activityByDate[$date] = ($activityByDate[$date] ?? 0) + 1;
+        }
+        $activityChart = [];
+        for ($i = 6; $i >= 0; $i--) {
+            $date = date('Y-m-d', strtotime('-' . $i . ' days'));
+            $activityChart[] = ['label' => date('d M', strtotime($date)), 'total' => (int) ($activityByDate[$date] ?? 0)];
+        }
 
         return $this->render('dpl/dashboard', [
-            'title'           => 'Dashboard DPL',
+            'title'           => 'Dashboard Dosen Pembimbing Lapangan',
             'dpl'             => $dpl,
             'jumlahMahasiswa' => count($mahasiswa),
             'logbookPending'  => $logbookModel->getPendingByDpl($dpl['id']),
@@ -52,6 +71,9 @@ class DashboardController extends PanelController
             'filterLabel'     => $filterLabel,
             'kelompok'        => $kelompokModel->getByDplId((int) $dpl['id']),
             'petaKelompok'    => $kelompokModel->getWithGps($dpl['id']),
+            'statusChart'      => $statusChart,
+            'completionChart'  => $completionChart,
+            'activityChart'    => $activityChart,
         ]);
     }
 }

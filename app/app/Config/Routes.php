@@ -101,6 +101,11 @@ $routes->group('dpl', ['filter' => ['auth', 'role:dpl']], static function ($rout
     $routes->get('evaluasi', 'Dpl\EvaluasiController::index');
     $routes->get('evaluasi/(:num)', 'Dpl\EvaluasiController::form/$1');
     $routes->post('evaluasi/(:num)', 'Dpl\EvaluasiController::save/$1');
+    $routes->get('evaluasi/kelompok/(:num)', 'Dpl\EvaluasiController::groupForm/$1');
+    $routes->post('evaluasi/kelompok/(:num)', 'Dpl\EvaluasiController::saveGroup/$1');
+    $routes->post('evaluasi/kriteria', 'Dpl\EvaluasiController::storeCriteria');
+    $routes->post('evaluasi/kriteria/(:num)', 'Dpl\EvaluasiController::updateCriteria/$1');
+    $routes->post('evaluasi/kriteria/(:num)/delete', 'Dpl\EvaluasiController::deleteCriteria/$1');
     $routes->get('export', 'Dpl\ExportController::index');
     $routes->get('export/logbook', 'Dpl\ExportController::logbook');
     $routes->get('export/laporan', 'Dpl\ExportController::laporan');
@@ -117,9 +122,15 @@ $routes->group('mahasiswa', ['filter' => ['auth', 'role:mahasiswa']], static fun
     $routes->get('logbook', 'Mahasiswa\LogbookController::index');
     $routes->get('logbook/create', 'Mahasiswa\LogbookController::create');
     $routes->post('logbook', 'Mahasiswa\LogbookController::store');
+    $routes->get('logbook/(:num)/edit', 'Mahasiswa\LogbookController::edit/$1');
+    $routes->post('logbook/(:num)', 'Mahasiswa\LogbookController::update/$1');
+    $routes->post('logbook/(:num)/delete', 'Mahasiswa\LogbookController::delete/$1');
     $routes->get('laporan', 'Mahasiswa\LaporanController::index');
     $routes->get('laporan/create', 'Mahasiswa\LaporanController::create');
     $routes->post('laporan', 'Mahasiswa\LaporanController::store');
+    $routes->get('laporan/(:num)/edit', 'Mahasiswa\LaporanController::edit/$1');
+    $routes->post('laporan/(:num)', 'Mahasiswa\LaporanController::update/$1');
+    $routes->post('laporan/(:num)/delete', 'Mahasiswa\LaporanController::delete/$1');
     $routes->get('nilai', 'Mahasiswa\NilaiController::index');
     $routes->get('evaluasi', 'Mahasiswa\EvaluasiController::index');
     $routes->get('tim', 'Mahasiswa\TimController::index');

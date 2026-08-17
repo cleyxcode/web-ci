@@ -9,44 +9,6 @@ Jalankan via SSH:
   mv public_html/public/* public_html/
   rmdir public_html/public
 
-  Buat vendor dari komputer lokal menggunakan Composer Docker, lalu upload ke:....
-
-  /home/u508460740/domains/slategray-skunk-297972.hostingersite.com/vendor
-
-  Atau jika Composer tersedia di Hostinger:
-
-  cd /home/u508460740/domains/slategray-skunk-297972.hostingersite.com
-  composer install --no-dev --optimize-autoloader
-
-  Setelah itu buka:
-
-  https://slategray-skunk-297972.hostingersite.com/
-
-  Jangan upload folder docker, sql, tests, README, dan file project lain ke public_html karena tidak boleh menjadi folder
-  publik.
-
-
-› [u508460740@id-dci-web1987 public]$ cd /home/u508460740/domains/slategray-skunk-297972.hostingersite.com
-  [u508460740@id-dci-web1987 slategray-skunk-297972.hostingersite.com]$ ls
-  public_html
-  [u508460740@id-dci-web1987 slategray-skunk-297972.hostingersite.com]$  mv public_html/app ./app
-    mv public_html/writable ./writable
-  [u508460740@id-dci-web1987 slategray-skunk-297972.hostingersite.com]$ shopt -s dotglob
-    mv public_html/public/* public_html/
-    rmdir public_html/public
-  [u508460740@id-dci-web1987 slategray-skunk-297972.hostingersite.com]$ composer install --no-dev --optimize-autoloader
-  Composer could not find a composer.json file in /home/u508460740/domains/slategray-skunk-297972.hostingersite.com
-  To initialize a project, please create a composer.json file. See https://getcomposer.org/basic-usage
-  [u508460740@id-dci-web1987 slategray-skunk-297972.hostingersite.com]$
-
-
-• Perintah composer install dijalankan di folder yang salah. composer.json masih berada di public_html, sedangkan
-  sekarang aplikasi berada satu level di atas.
-
-  Jalankan:
-
-  cd /home/u508460740/domains/slategray-skunk-297972.hostingersite.com
-
   mv public_html/composer.json .
   mv public_html/composer.lock .
 

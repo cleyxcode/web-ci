@@ -36,7 +36,7 @@ $stars = static function (int $value): string {
     <div class="flex flex-col gap-4 rounded-3xl bg-gradient-to-br from-emerald-700 via-teal-700 to-cyan-800 p-6 text-white shadow-xl sm:p-8 md:flex-row md:items-end md:justify-between">
         <div>
             <a href="<?= site_url('dpl/evaluasi') ?>" class="mb-5 inline-flex items-center gap-2 text-sm font-bold text-emerald-100 transition hover:text-white">← Kembali ke daftar mahasiswa</a>
-            <p class="text-xs font-extrabold uppercase tracking-[0.2em] text-emerald-200">Evaluasi DPL</p>
+            <p class="text-xs font-extrabold uppercase tracking-[0.2em] text-emerald-200">Evaluasi Dosen Pembimbing Lapangan</p>
             <h1 class="mt-2 text-2xl font-extrabold tracking-tight sm:text-3xl"><?= esc($student['nama'] ?? '-') ?></h1>
             <p class="mt-2 text-sm text-emerald-100"><?= esc($student['npm'] ?? '-') ?> · <?= esc($student['nama_kelompok'] ?? 'Kelompok belum tersedia') ?></p>
         </div>

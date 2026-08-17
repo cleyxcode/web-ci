@@ -75,7 +75,7 @@ $pctEvaluasi = $totalMahasiswa > 0 ? round(($totalEvaluasi / $totalMahasiswa) * 
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="inline h-5 w-5 text-violet-500 mr-2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
             Evaluasi Mahasiswa Bimbingan
         </h2>
-        <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Isi atau perbarui penilaian mahasiswa yang berada di kelompok Anda.</p>
+        <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Isi atau perbarui penilaian mahasiswa yang berada di kelompok Anda. Sebagai Dosen Pembimbing Lapangan, Anda memberi penilaian terhadap pelaksanaan KKN mahasiswa.</p>
         </div>
     </div>
     <div class="table-wrap responsive-table">
@@ -151,6 +151,32 @@ $pctEvaluasi = $totalMahasiswa > 0 ? round(($totalEvaluasi / $totalMahasiswa) * 
         </table>
     </div>
 </div>
+
+<?php if (! empty($kelompok)): ?>
+<div class="card">
+    <div class="card-head"><div><h2>Evaluasi per kelompok</h2><p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Isi atau perbarui evaluasi semua anggota dalam satu formulir.</p></div></div>
+    <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <?php foreach ($kelompok as $group): ?>
+            <a class="rounded-2xl border border-emerald-100 bg-emerald-50/60 p-4 transition hover:border-emerald-300 hover:bg-emerald-50 dark:border-emerald-900/40 dark:bg-emerald-950/20" href="<?= site_url('dpl/evaluasi/kelompok/' . (int) $group['id']) ?>">
+                <strong class="block text-sm text-slate-900 dark:text-white"><?= esc($group['nama_kelompok']) ?></strong>
+                <span class="mt-1 block text-xs text-slate-500">Evaluasi seluruh anggota →</span>
+            </a>
+        <?php endforeach; ?>
+    </div>
+</div>
+<?php endif; ?>
+
+<section class="card">
+    <div class="card-head"><div><h2>Pertanyaan evaluasi</h2><p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Sesuaikan pertanyaan dengan kondisi lapangan. Pertanyaan tambahan berlaku untuk DPL Anda.</p></div></div>
+    <form method="post" action="<?= site_url('dpl/evaluasi/kriteria') ?>" class="mb-5 grid gap-3 rounded-2xl bg-emerald-50/60 p-4 dark:bg-emerald-950/20 md:grid-cols-[1fr_1fr_auto] md:items-end">
+        <?= csrf_field() ?><div class="field mb-0"><label>Pertanyaan baru</label><input name="nama" maxlength="150" required placeholder="Contoh: Kemampuan beradaptasi dengan masyarakat"></div><div class="field mb-0"><label>Petunjuk penilaian</label><input name="deskripsi" maxlength="255" placeholder="Opsional"></div><button class="btn btn-primary" type="submit">+ Tambah</button>
+    </form>
+    <div class="space-y-3">
+        <?php foreach (($criteria ?? []) as $criterion): ?>
+            <div class="rounded-2xl border border-slate-200 p-3 dark:border-slate-800"><form method="post" action="<?= site_url('dpl/evaluasi/kriteria/' . (int) $criterion['id']) ?>" class="grid gap-3 md:grid-cols-[1fr_1fr_auto] md:items-end"><?= csrf_field() ?><div class="field mb-0"><label><?= ($criterion['cakupan'] ?? 'semua') === 'dpl' ? 'Pertanyaan tambahan Anda' : 'Pertanyaan bawaan' ?></label><input name="nama" maxlength="150" required value="<?= esc($criterion['nama']) ?>"></div><div class="field mb-0"><label>Petunjuk</label><input name="deskripsi" maxlength="255" value="<?= esc($criterion['deskripsi'] ?? '') ?>"></div><button class="btn btn-secondary" type="submit">Simpan</button></form><?php if (($criterion['cakupan'] ?? 'semua') === 'dpl'): ?><form method="post" action="<?= site_url('dpl/evaluasi/kriteria/' . (int) $criterion['id'] . '/delete') ?>" data-confirm="Hapus pertanyaan tambahan ini?"><?= csrf_field() ?><button class="mt-2 text-xs font-bold text-rose-600" type="submit">Hapus pertanyaan tambahan</button></form><?php endif; ?></div>
+        <?php endforeach; ?>
+    </div>
+</section>
 
 <?php if (! empty($belumEvaluasi)): ?>
 <div class="card overflow-hidden border-rose-200 shadow-sm shadow-rose-900/5 dark:border-rose-900/50">

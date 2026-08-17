@@ -146,8 +146,23 @@ class DplController extends PanelController
     {
         $dpl = $this->dplModel->find($id);
 
-        if ($dpl) {
-            $this->userModel->delete($dpl['user_id']);
+        if (! $dpl) {
+            return redirect()->to('/admin/dpl')->with('error', 'Data DPL tidak ditemukan.');
+        }
+
+        if (model(\App\Models\KelompokKknModel::class)->where('dpl_id', $id)->countAllResults() > 0) {
+            return redirect()->to('/admin/dpl')->with('error', 'DPL tidak dapat dihapus sebelum kelompok bimbingannya dipindahkan.');
+        }
+
+        $db = db_connect();
+        $db->transStart();
+        $db->table('penilaian')->where('dpl_id', $id)->delete();
+        $db->table('logbook')->where('validated_by', $id)->set(['validated_by' => null])->update();
+        $this->userModel->delete((int) $dpl['user_id']);
+        $db->transComplete();
+
+        if (! $db->transStatus()) {
+            return redirect()->to('/admin/dpl')->with('error', 'DPL gagal dihapus karena masih dipakai data lain.');
         }
 
         return redirect()->to('/admin/dpl')->with('success', 'DPL dihapus.');

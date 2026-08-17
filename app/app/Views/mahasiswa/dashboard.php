@@ -170,6 +170,12 @@ $alamatPenelitian = trim($m['alamat_penelitian'] ?? '');
         </a>
     </div>
 
+    <div class="dashboard-grid dashboard-grid-wide">
+        <div class="card chart-panel"><div class="card-head"><div><h2>Status logbook</h2><p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Ringkasan kegiatan Anda.</p></div></div><div class="relative h-64"><canvas id="mhsLogbookChart" aria-label="Grafik status logbook mahasiswa" role="img"></canvas></div></div>
+        <div class="card chart-panel"><div class="card-head"><div><h2>Status laporan</h2><p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Ringkasan laporan yang dikirim.</p></div></div><div class="relative h-64"><canvas id="mhsLaporanChart" aria-label="Grafik status laporan mahasiswa" role="img"></canvas></div></div>
+        <div class="card chart-panel"><div class="card-head"><div><h2>Tren aktivitas 7 hari</h2><p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Pergerakan logbook harian Anda.</p></div></div><div class="relative h-64"><canvas id="mhsActivityChart" aria-label="Grafik tren aktivitas mahasiswa" role="img"></canvas></div></div>
+    </div>
+
     <!-- Map -->
     <?php if (! empty($petaKelompok)): ?>
     <div class="card">
@@ -263,3 +269,17 @@ $alamatPenelitian = trim($m['alamat_penelitian'] ?? '');
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    if (typeof Chart === 'undefined') return;
+    const logbook = <?= json_encode($logbookChart ?? [], JSON_UNESCAPED_UNICODE) ?>;
+    const laporan = <?= json_encode($laporanChart ?? [], JSON_UNESCAPED_UNICODE) ?>;
+    const makeChart = (id, rows, colors) => { const canvas = document.getElementById(id); if (!canvas) return; new Chart(canvas, { type: 'bar', data: { labels: rows.map(row => row.label), datasets: [{ label: 'Jumlah', data: rows.map(row => Number(row.total)), backgroundColor: colors, borderRadius: 8, maxBarThickness: 42 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } }, x: { grid: { display: false } } } } }); };
+    makeChart('mhsLogbookChart', logbook, ['#f59e0b', '#10b981', '#f43f5e']);
+    makeChart('mhsLaporanChart', laporan, ['#f59e0b', '#3b82f6', '#f43f5e']);
+    const activity = <?= json_encode($activityChart ?? [], JSON_UNESCAPED_UNICODE) ?>;
+    const activityCanvas = document.getElementById('mhsActivityChart');
+    if (activityCanvas) new Chart(activityCanvas, { type: 'line', data: { labels: activity.map(row => row.label), datasets: [{ label: 'Logbook', data: activity.map(row => Number(row.total)), borderColor: '#7c3aed', backgroundColor: 'rgba(124,58,237,.14)', borderWidth: 3, pointRadius: 4, pointHoverRadius: 7, pointBackgroundColor: '#fff', pointBorderColor: '#7c3aed', tension: .38, fill: true }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } }, x: { grid: { display: false } } } } });
+});
+</script>

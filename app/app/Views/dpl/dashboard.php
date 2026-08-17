@@ -1,11 +1,11 @@
 <?php if (empty($dpl)): ?>
-    <div class="card"><p class="empty text-rose-500">Profil DPL belum terhubung ke akun Anda. Hubungi admin.</p></div>
+    <div class="card"><p class="empty text-rose-500">Profil Dosen Pembimbing Lapangan belum terhubung ke akun Anda. Hubungi admin.</p></div>
 <?php else: ?>
 <div class="dashboard-page dashboard-dpl">
     <!-- Hero Strip -->
     <div class="mb-5 flex flex-col justify-between gap-4 overflow-hidden rounded-2xl bg-gradient-to-r from-emerald-700 via-teal-600 to-emerald-600 p-6 text-white shadow-lg sm:flex-row sm:items-center">
         <div>
-            <div class="text-xs font-extrabold uppercase tracking-widest text-emerald-200">Antrian validasi DPL</div>
+            <div class="text-xs font-extrabold uppercase tracking-widest text-emerald-200">Antrian validasi Dosen Pembimbing Lapangan</div>
             <h2 class="mt-1 text-2xl font-extrabold">Halo, <?= esc($dpl['nama']) ?> 👋</h2>
             <p class="mt-1 text-sm text-emerald-100">Prioritaskan logbook dan laporan mahasiswa yang menunggu stempel validasi Anda.</p>
         </div>
@@ -80,6 +80,21 @@
         'filterDate'   => $filterDate ?? date('Y-m-d'),
         'filterLabel'  => $filterLabel ?? 'Pilih rentang waktu',
     ]) ?>
+
+    <div class="dashboard-grid dashboard-grid-wide">
+    <div class="card chart-panel">
+        <div class="card-head"><div><h2>Ringkasan status logbook</h2><p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Data mahasiswa pada kelompok bimbingan Anda.</p></div></div>
+        <div class="relative h-64"><canvas id="dplLogbookChart" aria-label="Grafik status logbook DPL" role="img"></canvas></div>
+    </div>
+    <div class="card chart-panel">
+        <div class="card-head"><div><h2>Progres evaluasi</h2><p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Cakupan evaluasi mahasiswa bimbingan.</p></div></div>
+        <div class="relative h-64"><canvas id="dplEvaluationChart" aria-label="Grafik progres evaluasi DPL" role="img"></canvas></div>
+    </div>
+    <div class="card chart-panel">
+        <div class="card-head"><div><h2>Tren aktivitas 7 hari</h2><p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Pergerakan logbook kelompok bimbingan.</p></div></div>
+        <div class="relative h-64"><canvas id="dplActivityChart" aria-label="Grafik tren aktivitas DPL" role="img"></canvas></div>
+    </div>
+    </div>
 
     <!-- Workspace Grid -->
     <div class="dpl-workspace-grid">
@@ -252,3 +267,18 @@
     </div>
 </div>
 <?php endif; ?>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const canvas = document.getElementById('dplLogbookChart');
+    if (!canvas || typeof Chart === 'undefined') return;
+    const rows = <?= json_encode($statusChart ?? [], JSON_UNESCAPED_UNICODE) ?>;
+    new Chart(canvas, { type: 'bar', data: { labels: rows.map(row => row.label), datasets: [{ label: 'Logbook', data: rows.map(row => Number(row.total)), backgroundColor: ['#f59e0b', '#10b981', '#f43f5e'], borderRadius: 8, maxBarThickness: 46 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } } });
+    const evaluationCanvas = document.getElementById('dplEvaluationChart');
+    const completion = <?= json_encode($completionChart ?? [], JSON_UNESCAPED_UNICODE) ?>;
+    if (evaluationCanvas) new Chart(evaluationCanvas, { type: 'doughnut', data: { labels: completion.map(row => row.label), datasets: [{ data: completion.map(row => Number(row.total)), backgroundColor: ['#10b981', '#e2e8f0'], borderWidth: 0 }] }, options: { responsive: true, maintainAspectRatio: false, cutout: '65%', plugins: { legend: { position: 'bottom' } } } });
+    const activityCanvas = document.getElementById('dplActivityChart');
+    const activity = <?= json_encode($activityChart ?? [], JSON_UNESCAPED_UNICODE) ?>;
+    if (activityCanvas) new Chart(activityCanvas, { type: 'line', data: { labels: activity.map(row => row.label), datasets: [{ label: 'Logbook', data: activity.map(row => Number(row.total)), borderColor: '#0f766e', backgroundColor: 'rgba(20,184,166,.14)', borderWidth: 3, pointRadius: 4, pointHoverRadius: 7, pointBackgroundColor: '#fff', pointBorderColor: '#0f766e', tension: .38, fill: true }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { precision: 0 } }, x: { grid: { display: false } } } } });
+});
+</script>

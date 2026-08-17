@@ -29,7 +29,8 @@ $iconSvg = static function (string $name): string {
     ];
     return '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.75">' . ($icons[$name] ?? $icons['home']) . '</svg>';
 };
-$mobileMenus = array_values(array_filter($menus, static fn ($m) => ! empty($m['mobile']))) ?: array_slice($menus, 0, 5);
+// Semua menu tersedia di navigasi mobile; pengguna dapat menggeser bar ke kiri/kanan.
+$mobileMenus = array_values($menus);
 $initial = strtoupper(mb_substr($user['nama'] ?? 'U', 0, 1));
 $unread = (int) ($unreadCount ?? count($notifikasi ?? []));
 $role = (string) ($user['role'] ?? 'guest');
@@ -77,8 +78,8 @@ $roleAccent = match ($role) {
 <div class="min-h-screen lg:flex">
     <aside class="panel-sidebar hidden w-[260px] shrink-0 flex-col overflow-y-auto overscroll-contain bg-gradient-to-b <?= $roleTheme ?> px-4 py-5 text-white shadow-2xl shadow-indigo-950/10 lg:fixed lg:inset-y-0 lg:left-0 lg:flex" aria-label="Navigasi utama">
         <a class="flex items-center gap-3 px-3" href="<?= esc($menus[0]['url'] ?? '/') ?>">
-            <span class="grid h-10 w-10 place-items-center rounded-xl bg-white/15 ring-1 ring-white/25"><?= $iconSvg('check') ?></span>
-            <span class="leading-tight"><strong class="block text-[15px] font-extrabold tracking-tight">KKN TEMATIK</strong><small class="text-[11px] font-semibold text-white/70">Monitoring System</small></span>
+            <span class="ukim-brand-mark" aria-hidden="true"><img src="<?= base_url('assets/images/72cf498fca7f74ded55e9bec99a848a8.webp') ?>" alt="Logo KKN Tematik UKIM"></span>
+            <span class="leading-tight"><strong class="block text-[15px] font-extrabold tracking-tight">UKIM · KKN</strong><small class="text-[11px] font-semibold text-white/70">Monitoring System</small></span>
         </a>
         <a href="<?= esc($profilUrl) ?>" class="mt-7 flex items-center gap-3 rounded-2xl bg-white/10 p-3 ring-1 ring-white/10 transition hover:bg-white/15">
             <span class="grid h-11 w-11 place-items-center rounded-full bg-white text-sm font-extrabold text-indigo-700 shadow-sm"><?= esc($initial) ?></span>
@@ -97,7 +98,7 @@ $roleAccent = match ($role) {
 
     <div class="min-w-0 flex-1 lg:ml-[260px]">
         <header class="sticky top-0 z-30 flex h-[68px] items-center justify-between border-b border-slate-200/80 bg-white/95 px-4 backdrop-blur lg:px-8 dark:border-slate-800 dark:bg-slate-900/95">
-            <div class="min-w-0"><h1 class="truncate text-lg font-extrabold tracking-tight text-slate-900 lg:text-xl dark:text-white"><?= esc($title ?? '') ?></h1><p class="hidden text-xs font-semibold text-slate-400 sm:block">Fakultas Ilmu Komputer · FILKOM</p></div>
+            <div class="flex min-w-0 items-center gap-2"><span class="ukim-brand-mark ukim-brand-mark-mobile text-lg lg:hidden"><img src="<?= base_url('assets/images/72cf498fca7f74ded55e9bec99a848a8.webp') ?>" alt="Logo KKN Tematik UKIM"></span><div class="min-w-0"><h1 class="truncate text-lg font-extrabold tracking-tight text-slate-900 lg:text-xl dark:text-white"><?= esc($title ?? '') ?></h1><p class="hidden text-xs font-semibold text-slate-400 sm:block">UKIM Ambon · Fakultas Ilmu Komputer</p></div></div>
             <div class="flex items-center gap-1.5 sm:gap-3">
                 <button type="button" class="grid h-10 w-10 place-items-center rounded-xl text-slate-500 transition hover:bg-slate-100 hover:text-slate-800 dark:text-slate-300 dark:hover:bg-slate-800" id="theme-toggle" title="Mode gelap/terang" aria-label="Toggle dark mode"><span class="h-5 w-5 dark:hidden"><?= $iconSvg('moon') ?></span><span class="hidden h-5 w-5 dark:block"><?= $iconSvg('sun') ?></span></button>
                 <div class="relative" id="notif-wrap">
@@ -165,12 +166,12 @@ $roleAccent = match ($role) {
     </div>
 </div>
 
-<nav class="fixed inset-x-0 bottom-0 z-40 grid grid-flow-col auto-cols-fr border-t border-slate-200 bg-white px-1 py-2 shadow-[0_-8px_24px_rgba(15,23,42,.06)] lg:hidden dark:border-slate-800 dark:bg-slate-900">
-    <?php foreach (array_slice($mobileMenus, 0, 4) as $menu): ?>
+<nav class="mobile-bottom-nav fixed inset-x-0 bottom-0 z-40 flex gap-1 overflow-x-auto border-t border-slate-200 bg-white px-2 py-2 shadow-[0_-8px_24px_rgba(15,23,42,.06)] lg:hidden dark:border-slate-800 dark:bg-slate-900" aria-label="Navigasi mobile">
+    <?php foreach ($mobileMenus as $menu): ?>
         <?php $active = str_starts_with('/' . $uri, rtrim($menu['url'], '/')); ?>
-        <a class="flex flex-col items-center gap-1 rounded-lg py-1 text-[10px] font-extrabold <?= $active ? 'text-violet-600' : 'text-slate-400 dark:text-slate-500' ?>" href="<?= esc($menu['url']) ?>"><span class="h-5 w-5"><?= $iconSvg($menu['icon'] ?? 'home') ?></span><?= esc(explode(' ', $menu['label'])[0]) ?></a>
+        <a class="mobile-nav-item flex min-w-[76px] shrink-0 flex-col items-center gap-1 rounded-lg px-2 py-1 text-[10px] font-extrabold <?= $active ? 'active-item text-violet-600' : 'text-slate-400 dark:text-slate-500' ?>" href="<?= esc($menu['url']) ?>"><span class="h-5 w-5"><?= $iconSvg($menu['icon'] ?? 'home') ?></span><?= esc($menu['label']) ?></a>
     <?php endforeach; ?>
-    <a class="flex flex-col items-center gap-1 rounded-lg py-1 text-[10px] font-extrabold <?= str_starts_with('/' . $uri, rtrim($profilUrl, '/')) ? 'text-violet-600' : 'text-slate-400 dark:text-slate-500' ?>" href="<?= esc($profilUrl) ?>"><span class="h-5 w-5"><?= $iconSvg('user') ?></span>Profil</a>
+    <a class="mobile-nav-item flex min-w-[76px] shrink-0 flex-col items-center gap-1 rounded-lg px-2 py-1 text-[10px] font-extrabold <?= str_starts_with('/' . $uri, rtrim($profilUrl, '/')) ? 'active-item text-violet-600' : 'text-slate-400 dark:text-slate-500' ?>" href="<?= esc($profilUrl) ?>"><span class="h-5 w-5"><?= $iconSvg('user') ?></span>Profil</a>
 </nav>
 
 <div id="toast" class="toast hidden fixed bottom-24 right-4 z-50 flex w-[min(24rem,calc(100vw-2rem))] items-start gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-xl shadow-slate-900/10 dark:border-slate-700 dark:bg-slate-900" role="status" aria-live="polite" aria-atomic="true">

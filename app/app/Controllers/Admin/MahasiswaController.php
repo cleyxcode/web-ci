@@ -137,8 +137,19 @@ class MahasiswaController extends PanelController
     {
         $mhs = $this->mahasiswaModel->find($id);
 
-        if ($mhs) {
-            $this->userModel->delete($mhs['user_id']);
+        if (! $mhs) {
+            return redirect()->to('/admin/mahasiswa')->with('error', 'Data mahasiswa tidak ditemukan.');
+        }
+
+        $db = db_connect();
+        $db->transStart();
+        $db->table('penilaian')->where('mahasiswa_id', $id)->delete();
+        $db->table('evaluasi')->where('mahasiswa_id', $id)->delete();
+        $this->userModel->delete((int) $mhs['user_id']);
+        $db->transComplete();
+
+        if (! $db->transStatus()) {
+            return redirect()->to('/admin/mahasiswa')->with('error', 'Mahasiswa gagal dihapus karena masih dipakai data lain.');
         }
 
         return redirect()->to('/admin/mahasiswa')->with('success', 'Mahasiswa dihapus.');

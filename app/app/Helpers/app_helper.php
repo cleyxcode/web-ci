@@ -21,40 +21,50 @@ if (! function_exists('current_user')) {
 }
 
 if (! function_exists('stempel_class')) {
-    function stempel_class(string $status): string
+    function stempel_class(?string $status): string
     {
         return match ($status) {
-            'menunggu'   => 'stempel stempel-menunggu',
-            'divalidasi' => 'stempel stempel-divalidasi',
-            'diterima'   => 'stempel stempel-diterima',
-            'ditolak'    => 'stempel stempel-ditolak',
-            default      => 'stempel',
+            'menunggu'  => 'stempel stempel-menunggu',
+            'divalidasi'=> 'stempel stempel-divalidasi',
+            'diterima'  => 'stempel stempel-diterima',
+            'ditolak'   => 'stempel stempel-ditolak',
+            default     => 'stempel',
         };
     }
 }
 
 if (! function_exists('stempel_label')) {
-    function stempel_label(string $status): string
+    function stempel_label(?string $status): string
     {
         return match ($status) {
             'menunggu'   => 'Menunggu',
             'divalidasi' => 'Divalidasi',
             'diterima'   => 'Diterima',
             'ditolak'    => 'Ditolak',
-            default      => ucfirst($status),
+            default      => ucfirst((string) $status),
         };
     }
 }
 
-if (! function_exists('grade_class')) {
-    function grade_class(?string $grade): string
+if (! function_exists('grade_color')) {
+    function grade_color(?string $grade): string
     {
         return match ($grade) {
-            'A', 'B'  => 'text-[#2D7A4F] font-mono font-bold',
-            'BC', 'C' => 'text-[#C4920A] font-mono font-bold',
+            'A'       => 'text-[#2D7A4F] font-mono font-bold',
+            'B'       => 'text-[#1B6B8A] font-mono font-bold',
+            'BC'      => 'text-[#C4920A] font-mono font-bold',
+            'C'       => 'text-[#C4920A] font-mono font-bold',
             'D'       => 'text-[#B83232] font-mono font-bold',
             default   => 'text-[#6B6560] font-mono',
         };
+    }
+}
+
+// Alias lama tetap dipertahankan agar view/integrasi pihak ketiga tidak rusak.
+if (! function_exists('grade_class')) {
+    function grade_class(?string $grade): string
+    {
+        return grade_color($grade);
     }
 }
 
@@ -65,7 +75,7 @@ if (! function_exists('panel_menus')) {
             'admin' => [
                 ['label' => 'Dashboard', 'url' => '/admin/dashboard', 'icon' => 'home', 'mobile' => true],
                 ['label' => 'Mahasiswa', 'url' => '/admin/mahasiswa', 'icon' => 'users', 'mobile' => true],
-                ['label' => 'DPL', 'url' => '/admin/dpl', 'icon' => 'academic', 'mobile' => true],
+                ['label' => 'Dosen Pembimbing', 'url' => '/admin/dpl', 'icon' => 'academic', 'mobile' => true],
                 ['label' => 'Kelompok KKN', 'url' => '/admin/kkn', 'icon' => 'group', 'mobile' => true],
                 ['label' => 'Lokasi KKN', 'url' => '/admin/lokasi', 'icon' => 'map'],
                 ['label' => 'Laporan', 'url' => '/admin/laporan', 'icon' => 'doc', 'mobile' => true],

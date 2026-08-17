@@ -27,6 +27,96 @@ class LaporanController extends PanelController
         return $this->render('mahasiswa/laporan/form', ['title' => 'Upload Laporan']);
     }
 
+    public function edit(int $id)
+    {
+        $mhs = model(MahasiswaModel::class)->findByUserId(current_user()['id']);
+
+        if (! $mhs) {
+            return redirect()->to('/mahasiswa/dashboard');
+        }
+
+        $laporan = model(LaporanModel::class)->find($id);
+
+        if (! $laporan || (int) $laporan['mahasiswa_id'] !== (int) $mhs['id']) {
+            return redirect()->to('/mahasiswa/laporan')->with('error', 'Laporan tidak ditemukan.');
+        }
+
+        if (($laporan['status'] ?? 'menunggu') !== 'menunggu') {
+            return redirect()->to('/mahasiswa/laporan')->with('error', 'Laporan yang sudah diterima atau ditolak tidak dapat diedit.');
+        }
+
+        return $this->render('mahasiswa/laporan/form', [
+            'title'   => 'Edit Laporan',
+            'laporan' => $laporan,
+        ]);
+    }
+
+    public function update(int $id)
+    {
+        $mhs = model(MahasiswaModel::class)->findByUserId(current_user()['id']);
+
+        if (! $mhs) {
+            return redirect()->to('/mahasiswa/dashboard');
+        }
+
+        $laporanModel = model(LaporanModel::class);
+        $laporan = $laporanModel->find($id);
+
+        if (! $laporan || (int) $laporan['mahasiswa_id'] !== (int) $mhs['id']) {
+            return redirect()->to('/mahasiswa/laporan')->with('error', 'Laporan tidak ditemukan.');
+        }
+
+        if (($laporan['status'] ?? 'menunggu') !== 'menunggu') {
+            return redirect()->to('/mahasiswa/laporan')->with('error', 'Laporan yang sudah diterima atau ditolak tidak dapat diedit.');
+        }
+
+        if (! $this->validate([
+            'judul'     => 'required|min_length[5]|max_length[200]',
+            'deskripsi' => 'permit_empty|max_length[5000]',
+        ])) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $file = upload_file($this->request->getFile('file_laporan'), 'laporan', ['pdf']);
+
+        $data = [
+            'judul'     => trim((string) $this->request->getPost('judul')),
+            'deskripsi' => trim((string) $this->request->getPost('deskripsi')) ?: null,
+        ];
+
+        if ($file) {
+            $data['file_laporan'] = $file;
+        }
+
+        $laporanModel->update($id, $data);
+
+        return redirect()->to('/mahasiswa/laporan')->with('success', 'Laporan berhasil diperbarui.');
+    }
+
+    public function delete(int $id)
+    {
+        $mhs = model(MahasiswaModel::class)->findByUserId(current_user()['id']);
+
+        if (! $mhs) {
+            return redirect()->to('/mahasiswa/dashboard');
+        }
+
+        $laporanModel = model(LaporanModel::class);
+        $laporan = $laporanModel->find($id);
+
+        if (! $laporan || (int) $laporan['mahasiswa_id'] !== (int) $mhs['id']) {
+            return redirect()->to('/mahasiswa/laporan')->with('error', 'Laporan tidak ditemukan.');
+        }
+
+        if (($laporan['status'] ?? 'menunggu') !== 'menunggu') {
+            return redirect()->to('/mahasiswa/laporan')->with('error', 'Laporan yang sudah diterima atau ditolak tidak dapat dihapus.');
+        }
+
+        $laporanModel->delete($id);
+
+        return redirect()->to('/mahasiswa/laporan')->with('success', 'Laporan berhasil dihapus.');
+    }
+
     public function store()
     {
         $mhs = model(MahasiswaModel::class)->findByUserId(current_user()['id']);
