@@ -55,7 +55,7 @@ $roleAccent = match ($role) {
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="robots" content="noindex, nofollow">
     <title><?= esc($title ?? 'Panel') ?> — KKN Tematik FILKOM</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -70,7 +70,7 @@ $roleAccent = match ($role) {
     <script src="https://cdn.tailwindcss.com"></script>
     <script>tailwind.config = { darkMode: ['selector', '[data-theme="dark"]'] };</script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-    <link rel="stylesheet" href="<?= base_url('assets/css/app.css?v=20260817-2') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/css/app.css?v=20260817-3') ?>">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
 </head>
@@ -133,7 +133,7 @@ $roleAccent = match ($role) {
                     </div>
                 </div>
                 <form method="get" action="<?= site_url('logout') ?>" data-confirm="Anda akan keluar dari akun. Lanjutkan?" class="shrink-0">
-                    <button type="submit" class="group grid h-10 w-10 place-items-center rounded-xl border border-rose-200 bg-rose-50 text-rose-600 transition hover:border-rose-300 hover:bg-rose-100 focus:outline-none focus:ring-2 focus:ring-rose-300 dark:border-rose-900/60 dark:bg-rose-950/30 dark:text-rose-300 dark:hover:border-rose-800 dark:hover:bg-rose-950/60 sm:flex sm:w-auto sm:gap-2 sm:px-3" title="Keluar dari akun" aria-label="Keluar dari akun">
+                    <button type="submit" class="group hidden h-10 w-10 place-items-center rounded-xl border border-rose-200 bg-rose-50 text-rose-600 transition hover:border-rose-300 hover:bg-rose-100 focus:outline-none focus:ring-2 focus:ring-rose-300 dark:border-rose-900/60 dark:bg-rose-950/30 dark:text-rose-300 dark:hover:border-rose-800 dark:hover:bg-rose-950/60 sm:flex sm:w-auto sm:gap-2 sm:px-3" title="Keluar dari akun" aria-label="Keluar dari akun">
                         <span class="h-4 w-4"><?= $iconSvg('logout') ?></span>
                         <span class="hidden text-xs font-extrabold sm:inline">Keluar</span>
                     </button>

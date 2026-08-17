@@ -164,12 +164,16 @@
   /* ----- Shared responsive table semantics ----- */
   document.querySelectorAll('.table-wrap table.data').forEach((table) => {
     const wrapper = table.closest('.table-wrap');
-    const headers = [...table.querySelectorAll('thead th')].map((header) => header.textContent.trim());
     wrapper?.classList.add('responsive-table');
-    table.querySelectorAll('tbody tr').forEach((row) => {
+    const rows = [...table.querySelectorAll('tr')];
+    const headRow = rows.find((row) => row.querySelector('th'));
+    const headers = headRow ? [...headRow.querySelectorAll('th')].map((header) => header.textContent.trim()) : [];
+    rows.forEach((row) => {
+      if (row === headRow) return;
       row.querySelectorAll('td').forEach((cell, index) => {
-        if (!cell.classList.contains('empty') && !cell.dataset.label) {
-          cell.dataset.label = headers[index] || 'Data';
+        const label = headers[index];
+        if (!cell.classList.contains('empty') && !cell.dataset.label && label && cell.colSpan <= 1) {
+          cell.dataset.label = label;
         }
       });
     });

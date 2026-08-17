@@ -155,7 +155,12 @@ input, select, textarea {
   margin: 2px auto 0;
   opacity: 0.7;
 }
-.mobile-bottom-nav { scrollbar-width: thin; scrollbar-color: rgba(100,116,139,.45) transparent; }
+/* -------- Mobile bottom nav -------- */
+.mobile-bottom-nav {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(100,116,139,.45) transparent;
+  padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+}
 .mobile-bottom-nav::-webkit-scrollbar { height: 4px; }
 .mobile-bottom-nav::-webkit-scrollbar-track { background: transparent; }
 .mobile-bottom-nav::-webkit-scrollbar-thumb { border-radius: 999px; background: rgba(100,116,139,.45); }
@@ -219,15 +224,25 @@ input, select, textarea {
   }
   .data tbody td {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: 8px;
+    gap: 6px 8px;
+    min-width: 0;
     border-bottom: 1px solid #f8fafc !important;
     padding: 8px 12px;
     font-size: 0.8125rem;
+    overflow-wrap: anywhere;
   }
   .data tbody td:last-child {
     border-bottom: none !important;
+  }
+  .data tbody td.actions {
+    align-items: flex-start;
+    gap: 8px 12px;
+  }
+  .data tbody td.actions::before {
+    flex-basis: 100%;
   }
   .data tbody td::before {
     content: attr(data-label);
@@ -239,12 +254,15 @@ input, select, textarea {
     flex-shrink: 0;
   }
   .dark .data tbody td::before { color: #64748b; }
-  .data tbody td.empty {
+  .data tbody td.empty,
+  .data tbody td[colspan] {
     display: block;
     text-align: center;
     border: none !important;
   }
-  .data tbody td.empty::before { display: none; }
+  .data tbody td.empty::before,
+  .data tbody td[colspan]::before { display: none; }
+  .data tbody tr.hidden { display: none !important; }
 }
 
 /* -------- Dark mode color overrides -------- */

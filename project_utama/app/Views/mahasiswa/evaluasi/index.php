@@ -26,7 +26,7 @@ $stars = static function (float|int|null $value, string $size = 'h-5 w-5'): stri
         <p class="mx-auto mt-3 max-w-md text-sm leading-6 text-slate-500">Evaluasi Dosen Pembimbing Lapangan akan muncul setelah admin menempatkan Anda ke kelompok KKN.</p>
     </section>
 <?php elseif (! $evaluation): ?>
-    <section class="mx-auto max-w-2xl rounded-3xl border border-dashed border-slate-300 bg-white p-10 text-center shadow-sm dark:border-slate-700 dark:bg-slate-900">
+    <section class="mx-auto max-w-2xl rounded-3xl border border-dashed border-slate-300 bg-white p-6 text-center shadow-sm sm:p-10 dark:border-slate-700 dark:bg-slate-900">
         <div class="mx-auto grid h-20 w-20 place-items-center rounded-3xl bg-emerald-50 text-emerald-500 dark:bg-emerald-950/30"><span class="text-3xl">★</span></div>
         <h1 class="mt-6 text-2xl font-extrabold text-slate-900 dark:text-white">Evaluasi belum tersedia</h1>
         <p class="mx-auto mt-3 max-w-md text-sm leading-6 text-slate-500">Dosen Pembimbing Lapangan <?= esc($student['nama_dpl'] ?? 'kelompok Anda') ?> belum mengisi evaluasi. Anda akan dapat melihat rincian penilaian di halaman ini setelah disimpan.</p>
