@@ -132,12 +132,7 @@ $roleAccent = match ($role) {
                         </form>
                     </div>
                 </div>
-                <form method="get" action="<?= site_url('logout') ?>" data-confirm="Anda akan keluar dari akun. Lanjutkan?" class="shrink-0">
-                    <button type="submit" class="group hidden h-10 w-10 place-items-center rounded-xl border border-rose-200 bg-rose-50 text-rose-600 transition hover:border-rose-300 hover:bg-rose-100 focus:outline-none focus:ring-2 focus:ring-rose-300 dark:border-rose-900/60 dark:bg-rose-950/30 dark:text-rose-300 dark:hover:border-rose-800 dark:hover:bg-rose-950/60 sm:flex sm:w-auto sm:gap-2 sm:px-3" title="Keluar dari akun" aria-label="Keluar dari akun">
-                        <span class="h-4 w-4"><?= $iconSvg('logout') ?></span>
-                        <span class="hidden text-xs font-extrabold sm:inline">Keluar</span>
-                    </button>
-                </form>
+
             </div>
         </header>
 

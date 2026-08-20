@@ -65,9 +65,7 @@ $keywords = implode(', ', $seo->keywords);
                 <p class="mb-3 text-xs font-extrabold uppercase tracking-[0.16em] text-violet-600">Fakultas Ilmu Komputer · FILKOM</p>
                 <h1 id="hero-title" class="max-w-3xl text-4xl font-extrabold leading-[1.08] tracking-tight text-slate-900 sm:text-5xl">Monitoring KKN Tematik FILKOM yang terarah dan terukur</h1>
                 <p class="mt-5 max-w-2xl text-base leading-7 text-slate-500">Monitoring KKN Tematik FILKOM membantu mahasiswa, DPL, dan admin mengelola kegiatan lapangan, logbook KKN, laporan, lokasi GPS, evaluasi, dan penilaian dalam satu sistem.</p>
-                <div class="mt-7">
-                    <a class="inline-flex min-h-11 items-center justify-center rounded-xl bg-violet-600 px-5 text-sm font-extrabold text-white shadow-lg shadow-violet-600/20 transition hover:bg-violet-700" href="<?= site_url('login') ?>">Masuk ke dashboard</a>
-                </div>
+
             </div>
             <div class="rounded-3xl border border-violet-100 bg-gradient-to-br from-violet-600 to-indigo-700 p-7 text-white shadow-xl shadow-indigo-950/15" aria-label="Ringkasan fitur sistem">
                 <span class="text-xs font-extrabold uppercase tracking-[0.16em] text-white/70">Satu ruang kerja lapangan</span>
