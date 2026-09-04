@@ -370,6 +370,9 @@
       if (!points.length) return;
 
       const zoom = parseInt(el.dataset.zoom || '13', 10);
+      const shouldFitBounds = el.dataset.fitBounds === '1' || points.length > 1;
+
+      // Pusat awal ke titik pertama
       const map = L.map(el).setView([points[0].lat, points[0].lng], zoom);
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap',
@@ -382,9 +385,14 @@
         if (p.popup) marker.bindPopup(p.popup);
         bounds.push([p.lat, p.lng]);
       });
-      if (bounds.length > 1) map.fitBounds(bounds, { padding: [28, 28] });
+
+      // Auto-fit bounds jika ada lebih dari 1 titik, agar semua lokasi terlihat
+      if (shouldFitBounds && bounds.length > 1) {
+        map.fitBounds(bounds, { padding: [40, 40], maxZoom: 14 });
+      }
+
       el.dataset.mapReady = '1';
-      setTimeout(() => map.invalidateSize(), 120);
+      setTimeout(() => map.invalidateSize(), 150);
     });
   };
 
@@ -409,9 +417,17 @@
         && initialLatitude >= -90
         && initialLatitude <= 90
         && initialLongitude >= -180
-        && initialLongitude <= 180;
-      const defaultCenter = [-3.695, 128.183];
-      const map = L.map(el).setView(hasInitialPoint ? [initialLatitude, initialLongitude] : defaultCenter, hasInitialPoint ? 15 : 12);
+        && initialLongitude <= 180
+        && !(initialLatitude === 0 && initialLongitude === 0);
+
+      // Fallback center: Indonesia tengah (bukan hardcode Ambon)
+      // Jika sudah ada titik tersimpan, pakai itu. Jika tidak, tampilkan peta Indonesia.
+      const defaultCenter = hasInitialPoint
+        ? [initialLatitude, initialLongitude]
+        : [-2.5, 118.0]; // Pusat Indonesia
+      const defaultZoom = hasInitialPoint ? 15 : 5;
+
+      const map = L.map(el).setView(defaultCenter, defaultZoom);
       let marker = null;
 
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -427,7 +443,15 @@
         if (marker) {
           marker.setLatLng([latitude, longitude]);
         } else {
-          marker = L.marker([latitude, longitude]).addTo(map);
+          marker = L.marker([latitude, longitude], { draggable: true }).addTo(map);
+
+          // Update input koordinat saat pin digeser
+          marker.on('dragend', () => {
+            const pos = marker.getLatLng();
+            if (latitudeInput) latitudeInput.value = pos.lat.toFixed(7);
+            if (longitudeInput) longitudeInput.value = pos.lng.toFixed(7);
+            setStatus(`Titik dipilih: ${pos.lat.toFixed(7)}, ${pos.lng.toFixed(7)}`);
+          });
         }
 
         map.setView([latitude, longitude], Math.max(map.getZoom(), 15));
@@ -452,20 +476,24 @@
       };
 
       const syncInputs = () => {
-        const rawLatitude = (latitudeInput?.value || '').trim();
-        const rawLongitude = (longitudeInput?.value || '').trim();
-        const latitude = rawLatitude === '' ? NaN : Number(rawLatitude);
-        const longitude = rawLongitude === '' ? NaN : Number(rawLongitude);
+        const rawLat = (latitudeInput?.value || '').trim();
+        const rawLng = (longitudeInput?.value || '').trim();
+        const lat = rawLat === '' ? NaN : Number(rawLat);
+        const lng = rawLng === '' ? NaN : Number(rawLng);
 
-        if (Number.isFinite(latitude) && Number.isFinite(longitude)
-          && latitude >= -90 && latitude <= 90 && longitude >= -180 && longitude <= 180) {
-          setPoint(latitude, longitude, false);
+        if (Number.isFinite(lat) && Number.isFinite(lng)
+          && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180
+          && !(lat === 0 && lng === 0)) {
+          setPoint(lat, lng, false);
         }
       };
 
       if (hasInitialPoint) setPoint(initialLatitude, initialLongitude, false);
       el.addEventListener('click', () => map.invalidateSize());
+
+      // Klik di peta = pindah titik
       map.on('click', (event) => setPoint(event.latlng.lat, event.latlng.lng));
+
       latitudeInput?.addEventListener('change', syncInputs);
       longitudeInput?.addEventListener('change', syncInputs);
       clearButton?.addEventListener('click', clearPoint);
@@ -477,13 +505,21 @@
 
         setStatus('Mengambil lokasi perangkat…');
         navigator.geolocation.getCurrentPosition(
-          (position) => setPoint(position.coords.latitude, position.coords.longitude),
-          () => setStatus('Lokasi perangkat tidak dapat diambil. Pilih titik di peta.'),
+          (position) => {
+            setPoint(position.coords.latitude, position.coords.longitude);
+            setStatus(`Lokasi perangkat berhasil diambil: ${position.coords.latitude.toFixed(7)}, ${position.coords.longitude.toFixed(7)}`);
+          },
+          (err) => {
+            const msg = err.code === 1
+              ? 'Akses lokasi ditolak. Pilih titik di peta secara manual.'
+              : 'Lokasi perangkat tidak dapat diambil. Pilih titik di peta.';
+            setStatus(msg);
+          },
           { enableHighAccuracy: true, timeout: 10000 }
         );
       });
       el.dataset.mapReady = '1';
-      setTimeout(() => map.invalidateSize(), 120);
+      setTimeout(() => map.invalidateSize(), 150);
     });
   };
 

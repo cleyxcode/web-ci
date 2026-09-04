@@ -7,9 +7,19 @@ $class   = $class ?? 'map-box';
 $points = [];
 
 foreach ($markers as $m) {
-    if (empty($m['latitude']) || empty($m['longitude'])) {
-        continue;
-    }
+    // Pastikan latitude/longitude valid (bukan null, bukan 0, bukan string kosong)
+    $lat = isset($m['latitude'])  ? trim((string) $m['latitude'])  : '';
+    $lng = isset($m['longitude']) ? trim((string) $m['longitude']) : '';
+
+    if ($lat === '' || $lng === '') continue;
+
+    $latF = (float) $lat;
+    $lngF = (float) $lng;
+
+    // Validasi rentang valid koordinat dunia
+    if ($latF < -90 || $latF > 90 || $lngF < -180 || $lngF > 180) continue;
+    // Jika keduanya 0, abaikan (data belum diisi)
+    if ($latF === 0.0 && $lngF === 0.0) continue;
 
     $desa  = $m['nama_desa'] ?? '';
     $ketua = $m['nama_ketua'] ?? '';
@@ -25,8 +35,8 @@ foreach ($markers as $m) {
     }
 
     $points[] = [
-        'lat'   => (float) $m['latitude'],
-        'lng'   => (float) $m['longitude'],
+        'lat'   => $latF,
+        'lng'   => $lngF,
         'popup' => $popup,
     ];
 }
@@ -45,5 +55,6 @@ foreach ($markers as $m) {
     <div id="<?= esc($mapId) ?>" class="<?= esc($class) ?>"
          data-map="1"
          data-zoom="<?= $zoom ?>"
+         data-fit-bounds="<?= count($points) > 1 ? '1' : '0' ?>"
          data-points="<?= esc(json_encode($points), 'attr') ?>"></div>
 <?php endif; ?>
