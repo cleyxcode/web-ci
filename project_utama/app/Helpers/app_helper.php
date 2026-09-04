@@ -78,6 +78,7 @@ if (! function_exists('panel_menus')) {
                 ['label' => 'Dosen Pembimbing', 'url' => '/admin/dpl', 'icon' => 'academic', 'mobile' => true],
                 ['label' => 'Kelompok KKN', 'url' => '/admin/kkn', 'icon' => 'group', 'mobile' => true],
                 ['label' => 'Lokasi KKN', 'url' => '/admin/lokasi', 'icon' => 'map'],
+                ['label' => 'Logbook', 'url' => '/admin/logbook', 'icon' => 'book', 'mobile' => true],
                 ['label' => 'Laporan', 'url' => '/admin/laporan', 'icon' => 'doc', 'mobile' => true],
                 ['label' => 'Evaluasi', 'url' => '/admin/evaluasi', 'icon' => 'clipboard'],
                 ['label' => 'Pengumuman', 'url' => '/admin/pengumuman', 'icon' => 'bell'],

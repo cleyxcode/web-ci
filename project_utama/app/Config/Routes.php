@@ -66,6 +66,10 @@ $routes->group('admin', ['filter' => ['auth', 'role:admin']], static function ($
     $routes->post('lokasi/(:num)', 'Admin\LokasiController::update/$1');
     $routes->post('lokasi/(:num)/delete', 'Admin\LokasiController::delete/$1');
 
+    $routes->get('logbook', 'Admin\LogbookController::index');
+    $routes->get('logbook/(:num)', 'Admin\LogbookController::show/$1');
+    $routes->post('logbook/(:num)/delete', 'Admin\LogbookController::delete/$1');
+
     $routes->get('laporan', 'Admin\LaporanController::index');
     $routes->post('laporan/(:num)/delete', 'Admin\LaporanController::delete/$1');
     $routes->get('audit', 'Admin\AuditController::index');

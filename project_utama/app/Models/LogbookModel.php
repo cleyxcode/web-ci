@@ -26,6 +26,66 @@ class LogbookModel extends Model
         return $builder->orderBy('tanggal', 'DESC')->findAll();
     }
 
+    public function getAllWithMahasiswa(): array
+    {
+        return $this->select('logbook.*, mahasiswa.nama as nama_mahasiswa, mahasiswa.npm')
+            ->join('mahasiswa', 'mahasiswa.id = logbook.mahasiswa_id')
+            ->orderBy('logbook.tanggal', 'DESC')
+            ->findAll();
+    }
+
+    public function getAllWithFilter(?string $status = null, ?string $search = null, ?string $tanggalDari = null, ?string $tanggalSampai = null): array
+    {
+        $builder = $this->select('logbook.*, mahasiswa.nama as nama_mahasiswa, mahasiswa.npm, kelompok_kkn.nama_kelompok, dpl.nama as nama_dpl')
+            ->join('mahasiswa', 'mahasiswa.id = logbook.mahasiswa_id')
+            ->join('kelompok_kkn', 'kelompok_kkn.id = mahasiswa.kelompok_id', 'left')
+            ->join('dpl', 'dpl.id = kelompok_kkn.dpl_id', 'left');
+
+        if ($status !== null && $status !== '') {
+            $builder->where('logbook.status', $status);
+        }
+
+        if ($search !== null && $search !== '') {
+            $builder->groupStart()
+                ->like('mahasiswa.nama', $search)
+                ->orLike('mahasiswa.npm', $search)
+                ->orLike('logbook.kegiatan', $search)
+                ->orLike('logbook.lokasi_kegiatan', $search)
+                ->groupEnd();
+        }
+
+        if ($tanggalDari !== null && $tanggalDari !== '') {
+            $builder->where('logbook.tanggal >=', $tanggalDari);
+        }
+
+        if ($tanggalSampai !== null && $tanggalSampai !== '') {
+            $builder->where('logbook.tanggal <=', $tanggalSampai);
+        }
+
+        return $builder->orderBy('logbook.tanggal', 'DESC')->findAll();
+    }
+
+    public function getDetailById(int $id): ?array
+    {
+        $result = $this->select('logbook.*, mahasiswa.nama as nama_mahasiswa, mahasiswa.npm, mahasiswa.foto as foto_mahasiswa,
+                kelompok_kkn.nama_kelompok, kelompok_kkn.periode,
+                lokasi_kkn.nama_desa, lokasi_kkn.kecamatan, lokasi_kkn.kabupaten,
+                dpl.nama as nama_dpl, dpl.nidn')
+            ->join('mahasiswa', 'mahasiswa.id = logbook.mahasiswa_id')
+            ->join('kelompok_kkn', 'kelompok_kkn.id = mahasiswa.kelompok_id', 'left')
+            ->join('lokasi_kkn', 'lokasi_kkn.id = kelompok_kkn.lokasi_id', 'left')
+            ->join('dpl', 'dpl.id = kelompok_kkn.dpl_id', 'left')
+            ->where('logbook.id', $id)
+            ->first();
+
+        return $result ?: null;
+    }
+
+    public function countByStatus(string $status): int
+    {
+        return $this->where('status', $status)->countAllResults();
+    }
+
     public function getPendingByDpl(int $dplId): array
     {
         return $this->getByDpl($dplId, 'menunggu', 'ASC');
