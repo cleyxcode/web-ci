@@ -10,12 +10,13 @@
                     <th>Status</th>
                     <th>File</th>
                     <th>Tanggal</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
             <?php if (empty($laporan)): ?>
                 <tr>
-                    <td colspan="6">
+                    <td colspan="7">
                         <div class="flex flex-col items-center justify-center py-14 px-6 text-center">
                             <div class="mx-auto mb-4 grid h-16 w-16 place-items-center rounded-2xl bg-slate-100 text-slate-300 dark:bg-slate-800 dark:text-slate-600">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" class="h-8 w-8">
@@ -40,6 +41,12 @@
                             <?php else: ?>-<?php endif; ?>
                         </td>
                         <td><?= format_tanggal($row['created_at'] ?? null) ?></td>
+                        <td class="actions">
+                            <form method="post" action="<?= site_url('admin/laporan/' . (int) $row['id'] . '/delete') ?>" data-confirm="Hapus laporan ini permanen? File PDF juga akan dihapus." data-confirm-danger="1">
+                                <?= csrf_field() ?>
+                                <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+                            </form>
+                        </td>
                     </tr>
                 <?php endforeach; ?>
             <?php endif; ?>

@@ -67,6 +67,7 @@ $routes->group('admin', ['filter' => ['auth', 'role:admin']], static function ($
     $routes->post('lokasi/(:num)/delete', 'Admin\LokasiController::delete/$1');
 
     $routes->get('laporan', 'Admin\LaporanController::index');
+    $routes->post('laporan/(:num)/delete', 'Admin\LaporanController::delete/$1');
     $routes->get('audit', 'Admin\AuditController::index');
 
     $routes->get('evaluasi', 'Admin\EvaluasiController::index');
@@ -122,20 +123,14 @@ $routes->group('mahasiswa', ['filter' => ['auth', 'role:mahasiswa']], static fun
     $routes->get('logbook', 'Mahasiswa\LogbookController::index');
     $routes->get('logbook/create', 'Mahasiswa\LogbookController::create');
     $routes->post('logbook', 'Mahasiswa\LogbookController::store');
-<<<<<<< HEAD:project_utama/app/Config/Routes.php
     $routes->get('logbook/(:num)/edit', 'Mahasiswa\LogbookController::edit/$1');
     $routes->post('logbook/(:num)', 'Mahasiswa\LogbookController::update/$1');
-=======
->>>>>>> 6837627 (fix: resolve logic bugs, UI improvements (admin DPL, map gps), and add delete features for laporan/logbook):app/Config/Routes.php
     $routes->post('logbook/(:num)/delete', 'Mahasiswa\LogbookController::delete/$1');
     $routes->get('laporan', 'Mahasiswa\LaporanController::index');
     $routes->get('laporan/create', 'Mahasiswa\LaporanController::create');
     $routes->post('laporan', 'Mahasiswa\LaporanController::store');
-<<<<<<< HEAD:project_utama/app/Config/Routes.php
     $routes->get('laporan/(:num)/edit', 'Mahasiswa\LaporanController::edit/$1');
     $routes->post('laporan/(:num)', 'Mahasiswa\LaporanController::update/$1');
-=======
->>>>>>> 6837627 (fix: resolve logic bugs, UI improvements (admin DPL, map gps), and add delete features for laporan/logbook):app/Config/Routes.php
     $routes->post('laporan/(:num)/delete', 'Mahasiswa\LaporanController::delete/$1');
     $routes->get('nilai', 'Mahasiswa\NilaiController::index');
     $routes->get('evaluasi', 'Mahasiswa\EvaluasiController::index');

@@ -430,3 +430,29 @@ html { scroll-behavior: smooth; }
     opacity: 0.5;
   }
 }
+
+/* -------- Location picker (GPS map editor) -------- */
+.location-picker {
+  position: relative;
+  width: 100%;
+}
+
+/* Ensure map-box always has explicit height as standalone fallback */
+.map-box {
+  height: 18rem;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 0.75rem;
+}
+
+.map-box-lg {
+  height: 24rem;
+}
+
+/* Allow Leaflet to render correctly inside location-picker */
+.location-picker .map-box,
+.location-picker .map-box-lg {
+  display: block;
+  position: relative;
+  z-index: 1;
+}
