@@ -67,7 +67,7 @@ class LogbookModel extends Model
 
     public function getDetailById(int $id): ?array
     {
-        $result = $this->select('logbook.*, mahasiswa.nama as nama_mahasiswa, mahasiswa.npm, mahasiswa.foto as foto_mahasiswa,
+        $result = $this->select('logbook.*, mahasiswa.nama as nama_mahasiswa, mahasiswa.npm,
                 kelompok_kkn.nama_kelompok, kelompok_kkn.periode,
                 lokasi_kkn.nama_desa, lokasi_kkn.kecamatan, lokasi_kkn.kabupaten,
                 dpl.nama as nama_dpl, dpl.nidn')
