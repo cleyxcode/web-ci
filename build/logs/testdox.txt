@@ -1,0 +1,23 @@
+Export Lib
+ [x] Csv contains bom headers and rows
+ [x] Xls is spreadsheet ml
+ [x] Download defaults to xls
+ [x] Download csv format
+
+Health
+ [x] Is defined app path
+ [x] Base url has been set
+
+Helper
+ [x] Stempel class and label
+ [x] Grade class
+ [x] Panel menus per role
+ [x] Format alamat and tanggal
+
+Knn Lib
+ [ ] Hitung nilai akhir bobot
+ [x] Grade from score
+ [x] Predict falls back when no training
+ [x] Predict majority vote from neighbors
+ [x] Predict chooses nearest different cluster
+

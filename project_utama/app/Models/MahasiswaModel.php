@@ -41,6 +41,16 @@ class MahasiswaModel extends Model
             ->findAll();
     }
 
+    public function getLatest(int $limit = 8): array
+    {
+        return $this->select('mahasiswa.*, users.email, kelompok_kkn.nama_kelompok, lokasi_kkn.nama_desa')
+            ->join('users', 'users.id = mahasiswa.user_id')
+            ->join('kelompok_kkn', 'kelompok_kkn.id = mahasiswa.kelompok_id', 'left')
+            ->join('lokasi_kkn', 'lokasi_kkn.id = kelompok_kkn.lokasi_id', 'left')
+            ->orderBy('mahasiswa.created_at', 'DESC')
+            ->findAll($limit);
+    }
+
     public function findByUserId(int $userId): ?array
     {
         return $this->where('user_id', $userId)->first();

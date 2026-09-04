@@ -101,9 +101,23 @@ class DplController extends PanelController
             return redirect()->to('/admin/dpl')->with('error', 'Data tidak ditemukan.');
         }
 
+        $rules = [
+            'nama'     => 'required',
+            'username' => "required|is_unique[users.username,id,{$dpl['user_id']}]",
+            'email'    => "required|valid_email|is_unique[users.email,id,{$dpl['user_id']}]",
+            'nidn'     => 'required',
+        ];
+
+        if (! $this->validate($rules)) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $username = trim((string) $this->request->getPost('username'));
+
         $userData = [
-            'nama'  => $this->request->getPost('nama'),
-            'email' => $this->request->getPost('email'),
+            'nama'     => $this->request->getPost('nama'),
+            'email'    => $this->request->getPost('email'),
+            'username' => $username,
         ];
 
         $newPassword = trim((string) $this->request->getPost('password'));

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="CLI Arguments" tests="15" assertions="48" errors="0" failures="1" skipped="0" time="0.041007">
+    <testsuite name="ExportLibTest" file="/var/www/html/tests/unit/ExportLibTest.php" tests="4" assertions="9" errors="0" failures="0" skipped="0" time="0.016880">
+      <testcase name="testCsvContainsBomHeadersAndRows" file="/var/www/html/tests/unit/ExportLibTest.php" line="13" class="ExportLibTest" classname="ExportLibTest" assertions="4" time="0.014348"/>
+      <testcase name="testXlsIsSpreadsheetMl" file="/var/www/html/tests/unit/ExportLibTest.php" line="27" class="ExportLibTest" classname="ExportLibTest" assertions="3" time="0.000800"/>
+      <testcase name="testDownloadDefaultsToXls" file="/var/www/html/tests/unit/ExportLibTest.php" line="37" class="ExportLibTest" classname="ExportLibTest" assertions="1" time="0.000779"/>
+      <testcase name="testDownloadCsvFormat" file="/var/www/html/tests/unit/ExportLibTest.php" line="43" class="ExportLibTest" classname="ExportLibTest" assertions="1" time="0.000952"/>
+    </testsuite>
+    <testsuite name="HealthTest" file="/var/www/html/tests/unit/HealthTest.php" tests="2" assertions="3" errors="0" failures="0" skipped="0" time="0.007906">
+      <testcase name="testIsDefinedAppPath" file="/var/www/html/tests/unit/HealthTest.php" line="12" class="HealthTest" classname="HealthTest" assertions="1" time="0.000940"/>
+      <testcase name="testBaseUrlHasBeenSet" file="/var/www/html/tests/unit/HealthTest.php" line="17" class="HealthTest" classname="HealthTest" assertions="2" time="0.006966"/>
+    </testsuite>
+    <testsuite name="HelperTest" file="/var/www/html/tests/unit/HelperTest.php" tests="4" assertions="23" errors="0" failures="0" skipped="0" time="0.005418">
+      <testcase name="testStempelClassAndLabel" file="/var/www/html/tests/unit/HelperTest.php" line="18" class="HelperTest" classname="HelperTest" assertions="8" time="0.001209"/>
+      <testcase name="testGradeClass" file="/var/www/html/tests/unit/HelperTest.php" line="31" class="HelperTest" classname="HelperTest" assertions="3" time="0.000703"/>
+      <testcase name="testPanelMenusPerRole" file="/var/www/html/tests/unit/HelperTest.php" line="38" class="HelperTest" classname="HelperTest" assertions="8" time="0.002492"/>
+      <testcase name="testFormatAlamatAndTanggal" file="/var/www/html/tests/unit/HelperTest.php" line="60" class="HelperTest" classname="HelperTest" assertions="4" time="0.001014"/>
+    </testsuite>
+    <testsuite name="KnnLibTest" file="/var/www/html/tests/unit/KnnLibTest.php" tests="5" assertions="13" errors="0" failures="1" skipped="0" time="0.010804">
+      <testcase name="testHitungNilaiAkhirBobot" file="/var/www/html/tests/unit/KnnLibTest.php" line="13" class="KnnLibTest" classname="KnnLibTest" assertions="3" time="0.007837">
+        <failure type="PHPUnit\Framework\ExpectationFailedException">KnnLibTest::testHitungNilaiAkhirBobot
+Failed asserting that 84.5 is identical to 85.0.
+
+/var/www/html/tests/unit/KnnLibTest.php:18</failure>
+      </testcase>
+      <testcase name="testGradeFromScore" file="/var/www/html/tests/unit/KnnLibTest.php" line="21" class="KnnLibTest" classname="KnnLibTest" assertions="6" time="0.000846"/>
+      <testcase name="testPredictFallsBackWhenNoTraining" file="/var/www/html/tests/unit/KnnLibTest.php" line="31" class="KnnLibTest" classname="KnnLibTest" assertions="2" time="0.000647"/>
+      <testcase name="testPredictMajorityVoteFromNeighbors" file="/var/www/html/tests/unit/KnnLibTest.php" line="39" class="KnnLibTest" classname="KnnLibTest" assertions="1" time="0.000725"/>
+      <testcase name="testPredictChoosesNearestDifferentCluster" file="/var/www/html/tests/unit/KnnLibTest.php" line="52" class="KnnLibTest" classname="KnnLibTest" assertions="1" time="0.000750"/>
+    </testsuite>
+  </testsuite>
+</testsuites>

@@ -29,7 +29,7 @@
             <?php else: ?>
             <div class="field">
                 <label>Username</label>
-                <input type="text" value="<?= esc($dpl['username'] ?? '') ?>" disabled class="font-mono">
+                <input type="text" name="username" value="<?= esc(old('username', $dpl['username'] ?? '')) ?>" class="font-mono" required autocomplete="off">
             </div>
             <div class="field">
                 <label>Password baru (opsional)</label>

@@ -19,7 +19,7 @@ class RegisterController extends BaseController
     }
 
     // ── GET /register ─────────────────────────────────────────────────────────
-    public function index(): string
+    public function index()
     {
         if (session()->get('logged_in')) {
             return redirect()->to('/mahasiswa/dashboard');
