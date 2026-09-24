@@ -109,4 +109,22 @@ final class EvaluasiController extends PanelController
 
         return redirect()->to('/mahasiswa/evaluasi')->with('success', 'Evaluasi berhasil dikirim.');
     }
+
+    public function delete()
+    {
+        $mahasiswa = model(MahasiswaModel::class)->findByUserId((int) current_user()['id']);
+        if ($mahasiswa === null) {
+            return redirect()->to('/mahasiswa/dashboard')->with('error', 'Profil mahasiswa tidak ditemukan.');
+        }
+
+        $model = model(EvaluasiModel::class);
+        $evaluation = $model->findByMahasiswaDpl((int) $mahasiswa['id']);
+        if ($evaluation === null) {
+            return redirect()->to('/mahasiswa/evaluasi')->with('error', 'Evaluasi belum tersedia.');
+        }
+
+        $model->delete((int) $evaluation['id']);
+
+        return redirect()->to('/mahasiswa/evaluasi')->with('success', 'Evaluasi berhasil dihapus. Anda dapat mengisi kembali.');
+    }
 }

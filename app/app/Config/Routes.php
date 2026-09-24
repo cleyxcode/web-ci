@@ -134,6 +134,7 @@ $routes->group('mahasiswa', ['filter' => ['auth', 'role:mahasiswa']], static fun
     $routes->get('nilai', 'Mahasiswa\NilaiController::index');
     $routes->get('evaluasi', 'Mahasiswa\EvaluasiController::index');
     $routes->post('evaluasi', 'Mahasiswa\EvaluasiController::save');
+    $routes->post('evaluasi/delete', 'Mahasiswa\EvaluasiController::delete');
     $routes->get('tim', 'Mahasiswa\TimController::index');
     $routes->post('tim/gps', 'Mahasiswa\TimController::setLokasiGps');
     $routes->get('profil', 'Mahasiswa\ProfilController::index');

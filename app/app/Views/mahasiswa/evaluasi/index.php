@@ -95,5 +95,11 @@ $stars = static function (float|int|null $value, string $size = 'h-5 w-5'): stri
             <p class="text-xs font-extrabold uppercase tracking-widest text-amber-700 dark:text-amber-300">Komentar Anda untuk DPL</p>
             <p class="mt-3 whitespace-pre-line text-sm leading-7 text-slate-700 dark:text-slate-200"><?= esc($evaluation['komentar'] ?: 'DPL tidak menambahkan catatan.') ?></p>
         </section>
+        <div class="flex justify-end">
+            <form method="post" action="<?= site_url('mahasiswa/evaluasi/delete') ?>" data-confirm="Hapus evaluasi ini? Data rating dan komentar akan dihapus.">
+                <?= csrf_field() ?>
+                <button type="submit" class="btn btn-danger">Hapus evaluasi</button>
+            </form>
+        </div>
     </div>
 <?php endif; ?>
