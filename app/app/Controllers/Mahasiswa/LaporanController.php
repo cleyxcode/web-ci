@@ -5,6 +5,7 @@ namespace App\Controllers\Mahasiswa;
 use App\Controllers\PanelController;
 use App\Models\LaporanModel;
 use App\Models\MahasiswaModel;
+use App\Models\KelompokKknModel;
 
 class LaporanController extends PanelController
 {
@@ -15,7 +16,16 @@ class LaporanController extends PanelController
             return null;
         }
         $mhs = model(MahasiswaModel::class)->getWithRelations($mhsBase['id']);
-        $mhs['is_ketua'] = !empty($mhs['ketua_mahasiswa_id']) && (int) $mhs['id'] === (int) $mhs['ketua_mahasiswa_id'];
+        if ($mhs === null) return null;
+
+        // Ambil ketua langsung dari kelompok agar hak upload tidak bergantung
+        // pada hasil join profil mahasiswa.
+        $kelompok = ! empty($mhs['kelompok_id'])
+            ? model(KelompokKknModel::class)->find((int) $mhs['kelompok_id'])
+            : null;
+        $mhs['ketua_mahasiswa_id'] = $kelompok['ketua_mahasiswa_id'] ?? null;
+        $mhs['is_ketua'] = $kelompok !== null
+            && (int) ($kelompok['ketua_mahasiswa_id'] ?? 0) === (int) $mhs['id'];
         return $mhs;
     }
 
