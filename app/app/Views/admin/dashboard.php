@@ -3,7 +3,7 @@
         <div>
             <p>Ruang kendali KKN Tematik</p>
             <h2>Selamat datang kembali, <?= esc($user['nama'] ?? 'Admin') ?> <span aria-hidden="true">👋</span></h2>
-            <span>Pantau mahasiswa, kelompok, dan aktivitas KKN dari satu tempat.</span>
+            <span>Pantau mahasiswa, kelompok, dan aktivitas KKN Tematik dari satu tempat.</span>
         </div>
         <a href="<?= site_url('admin/mahasiswa/create') ?>" class="btn btn-primary admin-welcome-action">Tambah mahasiswa</a>
     </section>
@@ -29,7 +29,7 @@
                 <div class="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
                     <div class="h-full rounded-full bg-violet-500 transition-all duration-1000" style="width: <?= $totalMahasiswa > 0 ? '100' : '0' ?>%"></div>
                 </div>
-                <small class="text-xs text-slate-400">Mahasiswa aktif KKN</small>
+                <small class="text-xs text-slate-400">Mahasiswa aktif KKN Tematik</small>
             </div>
         </div>
 
@@ -52,7 +52,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="h-6 w-6"><path stroke-linecap="round" stroke-linejoin="round" d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>
             </div>
             <div class="min-w-0 flex-1">
-                <p class="text-xs font-bold text-slate-500">Total Lokasi KKN</p>
+                <p class="text-xs font-bold text-slate-500">Total Lokasi KKN Tematik</p>
                 <strong class="js-count-up block text-2xl font-extrabold text-slate-900 dark:text-white" data-count-up="<?= (int) ($totalLokasi ?? 0) ?>"><?= (int) ($totalLokasi ?? 0) ?></strong>
                 <div class="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800">
                     <div class="h-full rounded-full bg-emerald-500 transition-all duration-1000" style="width: <?= $totalLokasi > 0 ? '100' : '0' ?>%"></div>
@@ -80,7 +80,7 @@
     <section class="mb-5 grid grid-cols-2 gap-3 xl:grid-cols-4" aria-label="Ringkasan tambahan">
         <article class="admin-stat-card tone-indigo">
             <span class="admin-stat-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 19V5m0 14h16M8 16v-5m4 5V7m4 9v-3"/></svg></span>
-            <div><span>Kelompok KKN</span><strong class="js-count-up" data-count-up="<?= (int) ($totalKelompok ?? 0) ?>"><?= (int) ($totalKelompok ?? 0) ?></strong><small>Kelompok terkelola</small></div>
+            <div><span>Kelompok KKN Tematik</span><strong class="js-count-up" data-count-up="<?= (int) ($totalKelompok ?? 0) ?>"><?= (int) ($totalKelompok ?? 0) ?></strong><small>Kelompok terkelola</small></div>
         </article>
         <article class="admin-stat-card tone-rose">
             <span class="admin-stat-icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6Zm0 0v6h6M8 13h8M8 17h5"/></svg></span>
@@ -107,7 +107,7 @@
     <div class="card-head">
         <div>
             <h2>Statistik data terkelola</h2>
-            <p class="mt-1 text-xs font-semibold text-slate-400">Perbandingan jumlah data utama dalam sistem KKN</p>
+            <p class="mt-1 text-xs font-semibold text-slate-400">Perbandingan jumlah data utama dalam sistem KKN Tematik</p>
         </div>
     </div>
     <div class="relative h-64 sm:h-72">
@@ -129,7 +129,7 @@
 <div class="card dashboard-panel dashboard-map-panel">
     <div class="card-head">
         <h2>Peta lokasi GPS kelompok</h2>
-        <a href="<?= site_url('admin/kkn') ?>" class="btn btn-secondary btn-sm">Kelompok KKN</a>
+        <a href="<?= site_url('admin/kkn') ?>" class="btn btn-secondary btn-sm">Kelompok KKN Tematik</a>
     </div>
     <?= view('partials/map', [
         'mapId'    => 'map-admin-dash',

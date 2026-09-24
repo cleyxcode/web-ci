@@ -1,5 +1,5 @@
 <div class="card">
-    <div class="card-head"><h2>Nilai KKN</h2></div>
+    <div class="card-head"><h2>Nilai KKN Tematik</h2></div>
     <?php if (empty($nilai)): ?>
         <div class="flex flex-col items-center justify-center py-16 px-6 text-center">
             <div class="mx-auto mb-6 grid h-20 w-20 place-items-center rounded-2xl bg-amber-50 text-amber-400 shadow-sm ring-1 ring-amber-100 dark:bg-amber-900/20 dark:ring-amber-900/50">

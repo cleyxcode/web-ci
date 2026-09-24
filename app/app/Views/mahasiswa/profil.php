@@ -16,7 +16,7 @@ $isKetua = ! empty($isKetua);
     <div>
         <strong>NPM belum diisi.</strong>
         Data studi Anda (NPM, program studi, nomor HP) belum lengkap.
-        Lengkapi sekarang agar bisa dimasukkan ke kelompok KKN oleh admin.
+        Lengkapi sekarang agar bisa dimasukkan ke kelompok KKN Tematik Tematik oleh admin.
     </div>
 </div>
 <?php endif; ?>
@@ -90,14 +90,14 @@ $isKetua = ! empty($isKetua);
         </form>
     </div>
 
-    <!-- Kartu 3: Lokasi KKN berbasis peta -->
+    <!-- Kartu 3: Lokasi KKN Tematik berbasis peta -->
     <div class="card profile-location-card">
         <div class="card-head">
             <div>
-                <h2>Lokasi KKN</h2>
+                <h2>Lokasi KKN Tematik</h2>
                 <p class="field-hint">Titik lokasi dipilih langsung lewat peta, bukan diketik sebagai data alokasi.</p>
             </div>
-            <a href="<?= site_url('mahasiswa/tim') ?>" class="btn btn-secondary btn-sm">Buka tim KKN</a>
+            <a href="<?= site_url('mahasiswa/tim') ?>" class="btn btn-secondary btn-sm">Buka tim KKN Tematik Tematik</a>
         </div>
 
         <?php if (! $hasKelompok): ?>
@@ -108,7 +108,7 @@ $isKetua = ! empty($isKetua);
                     </svg>
                 </div>
                 <p class="text-sm font-bold text-slate-500 dark:text-slate-400">Belum Ada Kelompok</p>
-                <p class="mt-1 text-xs text-slate-400">Anda belum ditempatkan di kelompok KKN.</p>
+                <p class="mt-1 text-xs text-slate-400">Anda belum ditempatkan di kelompok KKN Tematik.</p>
             </div>
         <?php elseif ($isKetua): ?>
             <form method="post" action="<?= site_url('mahasiswa/tim/gps') ?>" class="location-picker-form">

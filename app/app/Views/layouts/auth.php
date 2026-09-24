@@ -66,7 +66,7 @@
                     <div class="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-white/15 ring-1 ring-white/20">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2" class="h-4.5 w-4.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5-2V4l5 2 6-2 5 2v14l-5-2-6 2zM9 6v14M15 4v14"/></svg>
                     </div>
-                    <span class="text-sm font-semibold text-white/80">Peta GPS lokasi kelompok KKN</span>
+                    <span class="text-sm font-semibold text-white/80">Peta GPS lokasi kelompok KKN Tematik Tematik</span>
                 </div>
                 <div class="flex items-center gap-3">
                     <div class="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-white/15 ring-1 ring-white/20">

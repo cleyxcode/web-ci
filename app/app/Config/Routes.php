@@ -67,6 +67,7 @@ $routes->group('admin', ['filter' => ['auth', 'role:admin']], static function ($
     $routes->post('lokasi/(:num)/delete', 'Admin\LokasiController::delete/$1');
 
     $routes->get('laporan', 'Admin\LaporanController::index');
+    $routes->get('logbook', 'Admin\LogbookController::index');
     $routes->get('audit', 'Admin\AuditController::index');
 
     $routes->get('evaluasi', 'Admin\EvaluasiController::index');
@@ -136,6 +137,7 @@ $routes->group('mahasiswa', ['filter' => ['auth', 'role:mahasiswa']], static fun
     $routes->post('laporan/(:num)/delete', 'Mahasiswa\LaporanController::delete/$1');
     $routes->get('nilai', 'Mahasiswa\NilaiController::index');
     $routes->get('evaluasi', 'Mahasiswa\EvaluasiController::index');
+    $routes->post('evaluasi', 'Mahasiswa\EvaluasiController::save');
     $routes->get('tim', 'Mahasiswa\TimController::index');
     $routes->post('tim/gps', 'Mahasiswa\TimController::setLokasiGps');
     $routes->get('profil', 'Mahasiswa\ProfilController::index');

@@ -1,5 +1,5 @@
 #!/bin/bash
-# live_test.sh — Live HTTP testing untuk KKN Monitoring System
+# live_test.sh — Live HTTP testing untuk KKN Tematik Monitoring System
 # Dijalankan di dalam container: docker compose exec app bash /var/www/html/live_test.sh
 
 set -uo pipefail
@@ -64,7 +64,7 @@ body_contains() {
 rm -f "$ADMIN_JAR" "$MHS_JAR" /tmp/anon_sess.txt
 
 echo "============================================================"
-echo " KKN Monitoring — Live HTTP Test Suite"
+echo " KKN Tematik Monitoring — Live HTTP Test Suite"
 echo " Target : $BASE"
 echo " Waktu  : $(date '+%Y-%m-%d %H:%M:%S')"
 echo "============================================================"
@@ -75,7 +75,7 @@ echo "── BLOK 1: Halaman Publik ──"
 
 CODE=$(http_code /tmp/anon_sess.txt GET "$BASE/")
 check "GET / → landing page SEO (200)" "$([ "$CODE" = "200" ] && echo 1 || echo 0)" "HTTP $CODE"
-check "GET / → memuat judul monitoring KKN" "$(body_contains "Monitoring KKN Tematik UKIM")"
+check "GET / → memuat judul monitoring KKN" "$(body_contains "Monitoring KKN Tematik Tematik UKIM")"
 
 CODE=$(http_code /tmp/anon_sess.txt GET "$BASE/login")
 check "GET /login tampil (200)" "$([ "$CODE" = "200" ] && echo 1 || echo 0)" "HTTP $CODE"
@@ -210,9 +210,9 @@ CODE=$(http_code $ADMIN_JAR POST "$BASE/admin/reset-password" \
 check "POST /admin/reset-password restore password admin123 → bukan 500" \
   "$([ "$CODE" != "500" ] && echo 1 || echo 0)" "HTTP $CODE"
 
-# ── BLOK 6: Admin — Lokasi & KKN (No Validation) ────────────────────────────
+# ── BLOK 6: Admin — Lokasi & KKN Tematik (No Validation) ────────────────────────────
 echo ""
-echo "── BLOK 6: Admin — Lokasi KKN ──"
+echo "── BLOK 6: Admin — Lokasi KKN Tematik ──"
 
 # Simpan lokasi dengan nama_desa kosong
 CODE=$(http_code $ADMIN_JAR POST "$BASE/admin/lokasi" \

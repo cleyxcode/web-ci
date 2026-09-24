@@ -26,6 +26,38 @@ body { font-family: 'Nunito Sans', system-ui, sans-serif; }
 input, select, textarea {
   color: #0f172a; /* text-slate-900 */
 }
+
+/* File picker: keep the native control clickable on desktop and mobile. */
+.file-picker {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  flex-wrap: wrap;
+}
+.file-picker input[type="file"] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+.file-picker-button {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: .65rem 1rem;
+  border: 1px solid #cbd5e1;
+  border-radius: .75rem;
+  background: #fff;
+  color: #334155;
+  font-weight: 700;
+}
+.file-picker-button:hover { background: #f8fafc; }
+.file-picker-name { color: #64748b; font-size: .875rem; }
+[data-theme="dark"] .file-picker-button { border-color: #475569; background: #1e293b; color: #f8fafc; }
+[data-theme="dark"] .file-picker-button:hover { background: #334155; }
 [data-theme="dark"] input, 
 [data-theme="dark"] select, 
 [data-theme="dark"] textarea {

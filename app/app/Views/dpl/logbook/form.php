@@ -17,7 +17,11 @@
         </div>
         <div class="field">
             <label>Dokumentasi (jpg/png, max 5MB)<?= $isEdit ? ' — Kosongkan jika tidak ingin mengubah' : '' ?></label>
-            <input type="file" name="dokumentasi" accept=".jpg,.jpeg,.png">
+            <div class="file-picker">
+                <input id="file-dpl-dokumentasi" type="file" name="dokumentasi[]" accept=".jpg,.jpeg,.png" multiple>
+                <label for="file-dpl-dokumentasi" class="file-picker-button">Pilih foto</label>
+                <span class="file-picker-name">Belum ada file dipilih (maks. 3 gambar)</span>
+            </div>
             <?php if ($isEdit && ! empty($logbook['dokumentasi'])): ?>
                 <span class="field-hint">Dokumentasi saat ini: <?= esc(basename($logbook['dokumentasi'])) ?></span>
             <?php endif; ?>

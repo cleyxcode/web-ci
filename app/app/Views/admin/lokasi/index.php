@@ -1,6 +1,6 @@
 <div class="card">
     <div class="card-head">
-        <h2>Lokasi KKN</h2>
+        <h2>Lokasi KKN Tematik</h2>
         <a href="<?= site_url('admin/lokasi/create') ?>" class="btn btn-primary btn-sm">+ Tambah</a>
     </div>
     <div class="table-wrap">
@@ -26,7 +26,7 @@
                                 </svg>
                             </div>
                             <p class="text-sm font-bold text-slate-500 dark:text-slate-400">Belum ada lokasi</p>
-                            <p class="mt-1 text-xs text-slate-400">Tambahkan lokasi desa tempat pelaksanaan KKN</p>
+                            <p class="mt-1 text-xs text-slate-400">Tambahkan lokasi desa tempat pelaksanaan KKN Tematik</p>
                         </div>
                     </td>
                 </tr>

@@ -27,7 +27,7 @@
                                 </svg>
                             </div>
                             <p class="text-sm font-bold text-slate-500 dark:text-slate-400">Belum ada logbook</p>
-                            <p class="mt-1 text-xs text-slate-400">Mulai catat kegiatan KKN harian Anda</p>
+                            <p class="mt-1 text-xs text-slate-400">Mulai catat kegiatan KKN Tematik harian Anda</p>
                             <a href="<?= site_url('mahasiswa/logbook/create') ?>" class="mt-4 inline-flex items-center gap-1.5 rounded-xl bg-violet-600 px-4 py-2 text-xs font-extrabold text-white shadow-sm hover:bg-violet-700 transition">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" class="h-3.5 w-3.5">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
@@ -45,7 +45,7 @@
                         <td><?= esc($row['lokasi_kegiatan'] ?? '-') ?></td>
                         <td>
                             <?php if (! empty($row['dokumentasi'])): ?>
-                                <a href="<?= base_url('uploads/' . $row['dokumentasi']) ?>" target="_blank">Lihat</a>
+                                <?php foreach (stored_files($row['dokumentasi']) as $file): ?><a class="mr-2" href="<?= base_url('uploads/' . $file) ?>" target="_blank">Lihat</a><?php endforeach; ?>
                             <?php else: ?>-<?php endif; ?>
                         </td>
                         <td><span class="<?= stempel_class($row['status']) ?>"><?= stempel_label($row['status']) ?></span></td>

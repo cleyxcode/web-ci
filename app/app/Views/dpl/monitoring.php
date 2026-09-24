@@ -47,7 +47,7 @@
                                 </svg>
                             </div>
                             <p class="text-sm font-bold text-slate-500 dark:text-slate-400">Belum ada kegiatan</p>
-                            <p class="mt-1 text-xs text-slate-400">Mahasiswa belum mencatat kegiatan KKN</p>
+                            <p class="mt-1 text-xs text-slate-400">Mahasiswa belum mencatat kegiatan KKN Tematik</p>
                         </div>
                     </td>
                 </tr>

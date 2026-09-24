@@ -1,6 +1,19 @@
 (() => {
   'use strict';
 
+  /* Custom file button: explicitly open the native picker and show the name. */
+  document.querySelectorAll('.file-picker').forEach((picker) => {
+    const input = picker.querySelector('input[type="file"]');
+    const button = picker.querySelector('.file-picker-button');
+    const name = picker.querySelector('.file-picker-name');
+    if (!input || !button) return;
+
+    button.addEventListener('click', () => input.click());
+    input.addEventListener('change', () => {
+      if (name) name.textContent = input.files?.length ? `${input.files.length} gambar dipilih (maks. 3)` : 'Belum ada file dipilih';
+    });
+  });
+
   /* ----- Password toggle ----- */
   document.querySelectorAll('.password-toggle').forEach((btn) => {
     btn.addEventListener('click', () => {

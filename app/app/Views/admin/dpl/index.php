@@ -54,7 +54,7 @@
                                 </svg>
                             </div>
                             <p class="text-sm font-bold text-slate-500 dark:text-slate-400">Belum ada Dosen Pembimbing</p>
-                            <p class="mt-1 text-xs text-slate-400">Buat akun DPL lalu assign ke kelompok KKN</p>
+                            <p class="mt-1 text-xs text-slate-400">Buat akun DPL lalu assign ke kelompok KKN Tematik Tematik</p>
                         </div>
                     </td>
                 </tr>

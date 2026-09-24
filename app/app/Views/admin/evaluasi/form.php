@@ -9,7 +9,7 @@ $defaultCriteria = [
     'Kerja sama tim dan komunikasi',
     'Pelaksanaan program kerja',
     'Kualitas logbook dan laporan',
-    'Etika/sikap di lokasi KKN',
+    'Etika/sikap di lokasi KKN Tematik Tematik',
 ];
 $storedCriteria = [];
 if (! empty($e['detail_evaluasi'])) {

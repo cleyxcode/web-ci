@@ -5,7 +5,7 @@ $allMhs = $mahasiswa ?? [];
     <div class="min-w-0">
         <p class="mb-1 text-[11px] font-extrabold uppercase tracking-[0.16em] text-violet-600 dark:text-violet-300">Direktori akademik</p>
         <h1 class="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">Manajemen Mahasiswa</h1>
-        <p class="mt-1 text-sm font-semibold text-slate-500 dark:text-slate-400">Kelola akun, kelompok KKN, dan kontak mahasiswa dalam satu tempat.</p>
+        <p class="mt-1 text-sm font-semibold text-slate-500 dark:text-slate-400">Kelola akun, kelompok KKN Tematik, dan kontak mahasiswa dalam satu tempat.</p>
     </div>
     <a href="<?= site_url('admin/mahasiswa/create') ?>" class="btn btn-primary w-full gap-2 sm:w-auto">
         <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 5v14M5 12h14"/></svg>
@@ -65,7 +65,7 @@ $allMhs = $mahasiswa ?? [];
                     <th>Nama & Akun</th>
                     <th>NPM</th>
                     <th>Program Studi</th>
-                    <th>Kelompok KKN</th>
+                    <th>Kelompok KKN Tematik</th>
                     <th>Kontak</th>
                     <th>Aksi</th>
                 </tr>

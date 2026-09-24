@@ -79,7 +79,7 @@ $roleAccent = match ($role) {
     <aside class="panel-sidebar hidden w-[260px] shrink-0 flex-col overflow-y-auto overscroll-contain bg-gradient-to-b <?= $roleTheme ?> px-4 py-5 text-white shadow-2xl shadow-indigo-950/10 lg:fixed lg:inset-y-0 lg:left-0 lg:flex" aria-label="Navigasi utama">
         <a class="flex items-center gap-3 px-3" href="<?= esc($menus[0]['url'] ?? '/') ?>">
             <span class="ukim-brand-mark" aria-hidden="true"><img src="<?= base_url('assets/images/72cf498fca7f74ded55e9bec99a848a8.webp') ?>" alt="Logo KKN Tematik UKIM"></span>
-            <span class="leading-tight"><strong class="block text-[15px] font-extrabold tracking-tight">UKIM · KKN</strong><small class="text-[11px] font-semibold text-white/70">Monitoring System</small></span>
+            <span class="leading-tight"><strong class="block text-[15px] font-extrabold tracking-tight">UKIM · KKN Tematik</strong><small class="text-[11px] font-semibold text-white/70">Monitoring System</small></span>
         </a>
         <a href="<?= esc($profilUrl) ?>" class="mt-7 flex items-center gap-3 rounded-2xl bg-white/10 p-3 ring-1 ring-white/10 transition hover:bg-white/15">
             <span class="grid h-11 w-11 place-items-center rounded-full bg-white text-sm font-extrabold text-indigo-700 shadow-sm"><?= esc($initial) ?></span>

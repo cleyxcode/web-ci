@@ -80,12 +80,12 @@ docker compose exec app bash
 ## Struktur Database
 - users        - semua pengguna (admin, dpl, mahasiswa)
 - dpl          - data Dosen Pembimbing Lapangan
-- mahasiswa    - data mahasiswa KKN
-- kelompok_kkn - data kelompok KKN
-- lokasi_kkn   - data lokasi/desa KKN
+- mahasiswa    - data mahasiswa KKN Tematik
+- kelompok_kkn - data kelompok KKN Tematik
+- lokasi_kkn   - data lokasi/desa KKN Tematik
 - logbook      - logbook harian mahasiswa
 - laporan      - laporan kegiatan
-- penilaian    - nilai mahasiswa + prediksi KNN
+- penilaian    - nilai mahasiswa KKN Tematik
 - evaluasi     - evaluasi kegiatan
 
 ## Tech Stack

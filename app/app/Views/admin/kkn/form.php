@@ -7,7 +7,7 @@ $currentLatitude = old('latitude', $kelompok['latitude'] ?? '');
 $currentLongitude = old('longitude', $kelompok['longitude'] ?? '');
 ?>
 <div class="card">
-    <div class="card-head"><h2><?= $isEdit ? 'Edit' : 'Tambah' ?> kelompok KKN</h2></div>
+    <div class="card-head"><h2><?= $isEdit ? 'Edit' : 'Tambah' ?> kelompok KKN Tematik Tematik</h2></div>
     <p class="field-hint">Atur DPL, lokasi penelitian, titik peta, anggota, dan ketua dari halaman ini. Data tersimpan bersama agar alur kelompok tetap sinkron.</p>
     <form method="post" action="<?= $isEdit ? site_url('admin/kkn/' . $kelompok['id']) : site_url('admin/kkn') ?>">
         <?= csrf_field() ?>

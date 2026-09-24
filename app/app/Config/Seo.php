@@ -13,11 +13,11 @@ class Seo extends BaseConfig
         'KKN Tematik UKIM',
         'monitoring KKN Tematik UKIM',
         'sistem monitoring KKN',
-        'monitoring kegiatan KKN mahasiswa',
+        'monitoring kegiatan KKN Tematik mahasiswa',
         'logbook KKN',
         'laporan KKN',
         'DPL KKN',
-        'penilaian KKN mahasiswa',
+        'penilaian KKN Tematik mahasiswa',
         'GPS lokasi KKN',
     ];
     public string $googleSiteVerification = 'ZisLNMIUr6B58UxNgfyKBnA4KUHayB6exKHeqvQetsw';

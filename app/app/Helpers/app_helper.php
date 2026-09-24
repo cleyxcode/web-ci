@@ -79,6 +79,7 @@ if (! function_exists('panel_menus')) {
                 ['label' => 'Kelompok KKN', 'url' => '/admin/kkn', 'icon' => 'group', 'mobile' => true],
                 ['label' => 'Lokasi KKN', 'url' => '/admin/lokasi', 'icon' => 'map'],
                 ['label' => 'Laporan', 'url' => '/admin/laporan', 'icon' => 'doc', 'mobile' => true],
+                ['label' => 'Logbook', 'url' => '/admin/logbook', 'icon' => 'book', 'mobile' => true],
                 ['label' => 'Evaluasi', 'url' => '/admin/evaluasi', 'icon' => 'clipboard'],
                 ['label' => 'Pengumuman', 'url' => '/admin/pengumuman', 'icon' => 'bell'],
                 ['label' => 'Audit Trail', 'url' => '/admin/audit', 'icon' => 'history'],
@@ -167,5 +168,30 @@ if (! function_exists('upload_file')) {
         $file->move($path, $newName);
 
         return trim($folder, '/') . '/' . $newName;
+    }
+}
+
+if (! function_exists('upload_files')) {
+    /** @return list<string> */
+    function upload_files(array $files, string $folder, array $allowed = ['jpg', 'jpeg', 'png'], int $maxKb = 5120, int $maxFiles = 3): array
+    {
+        $uploaded = [];
+        foreach (array_slice($files, 0, $maxFiles) as $file) {
+            $path = upload_file($file, $folder, $allowed, $maxKb);
+            if ($path !== null) {
+                $uploaded[] = $path;
+            }
+        }
+        return $uploaded;
+    }
+}
+
+if (! function_exists('stored_files')) {
+    /** @return list<string> */
+    function stored_files(?string $value): array
+    {
+        if ($value === null || trim($value) === '') return [];
+        $decoded = json_decode($value, true);
+        return is_array($decoded) ? array_values(array_filter($decoded, 'is_string')) : [$value];
     }
 }

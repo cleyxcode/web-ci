@@ -12,7 +12,7 @@ $alamatPenelitian = trim($m['alamat_penelitian'] ?? '');
         <div class="relative z-10">
             <div class="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs font-extrabold tracking-widest text-violet-100 backdrop-blur-sm">
                 <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
-                <?= esc($m['periode'] ?? 'Periode KKN') ?>
+                <?= esc($m['periode'] ?? 'Periode KKN Tematik') ?>
             </div>
             
             <h2 class="mt-4 text-3xl font-extrabold tracking-tight text-white"><?= esc($m['nama'] ?? 'Mahasiswa') ?></h2>
@@ -38,7 +38,7 @@ $alamatPenelitian = trim($m['alamat_penelitian'] ?? '');
                         <?php if ($alamatPenelitian !== ''): ?> <br><span class="opacity-75"><?= esc($alamatPenelitian) ?></span><?php endif; ?>
                     </span>
                 <?php else: ?>
-                    <span class="text-rose-200">Belum ditempatkan di kelompok KKN. Hubungi admin.</span>
+                    <span class="text-rose-200">Belum ditempatkan di kelompok KKN Tematik. Hubungi admin.</span>
                 <?php endif; ?>
             </div>
             
@@ -55,7 +55,7 @@ $alamatPenelitian = trim($m['alamat_penelitian'] ?? '');
     </div>
 
     <!-- Stat Grid -->
-    <section class="mb-5 grid grid-cols-2 gap-3 xl:grid-cols-5" aria-label="Ringkasan KKN">
+    <section class="mb-5 grid grid-cols-2 gap-3 xl:grid-cols-5" aria-label="Ringkasan KKN Tematik">
         
         <a href="<?= site_url('mahasiswa/logbook') ?>" class="admin-stat-card tone-violet group">
             <span class="admin-stat-icon">
@@ -166,7 +166,7 @@ $alamatPenelitian = trim($m['alamat_penelitian'] ?? '');
             <div class="quick-action_svg tone-blue">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="h-full w-full text-blue-600"><path stroke-linecap="round" stroke-linejoin="round" d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zm14 10v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
             </div>
-            <span class="mt-2 text-sm text-blue-700 dark:text-blue-400">Tim & Lokasi KKN</span>
+            <span class="mt-2 text-sm text-blue-700 dark:text-blue-400">Tim & Lokasi KKN Tematik</span>
         </a>
     </div>
 
@@ -182,7 +182,7 @@ $alamatPenelitian = trim($m['alamat_penelitian'] ?? '');
         <div class="card-head">
             <h2>
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="inline h-5 w-5 text-emerald-500 mr-1"><path stroke-linecap="round" stroke-linejoin="round" d="M9 20l-5-2V4l5 2 6-2 5 2v14l-5-2-6 2zM9 6v14M15 4v14"/></svg>
-                Lokasi KKN Kelompok
+                Lokasi KKN Tematik Kelompok
             </h2>
             <a href="<?= site_url('mahasiswa/tim') ?>" class="btn btn-secondary btn-sm">Set GPS Lokasi</a>
         </div>
@@ -221,7 +221,7 @@ $alamatPenelitian = trim($m['alamat_penelitian'] ?? '');
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" class="h-8 w-8"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                                     </div>
                                     <strong class="mt-4 block text-sm font-extrabold text-slate-900 dark:text-white">Belum ada logbook</strong>
-                                    <p class="mt-1 text-sm text-slate-500">Mulai catat kegiatan KKN harian Anda.</p>
+                                    <p class="mt-1 text-sm text-slate-500">Mulai catat kegiatan KKN Tematik harian Anda.</p>
                                 </div>
                             </td>
                         </tr>

@@ -13,7 +13,11 @@
         </div>
         <div class="field">
             <label>File PDF (max 5MB)<?= $isEdit ? ' — Kosongkan jika tidak ingin mengubah' : '' ?></label>
-            <input type="file" name="file_laporan" accept=".pdf" <?= $isEdit ? '' : 'required' ?>>
+            <div class="file-picker">
+                <input id="file-laporan" type="file" name="file_laporan" accept=".pdf" <?= $isEdit ? '' : 'required' ?>>
+                <label for="file-laporan" class="file-picker-button">Pilih file PDF</label>
+                <span class="file-picker-name">Belum ada file dipilih</span>
+            </div>
             <?php if ($isEdit && ! empty($laporan['file_laporan'])): ?>
                 <span class="field-hint">File saat ini: <?= esc(basename($laporan['file_laporan'])) ?></span>
             <?php endif; ?>

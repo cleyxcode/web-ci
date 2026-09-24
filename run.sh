@@ -30,7 +30,7 @@ fi
 printf '\n==> Menjalankan migration database terbaru\n'
 "${compose_command[@]}" exec -T app php spark migrate --all
 
-printf '\n==> Memastikan seeder demo KKN tersedia (idempotent)\n'
+printf '\n==> Memastikan seeder demo KKN Tematik tersedia (idempotent)\n'
 printf '    Seeder demo dijalankan sebagai migration dan aman diulang.\n'
 
 printf '\nURL yang dapat digunakan:\n'

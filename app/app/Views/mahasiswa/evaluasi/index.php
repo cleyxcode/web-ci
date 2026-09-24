@@ -22,14 +22,30 @@ $stars = static function (float|int|null $value, string $size = 'h-5 w-5'): stri
 <?php if (empty($student['kelompok_id'])): ?>
     <section class="mx-auto max-w-2xl py-20 text-center">
         <div class="mx-auto grid h-20 w-20 place-items-center rounded-3xl bg-amber-50 text-amber-500 dark:bg-amber-950/30"><span class="text-3xl">!</span></div>
-        <h1 class="mt-6 text-2xl font-extrabold text-slate-900 dark:text-white">Belum ada kelompok KKN</h1>
-        <p class="mx-auto mt-3 max-w-md text-sm leading-6 text-slate-500">Evaluasi Dosen Pembimbing Lapangan akan muncul setelah admin menempatkan Anda ke kelompok KKN.</p>
+        <h1 class="mt-6 text-2xl font-extrabold text-slate-900 dark:text-white">Belum ada kelompok KKN Tematik Tematik</h1>
+        <p class="mx-auto mt-3 max-w-md text-sm leading-6 text-slate-500">Evaluasi Dosen Pembimbing Lapangan akan muncul setelah admin menempatkan Anda ke kelompok KKN Tematik.</p>
     </section>
 <?php elseif (! $evaluation): ?>
-    <section class="mx-auto max-w-2xl rounded-3xl border border-dashed border-slate-300 bg-white p-6 text-center shadow-sm sm:p-10 dark:border-slate-700 dark:bg-slate-900">
-        <div class="mx-auto grid h-20 w-20 place-items-center rounded-3xl bg-emerald-50 text-emerald-500 dark:bg-emerald-950/30"><span class="text-3xl">★</span></div>
-        <h1 class="mt-6 text-2xl font-extrabold text-slate-900 dark:text-white">Evaluasi belum tersedia</h1>
-        <p class="mx-auto mt-3 max-w-md text-sm leading-6 text-slate-500">Dosen Pembimbing Lapangan <?= esc($student['nama_dpl'] ?? 'kelompok Anda') ?> belum mengisi evaluasi. Anda akan dapat melihat rincian penilaian di halaman ini setelah disimpan.</p>
+    <section class="mx-auto max-w-3xl space-y-6">
+        <div class="card">
+            <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white">Evaluasi DPL</h1>
+            <p class="mt-2 text-sm leading-6 text-slate-500 dark:text-slate-400">Nilai pengalaman bimbingan Anda secara jujur. Pertanyaan disiapkan oleh DPL/admin, sedangkan rating diberikan oleh mahasiswa.</p>
+        </div>
+        <form method="post" action="<?= site_url('mahasiswa/evaluasi') ?>" class="card space-y-5">
+            <?= csrf_field() ?>
+            <?php if (! empty(session('errors'))): ?><div class="alert alert-danger"><ul class="list-inside list-disc"><?php foreach ((array) session('errors') as $error): ?><li><?= esc((string) $error) ?></li><?php endforeach; ?></ul></div><?php endif; ?>
+            <?php foreach (($criteria ?? []) as $criterion): ?>
+                <fieldset class="rounded-2xl border border-slate-200 p-4 dark:border-slate-800">
+                    <legend class="px-2 text-sm font-extrabold text-slate-900 dark:text-white"><?= esc($criterion['nama']) ?></legend>
+                    <?php if (! empty($criterion['deskripsi'])): ?><p class="text-xs text-slate-500"><?= esc($criterion['deskripsi']) ?></p><?php endif; ?>
+                    <div class="mt-3 flex gap-2" role="radiogroup" aria-label="<?= esc($criterion['nama']) ?>">
+                        <?php for ($i = 1; $i <= 5; $i++): ?><label class="cursor-pointer rounded-lg border border-slate-200 px-3 py-2 text-sm font-bold hover:border-emerald-500 dark:border-slate-700"><input type="radio" name="criteria_rating[<?= (int) $criterion['id'] ?>]" value="<?= $i ?>" required> <?= $i ?></label><?php endfor; ?>
+                    </div>
+                </fieldset>
+            <?php endforeach; ?>
+            <div class="field"><label for="komentar">Komentar mahasiswa</label><textarea id="komentar" name="komentar" rows="5" maxlength="2000" placeholder="Tuliskan pengalaman atau saran untuk DPL..."><?= esc(old('komentar')) ?></textarea></div>
+            <button type="submit" class="btn btn-primary">Kirim evaluasi</button>
+        </form>
     </section>
 <?php else: ?>
     <div class="mx-auto max-w-5xl space-y-6">
@@ -53,7 +69,7 @@ $stars = static function (float|int|null $value, string $size = 'h-5 w-5'): stri
             <div class="card-head">
                 <div>
                     <h2>Rincian penilaian</h2>
-                    <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Setiap kriteria dinilai langsung oleh Dosen Pembimbing Lapangan Anda.</p>
+                    <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Setiap kriteria Anda nilai sendiri sebagai mahasiswa.</p>
                 </div>
                 <span class="text-xs font-semibold text-slate-400"><?= format_tanggal($evaluation['updated_at'] ?? $evaluation['created_at'] ?? null) ?></span>
             </div>
@@ -76,7 +92,7 @@ $stars = static function (float|int|null $value, string $size = 'h-5 w-5'): stri
         </section>
 
         <section class="card border-amber-200 bg-amber-50/60 dark:border-amber-900/50 dark:bg-amber-950/15">
-            <p class="text-xs font-extrabold uppercase tracking-widest text-amber-700 dark:text-amber-300">Catatan pembimbing</p>
+            <p class="text-xs font-extrabold uppercase tracking-widest text-amber-700 dark:text-amber-300">Komentar Anda untuk DPL</p>
             <p class="mt-3 whitespace-pre-line text-sm leading-7 text-slate-700 dark:text-slate-200"><?= esc($evaluation['komentar'] ?: 'DPL tidak menambahkan catatan.') ?></p>
         </section>
     </div>

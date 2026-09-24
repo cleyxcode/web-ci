@@ -75,7 +75,7 @@ $pctEvaluasi = $totalMahasiswa > 0 ? round(($totalEvaluasi / $totalMahasiswa) * 
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" class="inline h-5 w-5 text-violet-500 mr-2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
             Evaluasi Mahasiswa Bimbingan
         </h2>
-        <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Isi atau perbarui penilaian mahasiswa yang berada di kelompok Anda. Sebagai Dosen Pembimbing Lapangan, Anda memberi penilaian terhadap pelaksanaan KKN mahasiswa.</p>
+        <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Mahasiswa mengisi rating terhadap bimbingan Anda. Anda bertugas menyiapkan pertanyaan dan membaca hasil evaluasi.</p>
         </div>
     </div>
     <div class="table-wrap responsive-table">
@@ -91,7 +91,6 @@ $pctEvaluasi = $totalMahasiswa > 0 ? round(($totalEvaluasi / $totalMahasiswa) * 
                     <th>Kategori</th>
                     <th>Komentar</th>
                     <th>Tanggal</th>
-                    <th>Aksi</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-slate-100 dark:divide-slate-800/50">
@@ -143,7 +142,6 @@ $pctEvaluasi = $totalMahasiswa > 0 ? round(($totalEvaluasi / $totalMahasiswa) * 
                             </p>
                         </td>
                         <td data-label="Tanggal" class="text-xs whitespace-nowrap text-slate-500"><?= format_tanggal($row['created_at'] ?? null) ?></td>
-                        <td data-label="Aksi"><a href="<?= site_url('dpl/evaluasi/' . (int) $row['mahasiswa_id']) ?>" class="btn btn-secondary btn-sm">Ubah</a></td>
                     </tr>
                 <?php endforeach; ?>
             <?php endif; ?>
@@ -154,20 +152,20 @@ $pctEvaluasi = $totalMahasiswa > 0 ? round(($totalEvaluasi / $totalMahasiswa) * 
 
 <?php if (! empty($kelompok)): ?>
 <div class="card">
-    <div class="card-head"><div><h2>Evaluasi per kelompok</h2><p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Isi atau perbarui evaluasi semua anggota dalam satu formulir.</p></div></div>
+    <div class="card-head"><div><h2>Evaluasi per kelompok</h2><p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Pantau hasil evaluasi mahasiswa dalam kelompok bimbingan Anda.</p></div></div>
     <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         <?php foreach ($kelompok as $group): ?>
-            <a class="rounded-2xl border border-emerald-100 bg-emerald-50/60 p-4 transition hover:border-emerald-300 hover:bg-emerald-50 dark:border-emerald-900/40 dark:bg-emerald-950/20" href="<?= site_url('dpl/evaluasi/kelompok/' . (int) $group['id']) ?>">
+            <div class="rounded-2xl border border-emerald-100 bg-emerald-50/60 p-4 dark:border-emerald-900/40 dark:bg-emerald-950/20">
                 <strong class="block text-sm text-slate-900 dark:text-white"><?= esc($group['nama_kelompok']) ?></strong>
-                <span class="mt-1 block text-xs text-slate-500">Evaluasi seluruh anggota →</span>
-            </a>
+                <span class="mt-1 block text-xs text-slate-500">Menunggu mahasiswa mengisi evaluasi</span>
+            </div>
         <?php endforeach; ?>
     </div>
 </div>
 <?php endif; ?>
 
 <section class="card">
-    <div class="card-head"><div><h2>Pertanyaan evaluasi</h2><p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Sesuaikan pertanyaan dengan kondisi lapangan. Pertanyaan tambahan berlaku untuk DPL Anda.</p></div></div>
+        <div class="card-head"><div><h2>Pertanyaan evaluasi</h2><p class="mt-1 text-sm text-slate-500 dark:text-slate-400">Buat atau sesuaikan pertanyaan yang nantinya akan dijawab dan diberi rating oleh mahasiswa.</p></div></div>
     <form method="post" action="<?= site_url('dpl/evaluasi/kriteria') ?>" class="mb-5 grid gap-3 rounded-2xl bg-emerald-50/60 p-4 dark:bg-emerald-950/20 md:grid-cols-[1fr_1fr_auto] md:items-end">
         <?= csrf_field() ?><div class="field mb-0"><label>Pertanyaan baru</label><input name="nama" maxlength="150" required placeholder="Contoh: Kemampuan beradaptasi dengan masyarakat"></div><div class="field mb-0"><label>Petunjuk penilaian</label><input name="deskripsi" maxlength="255" placeholder="Opsional"></div><button class="btn btn-primary" type="submit">+ Tambah</button>
     </form>
@@ -202,7 +200,7 @@ $pctEvaluasi = $totalMahasiswa > 0 ? round(($totalEvaluasi / $totalMahasiswa) * 
                         <td data-label="NPM" class="font-mono text-sm text-slate-600 dark:text-slate-400"><?= esc($row['npm']) ?></td>
                         <td data-label="Nama" class="font-bold text-slate-900 dark:text-white"><?= esc($row['nama']) ?></td>
                         <td data-label="Prodi" class="text-sm text-slate-500"><?= esc($row['prodi'] ?? '-') ?></td>
-                        <td data-label="Aksi"><a href="<?= site_url('dpl/evaluasi/' . (int) $row['id']) ?>" class="btn btn-primary btn-sm">Beri evaluasi</a></td>
+                        <td data-label="Aksi"><span class="text-xs font-semibold text-slate-500">Menunggu mahasiswa</span></td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>

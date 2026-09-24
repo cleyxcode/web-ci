@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Libraries;
 
 /**
- * Perhitungan nilai KKN Tematik (tanpa KNN).
+ * Perhitungan nilai KKN Tematik.
  * Bobot: keaktifan 30% + logbook 30% + laporan 40%.
  */
 class NilaiLib

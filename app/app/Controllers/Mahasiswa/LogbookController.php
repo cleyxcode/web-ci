@@ -77,7 +77,9 @@ class LogbookController extends PanelController
             return redirect()->back()->withInput()->with('error', 'Tanggal kegiatan tidak boleh melebihi hari ini.');
         }
 
-        $dokumentasi = upload_file($this->request->getFile('dokumentasi'), 'logbook', ['jpg', 'jpeg', 'png']);
+        $files = $this->request->getFileMultiple('dokumentasi') ?? [];
+        if (count($files) > 3) return redirect()->back()->withInput()->with('error', 'Maksimal 3 gambar dokumentasi.');
+        $dokumentasi = upload_files($files, 'logbook');
 
         $data = [
             'tanggal'         => $this->request->getPost('tanggal'),
@@ -85,8 +87,8 @@ class LogbookController extends PanelController
             'lokasi_kegiatan' => trim((string) $this->request->getPost('lokasi_kegiatan')) ?: null,
         ];
 
-        if ($dokumentasi) {
-            $data['dokumentasi'] = $dokumentasi;
+        if ($dokumentasi !== []) {
+            $data['dokumentasi'] = json_encode($dokumentasi, JSON_UNESCAPED_SLASHES);
         }
 
         $logbookModel->update($id, $data);
@@ -136,14 +138,16 @@ class LogbookController extends PanelController
             return redirect()->back()->withInput()->with('error', 'Tanggal kegiatan tidak boleh melebihi hari ini.');
         }
 
-        $dokumentasi = upload_file($this->request->getFile('dokumentasi'), 'logbook', ['jpg', 'jpeg', 'png']);
+        $files = $this->request->getFileMultiple('dokumentasi') ?? [];
+        if (count($files) > 3) return redirect()->back()->withInput()->with('error', 'Maksimal 3 gambar dokumentasi.');
+        $dokumentasi = upload_files($files, 'logbook');
 
         model(LogbookModel::class)->insert([
             'mahasiswa_id'    => $mhs['id'],
             'tanggal'         => $this->request->getPost('tanggal'),
             'kegiatan'        => trim((string) $this->request->getPost('kegiatan')),
             'lokasi_kegiatan' => trim((string) $this->request->getPost('lokasi_kegiatan')) ?: null,
-            'dokumentasi'     => $dokumentasi,
+            'dokumentasi'     => $dokumentasi !== [] ? json_encode($dokumentasi, JSON_UNESCAPED_SLASHES) : null,
             'status'          => 'menunggu',
         ]);
 

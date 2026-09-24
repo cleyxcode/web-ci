@@ -14,8 +14,8 @@ $ketuaId = (int) ($k['ketua_mahasiswa_id'] ?? 0);
                 <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z"/>
             </svg>
         </div>
-        <h3 class="text-lg font-extrabold text-slate-800 dark:text-white">Belum Ada Tim KKN</h3>
-        <p class="mt-2 max-w-md text-sm text-slate-400 leading-relaxed">Anda belum ditempatkan di kelompok KKN. Silakan hubungi admin kampus agar dapat dimasukkan ke dalam tim KKN.</p>
+        <h3 class="text-lg font-extrabold text-slate-800 dark:text-white">Belum Ada Tim KKN Tematik</h3>
+        <p class="mt-2 max-w-md text-sm text-slate-400 leading-relaxed">Anda belum ditempatkan di kelompok KKN Tematik. Silakan hubungi admin kampus agar dapat dimasukkan ke dalam tim KKN Tematik.</p>
         <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
             <div class="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3 text-left shadow-sm dark:border-slate-700 dark:bg-slate-800">
                 <div class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-violet-100 text-violet-600 dark:bg-violet-900/50">
@@ -29,7 +29,7 @@ $ketuaId = (int) ($k['ketua_mahasiswa_id'] ?? 0);
     </div>
 <?php else: ?>
     <div class="hero-strip">
-        <div class="periode"><?= esc($k['periode'] ?? 'Periode KKN') ?></div>
+        <div class="periode"><?= esc($k['periode'] ?? 'Periode KKN Tematik') ?></div>
         <h2><?= esc($k['nama_kelompok']) ?></h2>
         <p>
             <?= count($anggota ?? []) ?> anggota · <?= format_tanggal($k['tanggal_mulai'] ?? null) ?> – <?= format_tanggal($k['tanggal_selesai'] ?? null) ?>

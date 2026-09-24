@@ -66,7 +66,7 @@ $errors   = session()->getFlashdata('errors') ?? [];
                            placeholder="08xxxxxxxxxx" maxlength="20">
                 </div>
                 <div class="field">
-                    <label for="f_kelompok">Kelompok KKN</label>
+                    <label for="f_kelompok">Kelompok KKN Tematik</label>
                     <select id="f_kelompok" name="kelompok_id">
                         <option value="">— Belum ditempatkan —</option>
                         <?php foreach ($kelompok ?? [] as $k): ?>

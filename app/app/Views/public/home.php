@@ -69,7 +69,7 @@ $keywords = implode(', ', $seo->keywords);
             </div>
             <div class="rounded-3xl border border-violet-100 bg-gradient-to-br from-violet-600 to-indigo-700 p-7 text-white shadow-xl shadow-indigo-950/15" aria-label="Ringkasan fitur sistem">
                 <span class="text-xs font-extrabold uppercase tracking-[0.16em] text-white/70">Satu ruang kerja lapangan</span>
-                <strong class="mt-4 block text-2xl leading-tight">Dokumentasi KKN lebih rapi, transparan, dan mudah dipantau.</strong>
+                <strong class="mt-4 block text-2xl leading-tight">Dokumentasi KKN Tematik lebih rapi, transparan, dan mudah dipantau.</strong>
                 <div class="mt-7 grid grid-cols-2 gap-2">
                     <span class="rounded-xl bg-white/15 px-3 py-3 text-sm font-bold ring-1 ring-white/15">Logbook</span>
                     <span class="rounded-xl bg-white/15 px-3 py-3 text-sm font-bold ring-1 ring-white/15">Laporan</span>
@@ -91,7 +91,7 @@ $keywords = implode(', ', $seo->keywords);
                 <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm shadow-slate-900/5">
                     <span class="text-sm font-extrabold text-blue-600">02</span>
                     <h3 class="mt-5 text-lg font-extrabold text-slate-900">Lokasi dan tim</h3>
-                    <p class="mt-2 text-sm leading-6 text-slate-500">Ketua kelompok mencatat GPS lokasi KKN agar admin dan DPL dapat memantau sebaran tim.</p>
+                    <p class="mt-2 text-sm leading-6 text-slate-500">Ketua kelompok mencatat GPS lokasi KKN Tematik Tematik agar admin dan DPL dapat memantau sebaran tim.</p>
                 </article>
                 <article class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm shadow-slate-900/5">
                     <span class="text-sm font-extrabold text-emerald-600">03</span>
@@ -104,7 +104,7 @@ $keywords = implode(', ', $seo->keywords);
         <section class="mt-6 flex flex-col gap-6 rounded-3xl bg-slate-900 p-7 text-white sm:flex-row sm:items-center sm:justify-between" aria-labelledby="cta-title">
             <div>
                 <p class="text-xs font-extrabold uppercase tracking-[0.16em] text-violet-300">Mulai sekarang</p>
-                <h2 id="cta-title" class="mt-2 text-2xl font-extrabold">Siap mengelola KKN dengan lebih teratur?</h2>
+                <h2 id="cta-title" class="mt-2 text-2xl font-extrabold">Siap mengelola KKN Tematik dengan lebih teratur?</h2>
             </div>
             <a class="inline-flex min-h-11 shrink-0 items-center justify-center rounded-xl bg-white px-5 text-sm font-extrabold text-slate-900 transition hover:bg-violet-50" href="<?= site_url('login') ?>">Buka sistem monitoring</a>
         </section>

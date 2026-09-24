@@ -54,8 +54,10 @@ final class EvaluasiController extends PanelController
         ]);
     }
 
-    public function form(int $mahasiswaId): string
+    public function form(int $mahasiswaId)
     {
+        return redirect()->to('/dpl/evaluasi')->with('info', 'Rating evaluasi diisi oleh mahasiswa.');
+        /*
         $context = $this->studentContext($mahasiswaId);
         if ($context === null) {
             return $this->render('dpl/evaluasi/index', [
@@ -77,10 +79,13 @@ final class EvaluasiController extends PanelController
                 (int) $context['mahasiswa']['kelompok_id']
             ),
         ]);
+        */
     }
 
     public function save(int $mahasiswaId)
     {
+        return redirect()->to('/dpl/evaluasi')->with('info', 'Rating evaluasi diisi oleh mahasiswa.');
+        /*
         $context = $this->studentContext($mahasiswaId);
         if ($context === null) {
             return redirect()->to('/dpl/evaluasi')->with('error', 'Mahasiswa bukan bagian dari kelompok bimbingan Anda.');
@@ -183,10 +188,13 @@ final class EvaluasiController extends PanelController
         );
 
         return redirect()->to('/dpl/evaluasi')->with('success', 'Evaluasi DPL berhasil disimpan.');
+        */
     }
 
-    public function groupForm(int $kelompokId): string
+    public function groupForm(int $kelompokId)
     {
+        return redirect()->to('/dpl/evaluasi')->with('info', 'Rating evaluasi diisi oleh mahasiswa.');
+        /*
         $dpl = $this->currentDpl();
         $kelompok = $dpl ? model(KelompokKknModel::class)->where('id', $kelompokId)->where('dpl_id', $dpl['id'])->first() : null;
         if (! $kelompok) {
@@ -204,10 +212,13 @@ final class EvaluasiController extends PanelController
             'evaluasi' => $evaluasi,
             'criteria' => model(EvaluasiKriteriaModel::class)->getForDpl((int) $dpl['id'], $kelompokId),
         ]);
+        */
     }
 
     public function saveGroup(int $kelompokId)
     {
+        return redirect()->to('/dpl/evaluasi')->with('info', 'Rating evaluasi diisi oleh mahasiswa.');
+        /*
         $dpl = $this->currentDpl();
         $kelompok = $dpl ? model(KelompokKknModel::class)->where('id', $kelompokId)->where('dpl_id', $dpl['id'])->first() : null;
         if (! $kelompok) {
@@ -248,6 +259,7 @@ final class EvaluasiController extends PanelController
 
         $this->notifyAdmins('Evaluasi kelompok baru', 'DPL ' . $dpl['nama'] . ' mengirim evaluasi untuk kelompok ' . ($kelompok['nama_kelompok'] ?? '-') . '.', 'info');
         return redirect()->to('/dpl/evaluasi')->with('success', 'Evaluasi seluruh anggota kelompok berhasil disimpan.');
+        */
     }
 
     public function storeCriteria()
