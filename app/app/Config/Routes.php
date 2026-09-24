@@ -103,10 +103,6 @@ $routes->group('dpl', ['filter' => ['auth', 'role:dpl']], static function ($rout
     $routes->get('penilaian/(:num)', 'Dpl\PenilaianController::form/$1');
     $routes->post('penilaian/(:num)', 'Dpl\PenilaianController::save/$1');
     $routes->get('evaluasi', 'Dpl\EvaluasiController::index');
-    $routes->get('evaluasi/(:num)', 'Dpl\EvaluasiController::form/$1');
-    $routes->post('evaluasi/(:num)', 'Dpl\EvaluasiController::save/$1');
-    $routes->get('evaluasi/kelompok/(:num)', 'Dpl\EvaluasiController::groupForm/$1');
-    $routes->post('evaluasi/kelompok/(:num)', 'Dpl\EvaluasiController::saveGroup/$1');
     $routes->post('evaluasi/kriteria', 'Dpl\EvaluasiController::storeCriteria');
     $routes->post('evaluasi/kriteria/(:num)', 'Dpl\EvaluasiController::updateCriteria/$1');
     $routes->post('evaluasi/kriteria/(:num)/delete', 'Dpl\EvaluasiController::deleteCriteria/$1');

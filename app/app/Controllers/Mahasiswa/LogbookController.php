@@ -91,6 +91,14 @@ class LogbookController extends PanelController
             $data['dokumentasi'] = json_encode($dokumentasi, JSON_UNESCAPED_SLASHES);
         }
 
+        // Perubahan setelah validasi harus masuk antrean DPL lagi.
+        if (($logbook['status'] ?? 'menunggu') !== 'menunggu') {
+            $data['status'] = 'menunggu';
+            $data['validated_by'] = null;
+            $data['validated_at'] = null;
+            $data['catatan_dpl'] = null;
+        }
+
         $logbookModel->update($id, $data);
 
         return redirect()->to('/mahasiswa/logbook')->with('success', 'Logbook berhasil diperbarui.');
