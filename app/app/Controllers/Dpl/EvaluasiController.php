@@ -54,6 +54,23 @@ final class EvaluasiController extends PanelController
         ]);
     }
 
+    public function delete(int $id)
+    {
+        $dpl = $this->currentDpl();
+        $model = model(EvaluasiModel::class);
+        $evaluation = $model->find($id);
+        $student = $evaluation ? model(MahasiswaModel::class)->getWithRelations((int) $evaluation['mahasiswa_id']) : null;
+
+        if ($dpl === null || $evaluation === null || ($evaluation['tipe_evaluasi'] ?? '') !== 'dpl'
+            || $student === null || (int) ($student['dpl_id'] ?? 0) !== (int) $dpl['id']) {
+            return redirect()->to('/dpl/evaluasi')->with('error', 'Evaluasi tidak ditemukan atau bukan milik kelompok bimbingan Anda.');
+        }
+
+        // Satu baris evaluasi ini juga yang dibaca mahasiswa, sehingga ikut hilang di halaman mahasiswa.
+        $model->delete($id);
+        return redirect()->to('/dpl/evaluasi')->with('success', 'Evaluasi mahasiswa berhasil dihapus.');
+    }
+
     public function form(int $mahasiswaId)
     {
         return redirect()->to('/dpl/evaluasi')->with('info', 'Rating evaluasi diisi oleh mahasiswa.');

@@ -200,7 +200,11 @@ $pctEvaluasi = $totalMahasiswa > 0 ? round(($totalEvaluasi / $totalMahasiswa) * 
                         <td data-label="NPM" class="font-mono text-sm text-slate-600 dark:text-slate-400"><?= esc($row['npm']) ?></td>
                         <td data-label="Nama" class="font-bold text-slate-900 dark:text-white"><?= esc($row['nama']) ?></td>
                         <td data-label="Prodi" class="text-sm text-slate-500"><?= esc($row['prodi'] ?? '-') ?></td>
-                        <td data-label="Aksi"><span class="text-xs font-semibold text-slate-500">Menunggu mahasiswa</span></td>
+                        <td data-label="Aksi">
+                            <form method="post" action="<?= site_url('dpl/evaluasi/' . (int) $row['id'] . '/delete') ?>" data-confirm="Hapus hasil evaluasi mahasiswa ini? Data juga akan hilang dari halaman mahasiswa.">
+                                <?= csrf_field() ?><button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+                            </form>
+                        </td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>

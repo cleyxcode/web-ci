@@ -103,6 +103,7 @@ $routes->group('dpl', ['filter' => ['auth', 'role:dpl']], static function ($rout
     $routes->get('penilaian/(:num)', 'Dpl\PenilaianController::form/$1');
     $routes->post('penilaian/(:num)', 'Dpl\PenilaianController::save/$1');
     $routes->get('evaluasi', 'Dpl\EvaluasiController::index');
+    $routes->post('evaluasi/(:num)/delete', 'Dpl\EvaluasiController::delete/$1');
     $routes->post('evaluasi/kriteria', 'Dpl\EvaluasiController::storeCriteria');
     $routes->post('evaluasi/kriteria/(:num)', 'Dpl\EvaluasiController::updateCriteria/$1');
     $routes->post('evaluasi/kriteria/(:num)/delete', 'Dpl\EvaluasiController::deleteCriteria/$1');
@@ -134,7 +135,6 @@ $routes->group('mahasiswa', ['filter' => ['auth', 'role:mahasiswa']], static fun
     $routes->get('nilai', 'Mahasiswa\NilaiController::index');
     $routes->get('evaluasi', 'Mahasiswa\EvaluasiController::index');
     $routes->post('evaluasi', 'Mahasiswa\EvaluasiController::save');
-    $routes->post('evaluasi/delete', 'Mahasiswa\EvaluasiController::delete');
     $routes->get('tim', 'Mahasiswa\TimController::index');
     $routes->post('tim/gps', 'Mahasiswa\TimController::setLokasiGps');
     $routes->get('profil', 'Mahasiswa\ProfilController::index');
