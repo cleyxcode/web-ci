@@ -172,6 +172,9 @@ class LogbookController extends PanelController
         ];
 
         if ($dokumentasi !== []) {
+            foreach (stored_files($logbook['dokumentasi'] ?? null) as $oldFile) {
+                delete_uploaded_file($oldFile);
+            }
             $data['dokumentasi'] = json_encode($dokumentasi, JSON_UNESCAPED_SLASHES);
         }
 
@@ -198,6 +201,10 @@ class LogbookController extends PanelController
         $mhs = model(MahasiswaModel::class)->find((int) $logbook['mahasiswa_id']);
         if (! $mhs || (int) $mhs['dpl_id'] !== (int) $dpl['id']) {
             return redirect()->to('/dpl/logbook')->with('error', 'Logbook bukan dari mahasiswa bimbingan Anda.');
+        }
+
+        foreach (stored_files($logbook['dokumentasi'] ?? null) as $oldFile) {
+            delete_uploaded_file($oldFile);
         }
 
         $logbookModel->delete($id);

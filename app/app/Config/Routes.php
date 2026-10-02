@@ -144,15 +144,19 @@ $routes->group('mahasiswa', ['filter' => ['auth', 'role:mahasiswa']], static fun
     $routes->post('profil/password', 'Mahasiswa\ProfilController::changePassword');
 });
 
-// Fallback for file uploads if web server doesn't serve them directly
+// Serve uploaded files from writable/uploads (and legacy public/uploads).
 $routes->get('uploads/(.+)', static function ($path) {
-    $filePath = FCPATH . 'uploads/' . $path;
-    if (file_exists($filePath)) {
-        $mime = mime_content_type($filePath);
-        header('Content-Type: ' . $mime);
-        header('Content-Length: ' . filesize($filePath));
-        readfile($filePath);
-        exit;
+    $filePath = resolve_uploaded_file((string) $path);
+    if ($filePath === null) {
+        throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
     }
-    throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+
+    $mime = mime_content_type($filePath) ?: 'application/octet-stream';
+
+    return service('response')
+        ->download($filePath, null)
+        ->inline()
+        ->setContentType($mime)
+        ->setHeader('Content-Length', (string) filesize($filePath))
+        ->setHeader('Cache-Control', 'private, max-age=3600');
 });

@@ -88,6 +88,9 @@ class LogbookController extends PanelController
         ];
 
         if ($dokumentasi !== []) {
+            foreach (stored_files($logbook['dokumentasi'] ?? null) as $oldFile) {
+                delete_uploaded_file($oldFile);
+            }
             $data['dokumentasi'] = json_encode($dokumentasi, JSON_UNESCAPED_SLASHES);
         }
 
@@ -119,6 +122,10 @@ class LogbookController extends PanelController
             return redirect()->to('/mahasiswa/logbook')->with('error', 'Logbook tidak ditemukan.');
         }
 
+
+        foreach (stored_files($logbook['dokumentasi'] ?? null) as $oldFile) {
+            delete_uploaded_file($oldFile);
+        }
 
         $logbookModel->delete($id);
 

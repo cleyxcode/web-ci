@@ -98,7 +98,7 @@ CREATE TABLE IF NOT EXISTS `logbook` (
   `tanggal` date NOT NULL,
   `kegiatan` text NOT NULL,
   `lokasi_kegiatan` varchar(200) DEFAULT NULL,
-  `dokumentasi` varchar(255) DEFAULT NULL,
+  `dokumentasi` text DEFAULT NULL,
   `status` enum('menunggu','divalidasi','ditolak') DEFAULT 'menunggu',
   `catatan_dpl` text DEFAULT NULL,
   `validated_by` int(11) DEFAULT NULL,

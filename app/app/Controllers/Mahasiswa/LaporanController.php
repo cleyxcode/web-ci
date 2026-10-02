@@ -127,6 +127,9 @@ class LaporanController extends PanelController
         ];
 
         if ($file) {
+            if (! empty($laporan['file_laporan'])) {
+                delete_uploaded_file($laporan['file_laporan']);
+            }
             $data['file_laporan'] = $file;
         }
 
@@ -160,6 +163,10 @@ class LaporanController extends PanelController
         }
 
         $laporanModel->delete($id);
+
+        if (! empty($laporan['file_laporan'])) {
+            delete_uploaded_file($laporan['file_laporan']);
+        }
 
         return redirect()->to('/mahasiswa/laporan')->with('success', 'Laporan kelompok berhasil dihapus.');
     }

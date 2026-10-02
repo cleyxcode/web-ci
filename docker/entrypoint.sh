@@ -5,10 +5,16 @@ mkdir -p \
     /var/www/html/writable/cache \
     /var/www/html/writable/logs \
     /var/www/html/writable/session \
-    /var/www/html/writable/uploads \
+    /var/www/html/writable/uploads/logbook \
+    /var/www/html/writable/uploads/laporan \
     /var/www/html/writable/debugbar \
     /var/www/html/public/uploads/logbook \
     /var/www/html/public/uploads/laporan
+
+# Keep legacy public/uploads files readable after storage moved to writable/.
+if [ -d /var/www/html/public/uploads ]; then
+    cp -an /var/www/html/public/uploads/. /var/www/html/writable/uploads/ 2>/dev/null || true
+fi
 
 chown -R www-data:www-data \
     /var/www/html/writable \

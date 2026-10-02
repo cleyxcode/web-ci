@@ -13,6 +13,7 @@ $checks = [
     'app/Config/Paths.php' => dirname($publicDirectory) . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Config' . DIRECTORY_SEPARATOR . 'Paths.php',
     'vendor/autoload.php' => dirname($publicDirectory) . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php',
     'writable directory' => dirname($publicDirectory) . DIRECTORY_SEPARATOR . 'writable',
+    'writable/uploads directory' => dirname($publicDirectory) . DIRECTORY_SEPARATOR . 'writable' . DIRECTORY_SEPARATOR . 'uploads',
 ];
 
 $formatStatus = static function (string $path, bool $directory = false): string {
@@ -51,7 +52,7 @@ echo 'mod_rewrite listed: ' . (function_exists('apache_get_modules') && in_array
 
 echo "\n[FILES]\n";
 foreach ($checks as $label => $path) {
-    $isDirectory = $label === 'writable directory';
+    $isDirectory = str_contains($label, 'directory');
     echo $label . ': ' . $formatStatus($path, $isDirectory) . ' (' . $path . ')' . PHP_EOL;
 }
 
@@ -68,3 +69,5 @@ echo "\n[INTERPRETATION]\n";
 echo "If this URL also returns 403, the domain document root or hosting permission is wrong.\n";
 echo "The document root must contain index.php, .htaccess, and the public assets.\n";
 echo "If app/Config/Paths.php or vendor/autoload.php is MISSING, fix the two-folder upload layout.\n";
+echo "Upload files are stored in writable/uploads (must be writable). public_html/uploads is legacy only.\n";
+echo "If /uploads/logbook or /uploads/laporan returns 404, re-upload the file after deploying this fix.\n";

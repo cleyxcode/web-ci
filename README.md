@@ -44,6 +44,23 @@ File public_html/index.php sudah mencari ../app/Config/Paths.php. Atur PHP ke ve
 
 Pastikan public_html/index.php dan public_html/.htaccess ada, file memiliki permission 644, folder 755, dan folder writable dapat ditulis PHP. Jika muncul 403, cek file tersembunyi .htaccess di public_html dan log error hosting.
 
+File upload (logbook/laporan) disimpan di folder writable/uploads, bukan di public_html. Jadi saat Anda mengunggah ulang isi public_html, file upload tidak ikut terhapus. Pastikan folder writable/uploads (beserta subfolder logbook dan laporan) berizin tulis (775 atau 755 + owner PHP).
+
+Setelah upload kode terbaru ke Hostinger, jalankan migrasi dari SSH:
+
+~~~bash
+cd ~/domains/kkntematikukim.site
+# pindahkan file lama (jika masih ada di public_html/uploads)
+mkdir -p writable/uploads/logbook writable/uploads/laporan
+cp -an public_html/uploads/logbook/. writable/uploads/logbook/ 2>/dev/null || true
+cp -an public_html/uploads/laporan/. writable/uploads/laporan/ 2>/dev/null || true
+chmod -R ug+rwX writable/uploads
+# pastikan file helper + migration terbaru sudah di folder app/
+php public_html/spark migrate --all
+~~~
+
+Migrasi `NormalizeUploadStorage` akan memastikan kolom dokumentasi = TEXT, membuat folder storage, menyalin sisa file legacy, dan merapikan path di database.
+
 ### Debug 403 melalui URL
 
 File tersedia di app/hostinger-debug.php dan app/public/hostinger-debug.php. Untuk URL utama, upload app/public/hostinger-debug.php ke public_html/Hostinger, lalu buka https://kkntematikukim.site/hostinger-debug.php. File ini menampilkan status PHP, document root, permission, file CI4, folder writable, dan extension tanpa menampilkan password database. Hapus file tersebut setelah selesai debugging.

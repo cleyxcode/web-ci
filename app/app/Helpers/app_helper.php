@@ -136,6 +136,71 @@ if (! function_exists('format_tanggal')) {
     }
 }
 
+if (! function_exists('upload_storage_dir')) {
+    /**
+     * Persistent upload root (outside public_html so Hostinger redeploys don't wipe files).
+     */
+    function upload_storage_dir(): string
+    {
+        return rtrim(WRITEPATH, '/\\') . DIRECTORY_SEPARATOR . 'uploads';
+    }
+}
+
+if (! function_exists('resolve_uploaded_file')) {
+    /**
+     * Resolve a stored relative path (e.g. logbook/file.jpg) to an absolute file.
+     * Prefers writable/uploads, falls back to legacy public/uploads.
+     */
+    function resolve_uploaded_file(string $relativePath): ?string
+    {
+        $relativePath = str_replace(['\\', "\0"], ['/', ''], $relativePath);
+        $relativePath = ltrim($relativePath, '/');
+
+        if ($relativePath === '' || str_contains($relativePath, '..')) {
+            return null;
+        }
+
+        $candidates = [
+            upload_storage_dir() . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $relativePath),
+            rtrim(FCPATH, '/\\') . DIRECTORY_SEPARATOR . 'uploads' . DIRECTORY_SEPARATOR . str_replace('/', DIRECTORY_SEPARATOR, $relativePath),
+        ];
+
+        foreach ($candidates as $candidate) {
+            $real = realpath($candidate);
+            if ($real === false || ! is_file($real)) {
+                continue;
+            }
+
+            $allowedRoots = array_filter([
+                realpath(upload_storage_dir()),
+                realpath(rtrim(FCPATH, '/\\') . DIRECTORY_SEPARATOR . 'uploads'),
+            ]);
+
+            foreach ($allowedRoots as $root) {
+                if (str_starts_with($real, rtrim($root, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR) || $real === $root) {
+                    return $real;
+                }
+            }
+        }
+
+        return null;
+    }
+}
+
+if (! function_exists('delete_uploaded_file')) {
+    function delete_uploaded_file(?string $relativePath): void
+    {
+        if ($relativePath === null || trim($relativePath) === '') {
+            return;
+        }
+
+        $absolute = resolve_uploaded_file($relativePath);
+        if ($absolute !== null) {
+            @unlink($absolute);
+        }
+    }
+}
+
 if (! function_exists('upload_file')) {
     function upload_file($file, string $folder, array $allowed = ['jpg', 'jpeg', 'png', 'pdf'], int $maxKb = 5120): ?string
     {
@@ -146,7 +211,7 @@ if (! function_exists('upload_file')) {
         $ext = strtolower((string) $file->getExtension());
 
         // Fallback ke ekstensi dari nama file asli jika getExtension() kosong
-        if ($ext === '') {
+        if ($ext === '' && method_exists($file, 'getClientExtension')) {
             $ext = strtolower((string) $file->getClientExtension());
         }
 
@@ -159,15 +224,21 @@ if (! function_exists('upload_file')) {
         }
 
         $newName = $file->getRandomName();
-        $path    = FCPATH . 'uploads/' . trim($folder, '/');
+        $folder  = trim($folder, '/');
+        $path    = upload_storage_dir() . DIRECTORY_SEPARATOR . $folder;
 
-        if (! is_dir($path)) {
-            mkdir($path, 0755, true);
+        if (! is_dir($path) && ! mkdir($path, 0755, true) && ! is_dir($path)) {
+            return null;
         }
 
-        $file->move($path, $newName);
+        try {
+            $file->move($path, $newName);
+        } catch (Throwable $e) {
+            log_message('error', 'Upload move failed: {message}', ['message' => $e->getMessage()]);
+            return null;
+        }
 
-        return trim($folder, '/') . '/' . $newName;
+        return $folder . '/' . $newName;
     }
 }
 
