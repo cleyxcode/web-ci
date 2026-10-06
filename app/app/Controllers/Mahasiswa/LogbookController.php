@@ -116,18 +116,26 @@ class LogbookController extends PanelController
         }
 
         $logbookModel = model(LogbookModel::class);
-        $logbook = $logbookModel->find($id);
+        $logbook      = $logbookModel->find($id);
 
         if (! $logbook || (int) $logbook['mahasiswa_id'] !== (int) $mhs['id']) {
             return redirect()->to('/mahasiswa/logbook')->with('error', 'Logbook tidak ditemukan.');
         }
 
+        try {
+            foreach (stored_files($logbook['dokumentasi'] ?? null) as $oldFile) {
+                delete_uploaded_file($oldFile);
+            }
 
-        foreach (stored_files($logbook['dokumentasi'] ?? null) as $oldFile) {
-            delete_uploaded_file($oldFile);
+            $logbookModel->delete($id);
+        } catch (\Throwable $e) {
+            log_message('error', 'Gagal hapus logbook mahasiswa #{id}: {message}', [
+                'id'      => $id,
+                'message' => $e->getMessage(),
+            ]);
+
+            return redirect()->to('/mahasiswa/logbook')->with('error', 'Gagal menghapus logbook. Silakan coba lagi.');
         }
-
-        $logbookModel->delete($id);
 
         return redirect()->to('/mahasiswa/logbook')->with('success', 'Logbook berhasil dihapus.');
     }

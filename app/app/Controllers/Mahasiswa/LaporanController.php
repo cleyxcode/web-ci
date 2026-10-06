@@ -141,31 +141,38 @@ class LaporanController extends PanelController
     public function delete(int $id)
     {
         $mhs = $this->getMahasiswaData();
-        if (! $mhs) return redirect()->to('/mahasiswa/dashboard');
+        if (! $mhs) {
+            return redirect()->to('/mahasiswa/dashboard');
+        }
 
-        if (!$mhs['is_ketua']) {
+        if (! $mhs['is_ketua']) {
             return redirect()->to('/mahasiswa/laporan')->with('error', 'Hanya ketua kelompok yang dapat menghapus laporan.');
         }
 
         $laporanModel = model(LaporanModel::class);
-        $laporan = $laporanModel->find($id);
-        if (!$laporan) {
+        $laporan      = $laporanModel->find($id);
+        if (! $laporan) {
             return redirect()->to('/mahasiswa/laporan')->with('error', 'Laporan tidak ditemukan.');
         }
 
         $uploader = model(MahasiswaModel::class)->find($laporan['mahasiswa_id']);
-        if (!$uploader || (int) $uploader['kelompok_id'] !== (int) $mhs['kelompok_id']) {
+        if (! $uploader || (int) $uploader['kelompok_id'] !== (int) $mhs['kelompok_id']) {
             return redirect()->to('/mahasiswa/laporan')->with('error', 'Laporan tidak ditemukan atau bukan milik kelompok Anda.');
         }
 
-        if (($laporan['status'] ?? 'menunggu') !== 'menunggu') {
-            return redirect()->to('/mahasiswa/laporan')->with('error', 'Laporan yang sudah diterima atau ditolak tidak dapat dihapus.');
-        }
+        try {
+            if (! empty($laporan['file_laporan'])) {
+                delete_uploaded_file($laporan['file_laporan']);
+            }
 
-        $laporanModel->delete($id);
+            $laporanModel->delete($id);
+        } catch (\Throwable $e) {
+            log_message('error', 'Gagal hapus laporan mahasiswa #{id}: {message}', [
+                'id'      => $id,
+                'message' => $e->getMessage(),
+            ]);
 
-        if (! empty($laporan['file_laporan'])) {
-            delete_uploaded_file($laporan['file_laporan']);
+            return redirect()->to('/mahasiswa/laporan')->with('error', 'Gagal menghapus laporan. Silakan coba lagi.');
         }
 
         return redirect()->to('/mahasiswa/laporan')->with('success', 'Laporan kelompok berhasil dihapus.');

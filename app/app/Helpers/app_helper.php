@@ -261,8 +261,63 @@ if (! function_exists('stored_files')) {
     /** @return list<string> */
     function stored_files(?string $value): array
     {
-        if ($value === null || trim($value) === '') return [];
+        if ($value === null || trim($value) === '') {
+            return [];
+        }
+
         $decoded = json_decode($value, true);
-        return is_array($decoded) ? array_values(array_filter($decoded, 'is_string')) : [$value];
+        if (is_array($decoded)) {
+            $paths = array_values(array_filter($decoded, static fn ($item): bool => is_string($item) && trim($item) !== ''));
+        } else {
+            $paths = [trim($value)];
+        }
+
+        return array_values(array_unique(array_map(static function (string $path): string {
+            $path = str_replace('\\', '/', $path);
+            $path = ltrim($path, '/');
+            if (str_starts_with($path, 'uploads/')) {
+                $path = substr($path, strlen('uploads/'));
+            }
+
+            return $path;
+        }, $paths)));
+    }
+}
+
+if (! function_exists('uploaded_url')) {
+    /**
+     * URL publik (via UploadsController) untuk path relatif di DB.
+     * Tetap mengembalikan URL meski file belum ketemu di disk, agar link tidak hilang.
+     */
+    function uploaded_url(?string $relativePath): ?string
+    {
+        $files = stored_files($relativePath);
+        $path  = $files[0] ?? null;
+        if ($path === null) {
+            return null;
+        }
+
+        $segments = array_map('rawurlencode', explode('/', $path));
+
+        return site_url('uploads/' . implode('/', $segments));
+    }
+}
+
+if (! function_exists('uploaded_file_exists')) {
+    function uploaded_file_exists(?string $relativePath): bool
+    {
+        $files = stored_files($relativePath);
+        $path  = $files[0] ?? null;
+
+        return $path !== null && resolve_uploaded_file($path) !== null;
+    }
+}
+
+if (! function_exists('is_image_path')) {
+    function is_image_path(string $relativePath): bool
+    {
+        $ext = strtolower(pathinfo($relativePath, PATHINFO_EXTENSION));
+
+        return in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp'], true);
     }
 }

@@ -102,4 +102,67 @@ class LaporanController extends PanelController
 
         return redirect()->back()->with('success', 'Laporan berhasil direview.');
     }
+
+    public function delete(int $id)
+    {
+        $owned = $this->findOwnedLaporan($id);
+        if ($owned === null) {
+            return redirect()->to('/dpl/laporan')->with('error', 'Laporan tidak ditemukan atau bukan dari mahasiswa bimbingan Anda.');
+        }
+
+        $laporan = $owned['laporan'];
+
+        try {
+            if (! empty($laporan['file_laporan'])) {
+                delete_uploaded_file($laporan['file_laporan']);
+            }
+
+            model(LaporanModel::class)->delete($id);
+
+            AuditLib::log(
+                'hapus',
+                'laporan',
+                'DPL menghapus laporan "' . ($laporan['judul'] ?? '') . '" milik ' . ($owned['mahasiswa']['nama'] ?? ''),
+                $id,
+                $laporan,
+                null
+            );
+        } catch (\Throwable $e) {
+            log_message('error', 'Gagal hapus laporan dpl #{id}: {message}', [
+                'id'      => $id,
+                'message' => $e->getMessage(),
+            ]);
+
+            return redirect()->to('/dpl/laporan')->with('error', 'Gagal menghapus laporan. Silakan coba lagi.');
+        }
+
+        return redirect()->to('/dpl/laporan')->with('success', 'Laporan berhasil dihapus.');
+    }
+
+    /**
+     * @return array{dpl: array<string,mixed>, laporan: array<string,mixed>, mahasiswa: array<string,mixed>}|null
+     */
+    private function findOwnedLaporan(int $id): ?array
+    {
+        $dpl = model(DplModel::class)->findByUserId((int) current_user()['id']);
+        if ($dpl === null) {
+            return null;
+        }
+
+        $laporan = model(LaporanModel::class)->find($id);
+        if ($laporan === null) {
+            return null;
+        }
+
+        $mhs = model(MahasiswaModel::class)->getWithRelations((int) $laporan['mahasiswa_id']);
+        if ($mhs === null || (int) ($mhs['dpl_id'] ?? 0) !== (int) $dpl['id']) {
+            return null;
+        }
+
+        return [
+            'dpl'       => $dpl,
+            'laporan'   => $laporan,
+            'mahasiswa' => $mhs,
+        ];
+    }
 }

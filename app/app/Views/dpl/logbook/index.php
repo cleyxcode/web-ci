@@ -63,9 +63,7 @@
                             <?php endif; ?>
                         </td>
                         <td data-label="Dok">
-                            <?php if (! empty($row['dokumentasi'])): ?>
-                                <?php foreach (stored_files($row['dokumentasi']) as $file): ?><a class="mr-2" href="<?= base_url('uploads/' . $file) ?>" target="_blank">Lihat</a><?php endforeach; ?>
-                            <?php else: ?>-<?php endif; ?>
+                            <?= view('partials/stored-files', ['value' => $row['dokumentasi'] ?? null]) ?>
                         </td>
                         <td data-label="Status"><span class="<?= stempel_class($row['status']) ?>"><?= stempel_label($row['status']) ?></span></td>
                         <td data-label="Aksi">

@@ -67,7 +67,9 @@ $routes->group('admin', ['filter' => ['auth', 'role:admin']], static function ($
     $routes->post('lokasi/(:num)/delete', 'Admin\LokasiController::delete/$1');
 
     $routes->get('laporan', 'Admin\LaporanController::index');
+    $routes->post('laporan/(:num)/delete', 'Admin\LaporanController::delete/$1');
     $routes->get('logbook', 'Admin\LogbookController::index');
+    $routes->post('logbook/(:num)/delete', 'Admin\LogbookController::delete/$1');
     $routes->get('audit', 'Admin\AuditController::index');
 
     $routes->get('evaluasi', 'Admin\EvaluasiController::index');
@@ -99,6 +101,7 @@ $routes->group('dpl', ['filter' => ['auth', 'role:dpl']], static function ($rout
     $routes->post('logbook/(:num)/delete', 'Dpl\LogbookController::delete/$1');
     $routes->get('laporan', 'Dpl\LaporanController::index');
     $routes->post('laporan/(:num)/review', 'Dpl\LaporanController::review/$1');
+    $routes->post('laporan/(:num)/delete', 'Dpl\LaporanController::delete/$1');
     $routes->get('penilaian', 'Dpl\PenilaianController::index');
     $routes->get('penilaian/(:num)', 'Dpl\PenilaianController::form/$1');
     $routes->post('penilaian/(:num)', 'Dpl\PenilaianController::save/$1');
@@ -145,18 +148,5 @@ $routes->group('mahasiswa', ['filter' => ['auth', 'role:mahasiswa']], static fun
 });
 
 // Serve uploaded files from writable/uploads (and legacy public/uploads).
-$routes->get('uploads/(.+)', static function ($path) {
-    $filePath = resolve_uploaded_file((string) $path);
-    if ($filePath === null) {
-        throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
-    }
-
-    $mime = mime_content_type($filePath) ?: 'application/octet-stream';
-
-    return service('response')
-        ->download($filePath, null)
-        ->inline()
-        ->setContentType($mime)
-        ->setHeader('Content-Length', (string) filesize($filePath))
-        ->setHeader('Cache-Control', 'private, max-age=3600');
-});
+// (:any) mendukung path bersarang seperti logbook/foto.jpg
+$routes->get('uploads/(:any)', 'UploadsController::serve/$1', ['filter' => 'auth']);

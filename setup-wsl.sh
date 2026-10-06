@@ -33,6 +33,7 @@ required_files=(
     sql/alter_evaluasi.sql
     sql/alter_remove_knn.sql
     sql/alter_2026_08.sql
+    sql/alter_2026_10_uploads.sql
 )
 
 for required_file in "${required_files[@]}"; do
@@ -53,8 +54,13 @@ for attempt in $(seq 1 60); do
     if "${compose_command[@]}" exec -T db sh -c \
         'mysqladmin ping -h localhost -u root -p"$MYSQL_ROOT_PASSWORD" --silent' \
         >/dev/null 2>&1; then
-        database_ready=true
-        break
+        # Pastikan server sudah menerima query normal (bukan temporary init server).
+        if "${compose_command[@]}" exec -T db sh -c \
+            'mysql -uroot -p"$MYSQL_ROOT_PASSWORD" -Nse "SELECT 1"' \
+            >/dev/null 2>&1; then
+            database_ready=true
+            break
+        fi
     fi
 
     printf 'Menunggu MySQL (%s/60)\r' "$attempt"
@@ -67,30 +73,43 @@ if [[ "$database_ready" != true ]]; then
     fail "MySQL tidak siap setelah 120 detik."
 fi
 
-table_count="$(${compose_command[@]} exec -T db sh -c \
-    'mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" -Nse "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = DATABASE()"' \
-    | tr -d '[:space:]')"
+# Volume db_data bisa menyimpan schema lama/parsial. Import ulang bila belum lengkap.
+# File alter memakai CREATE IF NOT EXISTS / cek kolom, jadi aman dijalankan berulang.
+min_tables=13
+count_tables() {
+    "${compose_command[@]}" exec -T db sh -c \
+        'mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" -Nse "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = DATABASE()"' \
+        | tr -d '[:space:]'
+}
 
-if [[ "$table_count" == "0" ]]; then
-    log "Database kosong, mengimpor schema dan data SQL"
+table_count="$(count_tables)"
+
+if [[ -z "$table_count" || "$table_count" -lt "$min_tables" ]]; then
+    log "Database belum lengkap ($table_count tabel), mengimpor schema dan alter SQL"
     sql_files=(
         /docker-entrypoint-initdb.d/01-init.sql
         /docker-entrypoint-initdb.d/02-alter-evaluasi.sql
         /docker-entrypoint-initdb.d/03-alter-remove-knn.sql
         /docker-entrypoint-initdb.d/04-alter-2026-08.sql
+        /docker-entrypoint-initdb.d/05-alter-2026-10-uploads.sql
     )
 
     for sql_file in "${sql_files[@]}"; do
         "${compose_command[@]}" exec -T db sh -c \
             "mysql -uroot -p\"\$MYSQL_ROOT_PASSWORD\" \"\$MYSQL_DATABASE\" < '$sql_file'"
     done
+
+    table_count="$(count_tables)"
 fi
 
-table_count="$(${compose_command[@]} exec -T db sh -c \
-    'mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" -Nse "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = DATABASE()"' \
-    | tr -d '[:space:]')"
+if [[ -z "$table_count" || "$table_count" -lt "$min_tables" ]]; then
+    log "Daftar tabel saat ini"
+    "${compose_command[@]}" exec -T db sh -c \
+        'mysql -uroot -p"$MYSQL_ROOT_PASSWORD" "$MYSQL_DATABASE" -Nse "SHOW TABLES"' >&2 || true
+    fail "Database belum lengkap. Hanya ditemukan ${table_count:-0} tabel (minimal $min_tables). Coba reset volume: docker compose down -v && bash run.sh"
+fi
 
-[[ "$table_count" -ge 13 ]] || fail "Database belum lengkap. Hanya ditemukan $table_count tabel."
+log "Database siap ($table_count tabel)"
 
 if ! "${compose_command[@]}" exec -T app sh -c \
     'curl -fsS http://localhost/login >/dev/null'; then

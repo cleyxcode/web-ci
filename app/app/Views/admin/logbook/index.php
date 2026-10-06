@@ -16,15 +16,42 @@
                 </select>
             </form>
         </div>
-        <div class="table-wrap responsive-table"><table class="data w-full text-left"><thead><tr><th>Tanggal</th><th>Mahasiswa</th><th>Kelompok</th><th>DPL</th><th>Kegiatan</th><th>Dokumentasi</th><th>Status</th></tr></thead><tbody>
-        <?php if (empty($logbooks)): ?><tr><td colspan="7"><div class="empty">Belum ada logbook.</div></td></tr><?php else: foreach ($logbooks as $row): ?><tr>
-            <td data-label="Tanggal"><?= format_tanggal($row['tanggal'] ?? null) ?></td>
-            <td data-label="Mahasiswa"><strong><?= esc($row['nama_mahasiswa'] ?? '-') ?></strong><small class="block text-xs text-slate-400"><?= esc($row['npm'] ?? '-') ?></small></td>
-            <td data-label="Kelompok"><?= esc($row['nama_kelompok'] ?? '-') ?></td>
-            <td data-label="DPL"><?= esc($row['nama_dpl'] ?? '-') ?></td>
-            <td data-label="Kegiatan" class="max-w-sm"><?= esc($row['kegiatan'] ?? '-') ?></td>
-            <td data-label="Dokumentasi"><?php if (! empty($row['dokumentasi'])): ?><?php foreach (stored_files($row['dokumentasi']) as $file): ?><a class="mr-2" href="<?= base_url('uploads/' . $file) ?>" target="_blank">Lihat</a><?php endforeach; ?><?php else: ?>-<?php endif; ?></td>
-            <td data-label="Status"><span class="<?= stempel_class($row['status'] ?? null) ?>"><?= stempel_label($row['status'] ?? null) ?></span></td>
-        </tr><?php endforeach; endif; ?></tbody></table></div>
+        <div class="table-wrap responsive-table">
+            <table class="data w-full text-left">
+                <thead>
+                    <tr>
+                        <th>Tanggal</th>
+                        <th>Mahasiswa</th>
+                        <th>Kelompok</th>
+                        <th>DPL</th>
+                        <th>Kegiatan</th>
+                        <th>Dokumentasi</th>
+                        <th>Status</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <?php if (empty($logbooks)): ?>
+                    <tr><td colspan="8"><div class="empty">Belum ada logbook.</div></td></tr>
+                <?php else: foreach ($logbooks as $row): ?>
+                    <tr>
+                        <td data-label="Tanggal"><?= format_tanggal($row['tanggal'] ?? null) ?></td>
+                        <td data-label="Mahasiswa"><strong><?= esc($row['nama_mahasiswa'] ?? '-') ?></strong><small class="block text-xs text-slate-400"><?= esc($row['npm'] ?? '-') ?></small></td>
+                        <td data-label="Kelompok"><?= esc($row['nama_kelompok'] ?? '-') ?></td>
+                        <td data-label="DPL"><?= esc($row['nama_dpl'] ?? '-') ?></td>
+                        <td data-label="Kegiatan" class="max-w-sm"><?= esc($row['kegiatan'] ?? '-') ?></td>
+                        <td data-label="Dokumentasi"><?= view('partials/stored-files', ['value' => $row['dokumentasi'] ?? null]) ?></td>
+                        <td data-label="Status"><span class="<?= stempel_class($row['status'] ?? null) ?>"><?= stempel_label($row['status'] ?? null) ?></span></td>
+                        <td data-label="Aksi" class="actions">
+                            <form method="post" action="<?= site_url('admin/logbook/' . (int) $row['id'] . '/delete') ?>" data-confirm="Hapus logbook ini?">
+                                <?= csrf_field() ?>
+                                <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+                            </form>
+                        </td>
+                    </tr>
+                <?php endforeach; endif; ?>
+                </tbody>
+            </table>
+        </div>
     </section>
 </div>

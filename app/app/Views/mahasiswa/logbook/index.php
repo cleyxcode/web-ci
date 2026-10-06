@@ -44,9 +44,7 @@
                         <td><?= esc($row['kegiatan']) ?></td>
                         <td><?= esc($row['lokasi_kegiatan'] ?? '-') ?></td>
                         <td>
-                            <?php if (! empty($row['dokumentasi'])): ?>
-                                <?php foreach (stored_files($row['dokumentasi']) as $file): ?><a class="mr-2" href="<?= base_url('uploads/' . $file) ?>" target="_blank">Lihat</a><?php endforeach; ?>
-                            <?php else: ?>-<?php endif; ?>
+                            <?= view('partials/stored-files', ['value' => $row['dokumentasi'] ?? null]) ?>
                         </td>
                         <td><span class="<?= stempel_class($row['status']) ?>"><?= stempel_label($row['status']) ?></span></td>
                         <td><?= esc($row['catatan_dpl'] ?? '-') ?></td>

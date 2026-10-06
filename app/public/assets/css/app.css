@@ -462,3 +462,55 @@ html { scroll-behavior: smooth; }
     opacity: 0.5;
   }
 }
+
+/* Preview dokumentasi / file laporan di tabel & form */
+.file-preview-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+}
+.file-preview-item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.55rem;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  overflow: hidden;
+  text-decoration: none;
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+.file-preview-item:hover {
+  border-color: #8b5cf6;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.12);
+}
+.file-preview-item.is-image img {
+  display: block;
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+}
+.file-preview-pdf {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.45rem 0.7rem;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: #b91c1c;
+}
+.file-preview-missing {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.35rem 0.55rem;
+  border-radius: 0.45rem;
+  border: 1px dashed #f1c4c4;
+  background: #fff5f5;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #b91c1c;
+}

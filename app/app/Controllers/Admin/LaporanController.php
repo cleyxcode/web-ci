@@ -3,7 +3,9 @@
 namespace App\Controllers\Admin;
 
 use App\Controllers\PanelController;
+use App\Libraries\AuditLib;
 use App\Models\LaporanModel;
+use Throwable;
 
 class LaporanController extends PanelController
 {
@@ -13,5 +15,41 @@ class LaporanController extends PanelController
             'title'   => 'Semua Laporan',
             'laporan' => model(LaporanModel::class)->getAllWithMahasiswa(),
         ]);
+    }
+
+    public function delete(int $id)
+    {
+        $laporanModel = model(LaporanModel::class);
+        $laporan      = $laporanModel->find($id);
+
+        if ($laporan === null) {
+            return redirect()->to('/admin/laporan')->with('error', 'Laporan tidak ditemukan.');
+        }
+
+        try {
+            if (! empty($laporan['file_laporan'])) {
+                delete_uploaded_file($laporan['file_laporan']);
+            }
+
+            $laporanModel->delete($id);
+
+            AuditLib::log(
+                'hapus',
+                'laporan',
+                'Admin menghapus laporan "' . ($laporan['judul'] ?? '') . '"',
+                $id,
+                $laporan,
+                null
+            );
+        } catch (Throwable $e) {
+            log_message('error', 'Gagal hapus laporan admin #{id}: {message}', [
+                'id'      => $id,
+                'message' => $e->getMessage(),
+            ]);
+
+            return redirect()->to('/admin/laporan')->with('error', 'Gagal menghapus laporan. Silakan coba lagi.');
+        }
+
+        return redirect()->to('/admin/laporan')->with('success', 'Laporan berhasil dihapus.');
     }
 }

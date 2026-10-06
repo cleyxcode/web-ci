@@ -105,48 +105,26 @@ class LogbookController extends PanelController
 
     public function edit(int $id)
     {
-        $dpl = model(DplModel::class)->findByUserId(current_user()['id']);
-
-        if (! $dpl) {
-            return redirect()->to('/dpl/dashboard');
-        }
-
-        $logbook = model(LogbookModel::class)->find($id);
-
-        if (! $logbook) {
-            return redirect()->to('/dpl/logbook')->with('error', 'Logbook tidak ditemukan.');
-        }
-
-        $mhs = model(MahasiswaModel::class)->find((int) $logbook['mahasiswa_id']);
-        if (! $mhs || (int) $mhs['dpl_id'] !== (int) $dpl['id']) {
-            return redirect()->to('/dpl/logbook')->with('error', 'Logbook bukan dari mahasiswa bimbingan Anda.');
+        $owned = $this->findOwnedLogbook($id);
+        if ($owned === null) {
+            return redirect()->to('/dpl/logbook')->with('error', 'Logbook tidak ditemukan atau bukan dari mahasiswa bimbingan Anda.');
         }
 
         return $this->render('dpl/logbook/form', [
             'title'   => 'Edit Logbook',
-            'logbook' => $logbook,
+            'logbook' => $owned['logbook'],
         ]);
     }
 
     public function update(int $id)
     {
-        $dpl = model(DplModel::class)->findByUserId(current_user()['id']);
-
-        if (! $dpl) {
-            return redirect()->to('/dpl/dashboard');
+        $owned = $this->findOwnedLogbook($id);
+        if ($owned === null) {
+            return redirect()->to('/dpl/logbook')->with('error', 'Logbook tidak ditemukan atau bukan dari mahasiswa bimbingan Anda.');
         }
 
         $logbookModel = model(LogbookModel::class);
-        $logbook = $logbookModel->find($id);
-
-        if (! $logbook) {
-            return redirect()->to('/dpl/logbook')->with('error', 'Logbook tidak ditemukan.');
-        }
-
-        $mhs = model(MahasiswaModel::class)->find((int) $logbook['mahasiswa_id']);
-        if (! $mhs || (int) $mhs['dpl_id'] !== (int) $dpl['id']) {
-            return redirect()->to('/dpl/logbook')->with('error', 'Logbook bukan dari mahasiswa bimbingan Anda.');
-        }
+        $logbook      = $owned['logbook'];
 
         if (! $this->validate([
             'tanggal'         => 'required|valid_date[Y-m-d]',
@@ -161,8 +139,10 @@ class LogbookController extends PanelController
             return redirect()->back()->withInput()->with('error', 'Tanggal kegiatan tidak boleh melebihi hari ini.');
         }
 
-        $files = $this->request->getFileMultiple('dokumentasi') ?? [];
-        if (count($files) > 3) return redirect()->back()->withInput()->with('error', 'Maksimal 3 gambar dokumentasi.');
+        $files = $this->request->getFileMultiple('dokumentasi') ?: [];
+        if (count($files) > 3) {
+            return redirect()->back()->withInput()->with('error', 'Maksimal 3 gambar dokumentasi.');
+        }
         $dokumentasi = upload_files($files, 'logbook');
 
         $data = [
@@ -185,30 +165,64 @@ class LogbookController extends PanelController
 
     public function delete(int $id)
     {
-        $dpl = model(DplModel::class)->findByUserId(current_user()['id']);
-
-        if (! $dpl) {
-            return redirect()->to('/dpl/dashboard');
+        $owned = $this->findOwnedLogbook($id);
+        if ($owned === null) {
+            return redirect()->to('/dpl/logbook')->with('error', 'Logbook tidak ditemukan atau bukan dari mahasiswa bimbingan Anda.');
         }
 
-        $logbookModel = model(LogbookModel::class);
-        $logbook = $logbookModel->find($id);
+        $logbook = $owned['logbook'];
 
-        if (! $logbook) {
-            return redirect()->to('/dpl/logbook')->with('error', 'Logbook tidak ditemukan.');
+        try {
+            foreach (stored_files($logbook['dokumentasi'] ?? null) as $oldFile) {
+                delete_uploaded_file($oldFile);
+            }
+
+            model(LogbookModel::class)->delete($id);
+
+            AuditLib::log(
+                'hapus',
+                'logbook',
+                'DPL menghapus logbook mahasiswa ' . ($owned['mahasiswa']['nama'] ?? '') . ' tanggal ' . ($logbook['tanggal'] ?? ''),
+                $id,
+                $logbook,
+                null
+            );
+        } catch (\Throwable $e) {
+            log_message('error', 'Gagal hapus logbook dpl #{id}: {message}', [
+                'id'      => $id,
+                'message' => $e->getMessage(),
+            ]);
+
+            return redirect()->to('/dpl/logbook')->with('error', 'Gagal menghapus logbook. Silakan coba lagi.');
         }
-
-        $mhs = model(MahasiswaModel::class)->find((int) $logbook['mahasiswa_id']);
-        if (! $mhs || (int) $mhs['dpl_id'] !== (int) $dpl['id']) {
-            return redirect()->to('/dpl/logbook')->with('error', 'Logbook bukan dari mahasiswa bimbingan Anda.');
-        }
-
-        foreach (stored_files($logbook['dokumentasi'] ?? null) as $oldFile) {
-            delete_uploaded_file($oldFile);
-        }
-
-        $logbookModel->delete($id);
 
         return redirect()->to('/dpl/logbook')->with('success', 'Logbook berhasil dihapus.');
+    }
+
+    /**
+     * @return array{dpl: array<string,mixed>, logbook: array<string,mixed>, mahasiswa: array<string,mixed>}|null
+     */
+    private function findOwnedLogbook(int $id): ?array
+    {
+        $dpl = model(DplModel::class)->findByUserId((int) current_user()['id']);
+        if ($dpl === null) {
+            return null;
+        }
+
+        $logbook = model(LogbookModel::class)->find($id);
+        if ($logbook === null) {
+            return null;
+        }
+
+        $mhs = model(MahasiswaModel::class)->getWithRelations((int) $logbook['mahasiswa_id']);
+        if ($mhs === null || (int) ($mhs['dpl_id'] ?? 0) !== (int) $dpl['id']) {
+            return null;
+        }
+
+        return [
+            'dpl'       => $dpl,
+            'logbook'   => $logbook,
+            'mahasiswa' => $mhs,
+        ];
     }
 }

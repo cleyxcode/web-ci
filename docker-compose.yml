@@ -39,6 +39,7 @@ services:
       - ./sql/alter_evaluasi.sql:/docker-entrypoint-initdb.d/02-alter-evaluasi.sql:ro
       - ./sql/alter_remove_knn.sql:/docker-entrypoint-initdb.d/03-alter-remove-knn.sql:ro
       - ./sql/alter_2026_08.sql:/docker-entrypoint-initdb.d/04-alter-2026-08.sql:ro
+      - ./sql/alter_2026_10_uploads.sql:/docker-entrypoint-initdb.d/05-alter-2026-10-uploads.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p$$MYSQL_ROOT_PASSWORD --silent"]
       interval: 10s

@@ -23,7 +23,7 @@
                 <span class="file-picker-name">Belum ada file dipilih (maks. 3 gambar)</span>
             </div>
             <?php if ($isEdit && ! empty($logbook['dokumentasi'])): ?>
-                <span class="field-hint">Dokumentasi saat ini: <?= esc(basename($logbook['dokumentasi'])) ?></span>
+                <div class="mt-2"><?= view('partials/stored-files', ['value' => $logbook['dokumentasi']]) ?></div>
             <?php endif; ?>
         </div>
         <div class="form-actions">

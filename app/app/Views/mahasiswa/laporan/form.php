@@ -19,7 +19,7 @@
                 <span class="file-picker-name">Belum ada file dipilih</span>
             </div>
             <?php if ($isEdit && ! empty($laporan['file_laporan'])): ?>
-                <span class="field-hint">File saat ini: <?= esc(basename($laporan['file_laporan'])) ?></span>
+                <div class="mt-2"><?= view('partials/stored-files', ['value' => $laporan['file_laporan']]) ?></div>
             <?php endif; ?>
         </div>
         <div class="form-actions">
