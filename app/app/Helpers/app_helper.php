@@ -146,17 +146,69 @@ if (! function_exists('upload_storage_dir')) {
     }
 }
 
+if (! function_exists('ensure_upload_directories')) {
+    /** Pastikan writable/uploads/{logbook,laporan} siap tulis. */
+    function ensure_upload_directories(): bool
+    {
+        $ok = true;
+        foreach (['logbook', 'laporan'] as $folder) {
+            $path = upload_storage_dir() . DIRECTORY_SEPARATOR . $folder;
+            if (is_dir($path)) {
+                continue;
+            }
+            if (! @mkdir($path, 0755, true) && ! is_dir($path)) {
+                $ok = false;
+                log_message('error', 'Gagal membuat folder upload: {path}', ['path' => $path]);
+            }
+        }
+
+        return $ok;
+    }
+}
+
+if (! function_exists('normalize_upload_relative_path')) {
+    /**
+     * Normalisasi path relatif DB (buang prefix uploads/, lindungi path traversal).
+     */
+    function normalize_upload_relative_path(?string $relativePath, ?string $defaultFolder = null): ?string
+    {
+        if ($relativePath === null) {
+            return null;
+        }
+
+        $path = trim(str_replace(['\\', "\0"], ['/', ''], $relativePath));
+        $path = ltrim($path, '/');
+
+        if ($path === '' || str_contains($path, '..')) {
+            return null;
+        }
+
+        if (str_starts_with($path, 'uploads/')) {
+            $path = substr($path, strlen('uploads/'));
+        }
+
+        $path = ltrim($path, '/');
+        if ($path === '') {
+            return null;
+        }
+
+        if ($defaultFolder !== null && ! str_contains($path, '/')) {
+            $path = trim($defaultFolder, '/') . '/' . $path;
+        }
+
+        return $path;
+    }
+}
+
 if (! function_exists('resolve_uploaded_file')) {
     /**
      * Resolve a stored relative path (e.g. logbook/file.jpg) to an absolute file.
      * Prefers writable/uploads, falls back to legacy public/uploads.
      */
-    function resolve_uploaded_file(string $relativePath): ?string
+    function resolve_uploaded_file(string $relativePath, bool $allowEmpty = false): ?string
     {
-        $relativePath = str_replace(['\\', "\0"], ['/', ''], $relativePath);
-        $relativePath = ltrim($relativePath, '/');
-
-        if ($relativePath === '' || str_contains($relativePath, '..')) {
+        $relativePath = normalize_upload_relative_path($relativePath);
+        if ($relativePath === null) {
             return null;
         }
 
@@ -167,7 +219,11 @@ if (! function_exists('resolve_uploaded_file')) {
 
         foreach ($candidates as $candidate) {
             $real = realpath($candidate);
-            if ($real === false || ! is_file($real)) {
+            if ($real === false || ! is_file($real) || ! is_readable($real)) {
+                continue;
+            }
+
+            if (! $allowEmpty && filesize($real) === 0) {
                 continue;
             }
 
@@ -190,21 +246,75 @@ if (! function_exists('resolve_uploaded_file')) {
 if (! function_exists('delete_uploaded_file')) {
     function delete_uploaded_file(?string $relativePath): void
     {
-        if ($relativePath === null || trim($relativePath) === '') {
-            return;
+        foreach (stored_files($relativePath) as $path) {
+            $absolute = resolve_uploaded_file($path, true);
+            if ($absolute !== null) {
+                @unlink($absolute);
+            }
+        }
+    }
+}
+
+if (! function_exists('upload_last_error')) {
+    function upload_last_error(?string $message = null): ?string
+    {
+        static $last = null;
+        if (func_num_args() > 0) {
+            $last = $message;
         }
 
-        $absolute = resolve_uploaded_file($relativePath);
-        if ($absolute !== null) {
-            @unlink($absolute);
+        return $last;
+    }
+}
+
+if (! function_exists('collect_upload_files')) {
+    /**
+     * Buang slot input file kosong (UPLOAD_ERR_NO_FILE) dari getFileMultiple().
+     *
+     * @param list<object|null> $files
+     * @return list<object>
+     */
+    function collect_upload_files(array $files): array
+    {
+        $real = [];
+        foreach ($files as $file) {
+            if (! is_object($file)) {
+                continue;
+            }
+
+            if (method_exists($file, 'getError') && (int) $file->getError() === UPLOAD_ERR_NO_FILE) {
+                continue;
+            }
+
+            if (method_exists($file, 'getName') && trim((string) $file->getName()) === '') {
+                continue;
+            }
+
+            $real[] = $file;
         }
+
+        return $real;
     }
 }
 
 if (! function_exists('upload_file')) {
     function upload_file($file, string $folder, array $allowed = ['jpg', 'jpeg', 'png', 'pdf'], int $maxKb = 5120): ?string
     {
-        if (! $file || ! $file->isValid() || $file->hasMoved()) {
+        upload_last_error(null);
+
+        if (! $file || ! is_object($file)) {
+            upload_last_error('File upload tidak valid.');
+            return null;
+        }
+
+        if (method_exists($file, 'hasMoved') && $file->hasMoved()) {
+            upload_last_error('File sudah diproses sebelumnya.');
+            return null;
+        }
+
+        if (method_exists($file, 'isValid') && ! $file->isValid()) {
+            $msg = method_exists($file, 'getErrorString') ? (string) $file->getErrorString() : 'File upload gagal.';
+            upload_last_error($msg !== '' ? $msg : 'File upload gagal.');
             return null;
         }
 
@@ -216,10 +326,17 @@ if (! function_exists('upload_file')) {
         }
 
         if ($ext === '' || ! in_array($ext, $allowed, true)) {
+            upload_last_error('Format file tidak diizinkan. Gunakan: ' . implode(', ', $allowed) . '.');
             return null;
         }
 
         if ($file->getSizeByUnit('kb') > $maxKb) {
+            upload_last_error('Ukuran file melebihi batas ' . $maxKb . 'KB.');
+            return null;
+        }
+
+        if (! ensure_upload_directories()) {
+            upload_last_error('Folder penyimpanan upload tidak dapat dibuat. Hubungi admin.');
             return null;
         }
 
@@ -228,6 +345,7 @@ if (! function_exists('upload_file')) {
         $path    = upload_storage_dir() . DIRECTORY_SEPARATOR . $folder;
 
         if (! is_dir($path) && ! mkdir($path, 0755, true) && ! is_dir($path)) {
+            upload_last_error('Folder upload "' . $folder . '" tidak dapat dibuat.');
             return null;
         }
 
@@ -235,6 +353,15 @@ if (! function_exists('upload_file')) {
             $file->move($path, $newName);
         } catch (Throwable $e) {
             log_message('error', 'Upload move failed: {message}', ['message' => $e->getMessage()]);
+            upload_last_error('Gagal menyimpan file ke server. Periksa permission writable/uploads.');
+            return null;
+        }
+
+        $saved = $path . DIRECTORY_SEPARATOR . $newName;
+        // Tolak file kosong di disk nyata; mock unit test yang tidak menulis file tetap lolos.
+        if (is_file($saved) && (int) filesize($saved) === 0) {
+            @unlink($saved);
+            upload_last_error('File tersimpan kosong atau gagal ditulis ke disk.');
             return null;
         }
 
@@ -247,7 +374,7 @@ if (! function_exists('upload_files')) {
     function upload_files(array $files, string $folder, array $allowed = ['jpg', 'jpeg', 'png'], int $maxKb = 5120, int $maxFiles = 3): array
     {
         $uploaded = [];
-        foreach (array_slice($files, 0, $maxFiles) as $file) {
+        foreach (array_slice(collect_upload_files($files), 0, $maxFiles) as $file) {
             $path = upload_file($file, $folder, $allowed, $maxKb);
             if ($path !== null) {
                 $uploaded[] = $path;
@@ -272,15 +399,15 @@ if (! function_exists('stored_files')) {
             $paths = [trim($value)];
         }
 
-        return array_values(array_unique(array_map(static function (string $path): string {
-            $path = str_replace('\\', '/', $path);
-            $path = ltrim($path, '/');
-            if (str_starts_with($path, 'uploads/')) {
-                $path = substr($path, strlen('uploads/'));
+        $normalized = [];
+        foreach ($paths as $path) {
+            $clean = normalize_upload_relative_path($path);
+            if ($clean !== null) {
+                $normalized[] = $clean;
             }
+        }
 
-            return $path;
-        }, $paths)));
+        return array_values(array_unique($normalized));
     }
 }
 

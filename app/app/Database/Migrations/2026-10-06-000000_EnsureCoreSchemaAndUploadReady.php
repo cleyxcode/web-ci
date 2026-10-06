@@ -112,6 +112,16 @@ final class EnsureCoreSchemaAndUploadReady extends Migration
                 ],
             ]);
         }
+
+        if ($this->db->fieldExists('lokasi_kegiatan', 'logbook')) {
+            $this->forge->modifyColumn('logbook', [
+                'lokasi_kegiatan' => [
+                    'type'       => 'VARCHAR',
+                    'constraint' => 255,
+                    'null'       => true,
+                ],
+            ]);
+        }
     }
 
     private function ensureKelompokSchema(): void

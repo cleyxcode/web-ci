@@ -70,7 +70,7 @@ $roleAccent = match ($role) {
     <script src="https://cdn.tailwindcss.com"></script>
     <script>tailwind.config = { darkMode: ['selector', '[data-theme="dark"]'] };</script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-    <link rel="stylesheet" href="<?= base_url('assets/css/app.css?v=20260817-3') ?>">
+    <link rel="stylesheet" href="<?= base_url('assets/css/app.css?v=20261006-1') ?>">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
 </head>
@@ -78,7 +78,7 @@ $roleAccent = match ($role) {
 <div class="min-h-screen lg:flex">
     <aside class="panel-sidebar hidden w-[260px] shrink-0 flex-col overflow-y-auto overscroll-contain bg-gradient-to-b <?= $roleTheme ?> px-4 py-5 text-white shadow-2xl shadow-indigo-950/10 lg:fixed lg:inset-y-0 lg:left-0 lg:flex" aria-label="Navigasi utama">
         <a class="flex items-center gap-3 px-3" href="<?= esc($menus[0]['url'] ?? '/') ?>">
-            <span class="ukim-brand-mark" aria-hidden="true"><img src="<?= base_url('assets/images/72cf498fca7f74ded55e9bec99a848a8.webp') ?>" alt="Logo KKN Tematik UKIM"></span>
+            <span class="ukim-brand-mark" aria-hidden="true"><img src="<?= base_url('assets/images/72cf498fca7f74ded55e9bec99a848a8.webp') ?>" alt="Logo KKN Tematik UKIM" width="32" height="32"></span>
             <span class="leading-tight"><strong class="block text-[15px] font-extrabold tracking-tight">UKIM · KKN Tematik</strong><small class="text-[11px] font-semibold text-white/70">Monitoring System</small></span>
         </a>
         <a href="<?= esc($profilUrl) ?>" class="mt-7 flex items-center gap-3 rounded-2xl bg-white/10 p-3 ring-1 ring-white/10 transition hover:bg-white/15">
@@ -98,7 +98,7 @@ $roleAccent = match ($role) {
 
     <div class="min-w-0 flex-1 lg:ml-[260px]">
         <header class="sticky top-0 z-30 flex h-[68px] items-center justify-between border-b border-slate-200/80 bg-white/95 px-4 backdrop-blur lg:px-8 dark:border-slate-800 dark:bg-slate-900/95">
-            <div class="flex min-w-0 items-center gap-2"><span class="ukim-brand-mark ukim-brand-mark-mobile text-lg lg:hidden"><img src="<?= base_url('assets/images/72cf498fca7f74ded55e9bec99a848a8.webp') ?>" alt="Logo KKN Tematik UKIM"></span><div class="min-w-0"><h1 class="truncate text-lg font-extrabold tracking-tight text-slate-900 lg:text-xl dark:text-white"><?= esc($title ?? '') ?></h1><p class="hidden text-xs font-semibold text-slate-400 sm:block">UKIM Ambon · Fakultas Ilmu Komputer</p></div></div>
+            <div class="flex min-w-0 items-center gap-2"><span class="ukim-brand-mark ukim-brand-mark-mobile lg:hidden"><img src="<?= base_url('assets/images/72cf498fca7f74ded55e9bec99a848a8.webp') ?>" alt="Logo KKN Tematik UKIM" width="28" height="28"></span><div class="min-w-0"><h1 class="truncate text-lg font-extrabold tracking-tight text-slate-900 lg:text-xl dark:text-white"><?= esc($title ?? '') ?></h1><p class="hidden text-xs font-semibold text-slate-400 sm:block">UKIM Ambon · Fakultas Ilmu Komputer</p></div></div>
             <div class="flex items-center gap-1.5 sm:gap-3">
                 <button type="button" class="grid h-10 w-10 place-items-center rounded-xl text-slate-500 transition hover:bg-slate-100 hover:text-slate-800 dark:text-slate-300 dark:hover:bg-slate-800" id="theme-toggle" title="Mode gelap/terang" aria-label="Toggle dark mode"><span class="h-5 w-5 dark:hidden"><?= $iconSvg('moon') ?></span><span class="hidden h-5 w-5 dark:block"><?= $iconSvg('sun') ?></span></button>
                 <div class="relative" id="notif-wrap">

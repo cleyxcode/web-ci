@@ -18,7 +18,9 @@ final class AddAdminEvaluasiFields extends Migration
     public function up(): void
     {
         if (! $this->db->tableExists('evaluasi')) {
-            throw new RuntimeException('Tabel evaluasi tidak ditemukan. Import skema database dasar terlebih dahulu.');
+            // CreateCoreSchema / init.sql seharusnya sudah membuat tabel.
+            // Skip agar migrate tidak gagal keras di DB yang belum siap.
+            return;
         }
 
         $this->addColumnIfMissing('tipe_evaluasi', [

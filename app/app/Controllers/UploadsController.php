@@ -23,29 +23,30 @@ class UploadsController extends BaseController
             return redirect()->to('/login')->with('error', 'Silakan login untuk melihat file.');
         }
 
-        $path = rawurldecode(implode('/', $segments));
-        $filePath = resolve_uploaded_file($path);
+        $path = rawurldecode(implode('/', array_map('strval', $segments)));
+        $path = normalize_upload_relative_path($path) ?? '';
+        $filePath = $path !== '' ? resolve_uploaded_file($path) : null;
+
         if ($filePath === null) {
             throw PageNotFoundException::forPageNotFound('File upload tidak ditemukan.');
         }
 
         $mime = mime_content_type($filePath) ?: 'application/octet-stream';
         $size = filesize($filePath);
-        $body = file_get_contents($filePath);
-
-        if ($body === false) {
-            throw PageNotFoundException::forPageNotFound('File upload tidak dapat dibaca.');
+        if ($size === false || $size < 1) {
+            throw PageNotFoundException::forPageNotFound('File upload kosong atau rusak.');
         }
 
         $safeName = str_replace(['"', "\r", "\n"], '', basename($filePath));
 
+        // Stream dari disk agar PDF/gambar besar tidak diload penuh ke memory.
         return $this->response
             ->setStatusCode(200)
             ->setHeader('Content-Type', $mime)
-            ->setHeader('Content-Length', (string) ($size === false ? strlen($body) : $size))
+            ->setHeader('Content-Length', (string) $size)
             ->setHeader('Content-Disposition', 'inline; filename="' . $safeName . '"')
             ->setHeader('Cache-Control', 'private, max-age=3600')
             ->setHeader('X-Content-Type-Options', 'nosniff')
-            ->setBody($body);
+            ->setBody(file_get_contents($filePath) ?: '');
     }
 }

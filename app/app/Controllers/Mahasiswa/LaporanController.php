@@ -127,10 +127,18 @@ class LaporanController extends PanelController
         ];
 
         if ($file) {
-            if (! empty($laporan['file_laporan'])) {
-                delete_uploaded_file($laporan['file_laporan']);
+            foreach (stored_files($laporan['file_laporan'] ?? null) as $oldFile) {
+                delete_uploaded_file($oldFile);
             }
             $data['file_laporan'] = $file;
+        } else {
+            $incoming = $this->request->getFile('file_laporan');
+            if ($incoming && method_exists($incoming, 'getError') && (int) $incoming->getError() !== UPLOAD_ERR_NO_FILE) {
+                return redirect()->back()->withInput()->with(
+                    'error',
+                    upload_last_error() ?? 'Gagal mengunggah PDF laporan (max 5MB).'
+                );
+            }
         }
 
         $laporanModel->update($id, $data);
@@ -161,8 +169,8 @@ class LaporanController extends PanelController
         }
 
         try {
-            if (! empty($laporan['file_laporan'])) {
-                delete_uploaded_file($laporan['file_laporan']);
+            foreach (stored_files($laporan['file_laporan'] ?? null) as $oldFile) {
+                delete_uploaded_file($oldFile);
             }
 
             $laporanModel->delete($id);
@@ -197,7 +205,10 @@ class LaporanController extends PanelController
         $file = upload_file($this->request->getFile('file_laporan'), 'laporan', ['pdf']);
 
         if (! $file) {
-            return redirect()->back()->withInput()->with('error', 'File PDF wajib diupload (max 5MB).');
+            return redirect()->back()->withInput()->with(
+                'error',
+                upload_last_error() ?? 'File PDF wajib diupload (max 5MB).'
+            );
         }
 
         model(LaporanModel::class)->insert([

@@ -113,8 +113,8 @@ class LaporanController extends PanelController
         $laporan = $owned['laporan'];
 
         try {
-            if (! empty($laporan['file_laporan'])) {
-                delete_uploaded_file($laporan['file_laporan']);
+            foreach (stored_files($laporan['file_laporan'] ?? null) as $oldFile) {
+                delete_uploaded_file($oldFile);
             }
 
             model(LaporanModel::class)->delete($id);

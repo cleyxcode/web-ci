@@ -139,11 +139,17 @@ class LogbookController extends PanelController
             return redirect()->back()->withInput()->with('error', 'Tanggal kegiatan tidak boleh melebihi hari ini.');
         }
 
-        $files = $this->request->getFileMultiple('dokumentasi') ?: [];
+        $files = collect_upload_files($this->request->getFileMultiple('dokumentasi') ?: []);
         if (count($files) > 3) {
             return redirect()->back()->withInput()->with('error', 'Maksimal 3 gambar dokumentasi.');
         }
         $dokumentasi = upload_files($files, 'logbook');
+        if ($files !== [] && $dokumentasi === []) {
+            return redirect()->back()->withInput()->with(
+                'error',
+                upload_last_error() ?? 'Gagal mengunggah dokumentasi. Pastikan JPG/PNG max 5MB.'
+            );
+        }
 
         $data = [
             'tanggal'         => $this->request->getPost('tanggal'),

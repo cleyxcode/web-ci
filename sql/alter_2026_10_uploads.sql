@@ -69,3 +69,13 @@ SET `file_laporan` = TRIM(LEADING '/' FROM REPLACE(`file_laporan`, 'uploads/', '
 WHERE `file_laporan` IS NOT NULL
   AND `file_laporan` != ''
   AND (`file_laporan` LIKE 'uploads/%' OR `file_laporan` LIKE '/uploads/%');
+
+-- lokasi_kegiatan cukup 255 karakter (selaras validasi form)
+SET @exists := (
+  SELECT COUNT(*) FROM information_schema.COLUMNS
+  WHERE TABLE_SCHEMA = @db AND TABLE_NAME = 'logbook' AND COLUMN_NAME = 'lokasi_kegiatan'
+);
+SET @sql := IF(@exists > 0,
+  'ALTER TABLE `logbook` MODIFY COLUMN `lokasi_kegiatan` varchar(255) DEFAULT NULL',
+  'SELECT 1');
+PREPARE stmt FROM @sql; EXECUTE stmt; DEALLOCATE PREPARE stmt;
