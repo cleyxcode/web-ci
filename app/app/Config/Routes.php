@@ -149,4 +149,5 @@ $routes->group('mahasiswa', ['filter' => ['auth', 'role:mahasiswa']], static fun
 
 // Serve uploaded files from writable/uploads (and legacy public/uploads).
 // (:any) mendukung path bersarang seperti logbook/foto.jpg
-$routes->get('uploads/(:any)', 'UploadsController::serve/$1', ['filter' => 'auth']);
+// match GET+HEAD agar preview <img> / probe browser tidak 404.
+$routes->match(['get', 'head'], 'uploads/(:any)', 'UploadsController::serve/$1', ['filter' => 'auth']);

@@ -1,8 +1,23 @@
-# Blok akses langsung ke public/uploads.
-# File dilayani via /uploads/* → UploadsController (writable/uploads).
-<IfModule mod_authz_core.c>
-	Require all denied
+# File upload TIDAK dilayani langsung dari public/uploads.
+# Semua request /uploads/* diteruskan ke front controller → UploadsController
+# (auth + baca dari writable/uploads, fallback legacy public/uploads).
+#
+# Jangan pakai "Require all denied" di sini: di LiteSpeed/Hostinger (dan Apache
+# dengan AllowOverride) aturan deny subfolder dievaluasi SEBELUM RewriteRule
+# parent, sehingga menghasilkan 403 Forbidden untuk semua role.
+
+<IfModule mod_rewrite.c>
+	RewriteEngine On
+	RewriteBase /uploads/
+	RewriteRule ^(.*)$ /index.php/uploads/$1 [L,QSA]
 </IfModule>
-<IfModule !mod_authz_core.c>
-	Deny from all
+
+# Jika mod_rewrite tidak aktif, jangan serve file mentah.
+<IfModule !mod_rewrite.c>
+	<IfModule mod_authz_core.c>
+		Require all denied
+	</IfModule>
+	<IfModule !mod_authz_core.c>
+		Deny from all
+	</IfModule>
 </IfModule>
